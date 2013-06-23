@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LiveCoding.Core;
 using NUnit.Framework;
 using Roslyn.Compilers.CSharp;
+using Roslyn.Scripting.CSharp;
 
 namespace LiveCoding.Extension.Tests
 {
@@ -17,16 +19,18 @@ namespace LiveCoding.Extension.Tests
             ValuesTrackingRewriter rewriter = new ValuesTrackingRewriter();
 
             var tree = SyntaxTree.ParseText(@"
+    using System;
+
     public class Program
     {
-        public static void Method()
+        private static void Method()
         {
             int i = 0;
             int b = 1;
 
             for (int j = 0; j < 10; j++)
             {
-                i += i;
+                i += j;
             }
 
             b = i + 1;
@@ -38,6 +42,16 @@ namespace LiveCoding.Extension.Tests
 
             var rewritten = tree.GetRoot().Accept(rewriter).NormalizeWhitespace();
 
+            var compilation = Compilation.Create("1.dll")
+                .AddSyntaxTrees(SyntaxTree.Create(Syntax.CompilationUnit().WithMembers(Syntax.List(rewritten))));
+
+            ScriptEngine engine = new ScriptEngine();
+            engine.AddReference(typeof(VariablesTracker).Assembly);
+
+            var session = engine.CreateSession();
+            session.Execute(rewritten.ToString());
+
+            session.Execute("Program.Method();");
         }
     }
 }
