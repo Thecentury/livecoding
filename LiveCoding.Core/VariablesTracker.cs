@@ -21,7 +21,7 @@ namespace LiveCoding.Core
             _changes.Clear();
         }
 
-        public static void AddValue(string variableName, object value, [CallerMemberName]string methodName = null, [CallerFilePath]string filePath = null, [CallerLineNumber]int lineNumber = 0)
+        public static void AddValue(string variableName, object value, [CallerMemberName]string methodName = "", [CallerFilePath]string filePath = "", [CallerLineNumber]int lineNumber = 0)
         {
             _changes.Add(new ValueChange
             {
@@ -29,7 +29,8 @@ namespace LiveCoding.Core
                 FilePath = filePath,
                 LineNumber = lineNumber,
                 MethodName = methodName,
-                Value = value
+                Value = value,
+                TimestampUtc = DateTime.UtcNow
             });
         }
     }
