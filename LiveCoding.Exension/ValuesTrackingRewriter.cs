@@ -11,146 +11,136 @@ namespace LiveCoding.Extension
         private const string AddValueMethod = "AddValue";
         private const string QuotedValueStringFormat = "\"{0}\"";
 
-        public override SyntaxNode VisitForStatement(ForStatementSyntax node)
+        private static string Quote( string value )
         {
-            return base.VisitForStatement(node);
+            return String.Format( QuotedValueStringFormat, value );
         }
 
-        public override SyntaxNode VisitBlock(BlockSyntax node)
+        public override SyntaxNode VisitBlock( BlockSyntax node )
         {
             List<StatementSyntax> statements = new List<StatementSyntax>();
-            int tempVariablesCount = 0;
 
-
-            foreach (var statement in node.Statements)
+            foreach ( var statement in node.Statements )
             {
-                StatementSyntax visited = (StatementSyntax)Visit(statement);
+                StatementSyntax visited = (StatementSyntax)Visit( statement );
 
                 LocalDeclarationStatementSyntax localDeclaration = visited as LocalDeclarationStatementSyntax;
-                if (localDeclaration != null)
+                if ( localDeclaration != null )
                 {
-                    statements.Add(localDeclaration);
+                    statements.Add( localDeclaration );
 
                     var identifier = localDeclaration.Declaration.Variables[0].Identifier;
 
 
-                    string identifierName = String.Format(QuotedValueStringFormat, identifier.ValueText);
+                    string identifierName = Quote( identifier.ValueText );
 
                     var separatedList = Syntax.SeparatedList<ArgumentSyntax>(
-                        Syntax.Argument(Syntax.LiteralExpression(SyntaxKind.StringLiteralExpression, Syntax.Literal(identifierName, identifierName))),
-                         Syntax.Token(SyntaxKind.CommaToken),
-                        Syntax.Argument(Syntax.IdentifierName(localDeclaration.Declaration.Variables[0].Identifier))
+                        Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression, Syntax.Literal( identifierName, identifierName ) ) ),
+                         Syntax.Token( SyntaxKind.CommaToken ),
+                        Syntax.Argument( Syntax.IdentifierName( localDeclaration.Declaration.Variables[0].Identifier ) )
                         );
 
-                    var track = CreateVariableTrackingExpression(separatedList);
+                    var track = CreateVariableTrackingExpression( separatedList );
 
-                    statements.Add(track);
+                    statements.Add( track );
                 }
                 else
                 {
                     ExpressionStatementSyntax expressionSyntax = visited as ExpressionStatementSyntax;
-                    if (expressionSyntax != null)
+                    if ( expressionSyntax != null )
                     {
                         BinaryExpressionSyntax binaryExpression = expressionSyntax.Expression as BinaryExpressionSyntax;
 
-                        if (binaryExpression != null && ChangesValue(binaryExpression.Kind))
+                        if ( binaryExpression != null && ChangesValue( binaryExpression.Kind ) )
                         {
-                            string tempVariableName = GenerateTempVariableName(tempVariablesCount);
-                            tempVariablesCount++;
+                            string tempVariableName = GenerateTempVariableName();
 
-                            ExpressionSyntax initializer;
-                            if (binaryExpression.Kind == SyntaxKind.AssignExpression)
-                            {
-                                initializer = binaryExpression.Right;
-                            }
-                            else
-                            {
-                                initializer = binaryExpression.Left;
-                            }
+                            var initializer = binaryExpression.Kind == SyntaxKind.AssignExpression ? binaryExpression.Right : binaryExpression.Left;
 
                             LocalDeclarationStatementSyntax localVariable =
                                 Syntax.LocalDeclarationStatement(
-                                    Syntax.VariableDeclaration(Syntax.IdentifierName("var"))
-                                        .WithVariables(Syntax.SeparatedList(
-                                            Syntax.VariableDeclarator(Syntax.Identifier(tempVariableName))
-                                                .WithInitializer(Syntax.EqualsValueClause(initializer)))));
-                            statements.Add(localVariable);
+                                    Syntax.VariableDeclaration( Syntax.IdentifierName( "var" ) )
+                                        .WithVariables( Syntax.SeparatedList(
+                                            Syntax.VariableDeclarator( Syntax.Identifier( tempVariableName ) )
+                                                .WithInitializer( Syntax.EqualsValueClause( initializer ) ) ) ) );
+                            statements.Add( localVariable );
 
-                            if (binaryExpression.Kind == SyntaxKind.AssignExpression)
+                            if ( binaryExpression.Kind == SyntaxKind.AssignExpression )
                             {
                                 var operation =
-                                    Syntax.ExpressionStatement(Syntax.BinaryExpression(binaryExpression.Kind,
+                                    Syntax.ExpressionStatement( Syntax.BinaryExpression( binaryExpression.Kind,
                                         binaryExpression.Left,
-                                        Syntax.IdentifierName(tempVariableName)));
+                                        Syntax.IdentifierName( tempVariableName ) ) );
 
-                                statements.Add(operation);
+                                statements.Add( operation );
                             }
                             else
                             {
                                 var operation =
-                                    Syntax.ExpressionStatement(Syntax.BinaryExpression(binaryExpression.Kind,
-                                    Syntax.IdentifierName(tempVariableName),
+                                    Syntax.ExpressionStatement( Syntax.BinaryExpression( binaryExpression.Kind,
+                                    Syntax.IdentifierName( tempVariableName ),
                                     binaryExpression.Right
-                                        ));
+                                        ) );
 
-                                statements.Add(operation);
+                                statements.Add( operation );
 
                                 var assignment =
-                                    Syntax.ExpressionStatement(Syntax.BinaryExpression(SyntaxKind.AssignExpression,
-                                        binaryExpression.Left, Syntax.IdentifierName(tempVariableName)));
-                                statements.Add(assignment);
+                                    Syntax.ExpressionStatement( Syntax.BinaryExpression( SyntaxKind.AssignExpression,
+                                        binaryExpression.Left, Syntax.IdentifierName( tempVariableName ) ) );
+                                statements.Add( assignment );
                             }
 
-                            string assignmentLeftSideName = String.Format(QuotedValueStringFormat,
-                                binaryExpression.Left);
+                            string assignmentLeftSideName = Quote( binaryExpression.Left.ToString() );
 
                             var arguments = Syntax.SeparatedList<ArgumentSyntax>(
-                                Syntax.Argument(Syntax.LiteralExpression(SyntaxKind.StringLiteralExpression,
-                                    Syntax.Literal(assignmentLeftSideName, assignmentLeftSideName))),
-                                Syntax.Token(SyntaxKind.CommaToken),
-                                Syntax.Argument(Syntax.IdentifierName(tempVariableName))
+                                Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression,
+                                    Syntax.Literal( assignmentLeftSideName, assignmentLeftSideName ) ) ),
+                                Syntax.Token( SyntaxKind.CommaToken ),
+                                Syntax.Argument( Syntax.IdentifierName( tempVariableName ) )
                                 );
 
-                            var track = CreateVariableTrackingExpression(arguments);
-                            statements.Add(track);
+                            var track = CreateVariableTrackingExpression( arguments );
+                            statements.Add( track );
                         }
                         else
                         {
-                            statements.Add(visited);
+                            statements.Add( visited );
                         }
                     }
                     else
                     {
-                        statements.Add(visited);
+                        statements.Add( visited );
                     }
                 }
             }
 
-            var result = Syntax.Block(statements);
+            var result = Syntax.Block( statements );
             return result;
         }
 
-        public override SyntaxNode VisitClassDeclaration(ClassDeclarationSyntax node)
+        public override SyntaxNode VisitClassDeclaration( ClassDeclarationSyntax node )
         {
-            ClassDeclarationSyntax visited = (ClassDeclarationSyntax) base.VisitClassDeclaration(node);
+            ClassDeclarationSyntax visited = (ClassDeclarationSyntax)base.VisitClassDeclaration( node );
+            visited = visited.WithModifiers( visited.Modifiers.ToPublic() );
             return visited;
         }
 
-        public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
+        public override SyntaxNode VisitMethodDeclaration( MethodDeclarationSyntax node )
         {
-            return base.VisitMethodDeclaration(node);
+            MethodDeclarationSyntax methodDeclaration = (MethodDeclarationSyntax)base.VisitMethodDeclaration( node );
+            return methodDeclaration.WithModifiers( methodDeclaration.Modifiers.ToPublic() );
         }
 
-        private static string GenerateTempVariableName(int index)
+        private static string GenerateTempVariableName()
         {
-            var id = Guid.NewGuid().ToString("N");
+            var id = Guid.NewGuid().ToString( "N" );
 
-            return String.Format("__liveCodingTemp_{0}_{1}", id, index);
+            return String.Format( "__liveCodingTemp_{0}", id );
         }
 
-        private static bool ChangesValue(SyntaxKind syntaxKind)
+        private static bool ChangesValue( SyntaxKind syntaxKind )
         {
-            switch (syntaxKind)
+            switch ( syntaxKind )
             {
                 case SyntaxKind.AddAssignExpression:
                 case SyntaxKind.AssignExpression:
@@ -173,14 +163,14 @@ namespace LiveCoding.Extension
             }
         }
 
-        private static ExpressionStatementSyntax CreateVariableTrackingExpression(SeparatedSyntaxList<ArgumentSyntax> arguments)
+        private static ExpressionStatementSyntax CreateVariableTrackingExpression( SeparatedSyntaxList<ArgumentSyntax> arguments )
         {
             return Syntax.ExpressionStatement(
                 Syntax.InvocationExpression(
-                    Syntax.MemberAccessExpression(SyntaxKind.MemberAccessExpression,
-                        Syntax.IdentifierName(VariablesTracker), Syntax.IdentifierName(AddValueMethod)),
+                    Syntax.MemberAccessExpression( SyntaxKind.MemberAccessExpression,
+                        Syntax.IdentifierName( VariablesTracker ), Syntax.IdentifierName( AddValueMethod ) ),
                     Syntax.ArgumentList(
-                        arguments))
+                        arguments ) )
                 );
         }
     }
