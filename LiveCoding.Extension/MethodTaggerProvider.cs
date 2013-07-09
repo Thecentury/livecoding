@@ -9,8 +9,8 @@ namespace LiveCoding.Extension
 {
     [Export( typeof( ITaggerProvider ) )]
     [ContentType( "code" )]
-    [TagType( typeof( LiveCodingMethodTag ) )]
-    internal sealed class LiveCodingMethodTaggerProvider : ITaggerProvider
+    [TagType( typeof( MethodTag ) )]
+    internal sealed class MethodTaggerProvider : ITaggerProvider
     {
         [Import]
         internal IClassifierAggregatorService AggregatorService;
@@ -22,7 +22,7 @@ namespace LiveCoding.Extension
                 throw new ArgumentNullException( "buffer" );
             }
 
-            return new LiveCodingMethodTagger( AggregatorService.GetClassifier( buffer ) ) as ITagger<T>;
+            return new MethodTagger( AggregatorService.GetClassifier( buffer ) ) as ITagger<T>;
         }
     }
 }

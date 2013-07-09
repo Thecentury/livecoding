@@ -9,12 +9,12 @@ namespace LiveCoding.Extension
     [Name( "LiveCodingMethodGlyph" )]
     [Order( After = "VsTextMarker" )]
     [ContentType( "code" )]
-    [TagType( typeof( LiveCodingMethodTag ) )]
-    internal sealed class TodoGlyphFactoryProvider : IGlyphFactoryProvider
+    [TagType( typeof( MethodTag ) )]
+    internal sealed class MethodGlyphFactoryProvider : IGlyphFactoryProvider
     {
         public IGlyphFactory GetGlyphFactory( IWpfTextView view, IWpfTextViewMargin margin )
         {
-            return new LiveCodingMethodGlyphFactory( view );
+            return new MethodGlyphFactory( view );
         }
     }
 }
