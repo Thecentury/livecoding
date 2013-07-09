@@ -7,11 +7,11 @@ using Microsoft.VisualStudio.Text.Formatting;
 
 namespace LiveCoding.Extension
 {
-    internal sealed class LiveCodingMethodGlyphFactory : IGlyphFactory
+    internal sealed class MethodGlyphFactory : IGlyphFactory
     {
         private readonly IWpfTextView _view;
 
-        public LiveCodingMethodGlyphFactory( IWpfTextView view )
+        public MethodGlyphFactory( IWpfTextView view )
         {
             _view = view;
         }
@@ -21,7 +21,7 @@ namespace LiveCoding.Extension
         public UIElement GenerateGlyph( IWpfTextViewLine line, IGlyphTag tag )
         {
             // Ensure we can draw a glyph for this marker. 
-            if ( tag == null || !( tag is LiveCodingMethodTag ) )
+            if ( tag == null || !( tag is MethodTag ) )
             {
                 return null;
             }

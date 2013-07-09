@@ -2,8 +2,7 @@
 
 namespace LiveCoding.Extension
 {
-    internal sealed class LiveCodingMethodTag : IGlyphTag
+    internal sealed class MethodExecutionTag : IGlyphTag
     {
-
     }
 }

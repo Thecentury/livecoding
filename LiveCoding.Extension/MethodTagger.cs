@@ -6,16 +6,16 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace LiveCoding.Extension
 {
-    internal sealed class LiveCodingMethodTagger : ITagger<LiveCodingMethodTag>
+    internal sealed class MethodTagger : ITagger<MethodTag>
     {
         private readonly IClassifier _сlassifier;
 
-        internal LiveCodingMethodTagger( IClassifier classifier )
+        internal MethodTagger( IClassifier classifier )
         {
             _сlassifier = classifier;
         }
 
-        IEnumerable<ITagSpan<LiveCodingMethodTag>> ITagger<LiveCodingMethodTag>.GetTags( NormalizedSnapshotSpanCollection spans )
+        IEnumerable<ITagSpan<MethodTag>> ITagger<MethodTag>.GetTags( NormalizedSnapshotSpanCollection spans )
         {
             foreach ( SnapshotSpan span in spans )
             {
@@ -25,7 +25,7 @@ namespace LiveCoding.Extension
                     string spanText = span.ToString();
                     if ( classification.ClassificationType.Classification.ToLower().Contains( "keyword" ) && spanText.Contains( "public" ) || spanText.Contains( "private" ) || spanText.Contains( "internal" ) || spanText.Contains( "protected" ) )
                     {
-                        yield return new TagSpan<LiveCodingMethodTag>( new SnapshotSpan( classification.Span.Start, classification.Span.Length ), new LiveCodingMethodTag() );
+                        yield return new TagSpan<MethodTag>( new SnapshotSpan( classification.Span.Start, classification.Span.Length ), new MethodTag() );
                     }
                 }
             }
