@@ -12,6 +12,11 @@ namespace LiveCoding.Extension
     [TagType( typeof( MethodTag ) )]
     internal sealed class MethodTaggerProvider : ITaggerProvider
     {
+	    static MethodTaggerProvider()
+	    {
+		    AssemblyResolver.Attach();
+	    }
+
         [Import]
         internal IClassifierAggregatorService AggregatorService;
 
