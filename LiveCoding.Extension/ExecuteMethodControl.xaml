@@ -5,7 +5,8 @@
              xmlns:extension="clr-namespace:LiveCoding.Extension"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             d:DataContext="{d:DesignInstance extension:MethodExecutionViewModel}"
+             xmlns:viewModels="clr-namespace:LiveCoding.Extension.ViewModels"
+             d:DataContext="{d:DesignInstance viewModels:MethodExecutionViewModel}"
              d:DesignHeight="300"
              d:DesignWidth="300"
              mc:Ignorable="d">
@@ -15,31 +16,31 @@
             <Setter Property="Stretch" Value="Uniform" />
         </Style>
 
-        <DataTemplate x:Key="ReadyToExecuteTemplate" DataType="extension:MethodExecutionViewModel">
+        <DataTemplate x:Key="ReadyToExecuteTemplate" DataType="viewModels:MethodExecutionViewModel">
             <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/leaf.png"
                    Style="{StaticResource IconStyle}"
                    ToolTip="Execute" />
         </DataTemplate>
 
-        <DataTemplate x:Key="ExecutingTemplate" DataType="extension:MethodExecutionViewModel">
+        <DataTemplate x:Key="ExecutingTemplate" DataType="viewModels:MethodExecutionViewModel">
             <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/ui-progress-bar-indeterminate.png"
                    Style="{StaticResource IconStyle}"
                    ToolTip="Executing" />
         </DataTemplate>
 
-        <DataTemplate x:Key="ExecutedTemplate" DataType="extension:MethodExecutionViewModel">
+        <DataTemplate x:Key="ExecutedTemplate" DataType="viewModels:MethodExecutionViewModel">
             <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/tick.png"
                    Style="{StaticResource IconStyle}"
                    ToolTip="Done" />
         </DataTemplate>
 
-        <DataTemplate x:Key="FailedTemplate" DataType="extension:MethodExecutionViewModel">
+        <DataTemplate x:Key="FailedTemplate" DataType="viewModels:MethodExecutionViewModel">
             <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/exclamation-red.png"
                    Style="{StaticResource IconStyle}"
                    ToolTip="Failed" />
         </DataTemplate>
 
-        <DataTemplate x:Key="CanceledTemplate" DataType="extension:MethodExecutionViewModel">
+        <DataTemplate x:Key="CanceledTemplate" DataType="viewModels:MethodExecutionViewModel">
             <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/cross-circle.png"
                    Style="{StaticResource IconStyle}"
                    ToolTip="Canceled" />
@@ -53,21 +54,25 @@
                                                     ReadyToExecuteTemplate="{StaticResource ReadyToExecuteTemplate}" />
     </UserControl.Resources>
 
-    <ContentControl Width="12"
-                    Height="12"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    HorizontalContentAlignment="Stretch"
-                    VerticalContentAlignment="Stretch"
-                    Background="Red"
-                    Content="{Binding}"
-                    ContentTemplate="{Binding State,
-                                              Converter={StaticResource TemplateConverter}}">
-        <i:Interaction.Triggers>
+    <Grid Background="Transparent"
+          MouseLeftButtonDown="OnMouseLeftButtonDown"
+          PreviewMouseLeftButtonDown="OnMouseLeftButtonDown">
+        <ContentControl Width="12"
+                        Height="12"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        Background="Red"
+                        Content="{Binding}"
+                        ContentTemplate="{Binding State,
+                                                  Converter={StaticResource TemplateConverter}}" />
+        <!--
+            <i:Interaction.Triggers>
             <i:EventTrigger EventName="MouseLeftButtonDown">
-                <i:InvokeCommandAction Command="{Binding ExecuteCommand}" />
+            <i:InvokeCommandAction Command="{Binding ExecuteCommand}" />
             </i:EventTrigger>
-        </i:Interaction.Triggers>
-
-    </ContentControl>
+            </i:Interaction.Triggers>
+        -->
+    </Grid>
 </UserControl>

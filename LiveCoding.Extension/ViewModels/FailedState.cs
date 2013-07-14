@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LiveCoding.Extension
+namespace LiveCoding.Extension.ViewModels
 {
 	internal sealed class FailedState : MethodExecutionStateBase
 	{
