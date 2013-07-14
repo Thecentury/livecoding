@@ -1,0 +1,73 @@
+﻿<UserControl x:Class="LiveCoding.Extension.ExecuteMethodControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:extension="clr-namespace:LiveCoding.Extension"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DataContext="{d:DesignInstance extension:MethodExecutionViewModel}"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Style x:Key="IconStyle" TargetType="Image">
+            <Setter Property="Stretch" Value="Uniform" />
+        </Style>
+
+        <DataTemplate x:Key="ReadyToExecuteTemplate" DataType="extension:MethodExecutionViewModel">
+            <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/leaf.png"
+                   Style="{StaticResource IconStyle}"
+                   ToolTip="Execute" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="ExecutingTemplate" DataType="extension:MethodExecutionViewModel">
+            <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/ui-progress-bar-indeterminate.png"
+                   Style="{StaticResource IconStyle}"
+                   ToolTip="Executing" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="ExecutedTemplate" DataType="extension:MethodExecutionViewModel">
+            <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/tick.png"
+                   Style="{StaticResource IconStyle}"
+                   ToolTip="Done" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="FailedTemplate" DataType="extension:MethodExecutionViewModel">
+            <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/exclamation-red.png"
+                   Style="{StaticResource IconStyle}"
+                   ToolTip="Failed" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="CanceledTemplate" DataType="extension:MethodExecutionViewModel">
+            <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/cross-circle.png"
+                   Style="{StaticResource IconStyle}"
+                   ToolTip="Canceled" />
+        </DataTemplate>
+
+        <extension:MethodExecutionTemplateConverter x:Key="TemplateConverter"
+                                                    CanceledTemplate="{StaticResource CanceledTemplate}"
+                                                    ExecutedTemplate="{StaticResource ExecutedTemplate}"
+                                                    ExecutingTemplate="{StaticResource ExecutingTemplate}"
+                                                    FailedTemplate="{StaticResource FailedTemplate}"
+                                                    ReadyToExecuteTemplate="{StaticResource ReadyToExecuteTemplate}" />
+    </UserControl.Resources>
+
+    <ContentControl Width="12"
+                    Height="12"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch"
+                    Background="Red"
+                    Content="{Binding}"
+                    ContentTemplate="{Binding State,
+                                              Converter={StaticResource TemplateConverter}}">
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="MouseLeftButtonDown">
+                <i:InvokeCommandAction Command="{Binding ExecuteCommand}" />
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+
+    </ContentControl>
+</UserControl>

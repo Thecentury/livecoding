@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -42,27 +41,15 @@ namespace LiveCoding.Extension
 				Line = line
 			};
 
-			Ellipse ellipse = new Ellipse
+			ExecuteMethodControl glyph = new ExecuteMethodControl
 			{
-				Fill = Brushes.LightBlue,
-				StrokeThickness = 1,
-				Stroke = Brushes.DarkBlue,
 				Height = GlyphSize,
 				Width = GlyphSize,
 				ToolTip = filePath,
 				DataContext = new MethodExecutionViewModel( methodGlyphTag, _view )
 			};
 
-			ellipse.MouseLeftButtonDown += OnGlyphMouseLeftButtonDown;
-
-			return ellipse;
-		}
-
-		private void OnGlyphMouseLeftButtonDown( object sender, MouseButtonEventArgs e )
-		{
-			FrameworkElement element = (FrameworkElement)sender;
-			MethodExecutionViewModel viewModel = (MethodExecutionViewModel)element.DataContext;
-			viewModel.ExecuteCommand.Execute( null );
+			return glyph;
 		}
 	}
 }

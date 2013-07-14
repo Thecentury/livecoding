@@ -96,9 +96,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmLightLibs.4.1.27.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -126,10 +124,14 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyResolver.cs" />
     <Compile Include="CanceledState.cs" />
     <Compile Include="ClassFromNamespaceRewriter.cs" />
     <Compile Include="ClassificationConstants.cs" />
     <Compile Include="ExecutedState.cs" />
+    <Compile Include="ExecuteMethodControl.xaml.cs">
+      <DependentUpon>ExecuteMethodControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FailedState.cs" />
     <Compile Include="IMethodExecutingStateOwner.cs" />
     <Compile Include="MethodExecutingState.cs" />
@@ -137,6 +139,7 @@
     <Compile Include="MethodExecution.cs" />
     <Compile Include="MethodExecutionState.cs" />
     <Compile Include="MethodExecutionStateBase.cs" />
+    <Compile Include="MethodExecutionTemplateConverter.cs" />
     <Compile Include="MethodExecutionViewModel.cs" />
     <Compile Include="MethodGlyphFactory.cs" />
     <Compile Include="MethodGlyphTag.cs" />
@@ -159,6 +162,7 @@
     <Compile Include="WpfTextViewExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -167,13 +171,35 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\leaf.png" />
+    <Resource Include="Resources\cross-circle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\exclamation-red.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\leaf.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\tick.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LiveCoding.Core\LiveCoding.Core.csproj">
       <Project>{715375EC-2D4B-41C9-A7DE-FFF97B10A9E9}</Project>
       <Name>LiveCoding.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="ExecuteMethodControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\ui-progress-bar-indeterminate.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
