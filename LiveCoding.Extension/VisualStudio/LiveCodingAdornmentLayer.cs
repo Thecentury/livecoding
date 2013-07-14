@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
-namespace LiveCoding.Extension
+namespace LiveCoding.Extension.VisualStudio
 {
 	[Export( typeof( IWpfTextViewCreationListener ) )]
 	[ContentType( "csharp" )]

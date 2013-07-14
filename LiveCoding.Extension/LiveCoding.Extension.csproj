@@ -125,13 +125,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyResolver.cs" />
-    <Compile Include="LiveCodingAdornmentLayer.cs" />
-    <Compile Include="LiveCodingAdornmentLayers.cs" />
+    <Compile Include="VisualStudio\LiveCodingAdornmentLayer.cs" />
+    <Compile Include="VisualStudio\LiveCodingAdornmentLayers.cs" />
     <Compile Include="ViewModels\CanceledState.cs" />
     <Compile Include="ClassFromNamespaceRewriter.cs" />
-    <Compile Include="ClassificationConstants.cs" />
+    <Compile Include="VisualStudio\ClassificationConstants.cs" />
+    <Compile Include="Views\DispatcherExtensions.cs" />
     <Compile Include="ViewModels\ExecutedState.cs" />
-    <Compile Include="ExecuteMethodControl.xaml.cs">
+    <Compile Include="Views\ExecuteMethodControl.xaml.cs">
       <DependentUpon>ExecuteMethodControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\FailedState.cs" />
@@ -140,27 +141,27 @@
     <Compile Include="ViewModels\MethodExecutingStateOwnerExtensions.cs" />
     <Compile Include="ViewModels\MethodExecutionState.cs" />
     <Compile Include="ViewModels\MethodExecutionStateBase.cs" />
-    <Compile Include="MethodExecutionTemplateConverter.cs" />
+    <Compile Include="Views\MethodExecutionTemplateConverter.cs" />
     <Compile Include="ViewModels\MethodExecutionViewModel.cs" />
-    <Compile Include="MethodGlyphFactory.cs" />
-    <Compile Include="MethodGlyphTag.cs" />
-    <Compile Include="MethodTag.cs" />
-    <Compile Include="MethodTagger.cs" />
-    <Compile Include="MethodExecutionTagger.cs" />
-    <Compile Include="MethodTaggerProvider.cs" />
-    <Compile Include="MethodExecutionTag.cs" />
-    <Compile Include="MethodExecutionTaggerProvider.cs" />
-    <Compile Include="ProjectHelper.cs" />
+    <Compile Include="VisualStudio\MethodGlyphFactory.cs" />
+    <Compile Include="VisualStudio\MethodGlyphTag.cs" />
+    <Compile Include="VisualStudio\MethodTag.cs" />
+    <Compile Include="VisualStudio\MethodTagger.cs" />
+    <Compile Include="VisualStudio\MethodExecutionTagger.cs" />
+    <Compile Include="VisualStudio\MethodTaggerProvider.cs" />
+    <Compile Include="VisualStudio\MethodExecutionTag.cs" />
+    <Compile Include="VisualStudio\MethodExecutionTaggerProvider.cs" />
+    <Compile Include="VisualStudio\ProjectHelper.cs" />
     <Compile Include="ViewModels\ReadyToExecuteState.cs" />
     <Compile Include="Support\IntraTextAdornmentTagger.cs" />
     <Compile Include="Support\IntraTextAdornmentTagTransformer.cs" />
     <Compile Include="Support\RegexTagger.cs" />
     <Compile Include="SyntaxTokenExtensions.cs" />
     <Compile Include="SyntaxTokenListExtensions.cs" />
-    <Compile Include="MethodGlyphFactoryProvider.cs" />
+    <Compile Include="VisualStudio\MethodGlyphFactoryProvider.cs" />
     <Compile Include="ValuesTrackingRewriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WpfTextViewExtensions.cs" />
+    <Compile Include="VisualStudio\WpfTextViewExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -192,7 +193,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="ExecuteMethodControl.xaml">
+    <Page Include="Views\ExecuteMethodControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

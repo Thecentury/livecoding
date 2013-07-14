@@ -3,10 +3,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using LiveCoding.Core;
+using LiveCoding.Extension.Views;
+using LiveCoding.Extension.VisualStudio;
 using Roslyn.Compilers.CSharp;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
@@ -104,8 +107,19 @@ namespace LiveCoding.Extension.ViewModels
 			Owner.View.VisualElement.Dispatcher.BeginInvoke( () =>
 			{
 				var layer = Owner.View.GetAdornmentLayer( LiveCodingAdornmentLayers.LiveCodingLayer );
-				bool added = layer.AddAdornment( textViewLine.GetTextElementSpan( textViewLine.Start ), null,
-					new Ellipse { Width = 10, Height = 10, Stretch = Stretch.Uniform, Fill = Brushes.DarkOrange } );
+
+				var view = Owner.View;
+
+				foreach ( var valueChange in VariablesTracker.Changes )
+				{
+					var line2 = view.TextSnapshot.GetLineFromPosition( valueChange.OriginalLineNumber );
+					bool added = layer.AddAdornment( view.GetTextElementSpan( line2.End ), null,
+						new TextBlock
+						{
+							Text = valueChange.Value != null ? valueChange.Value.ToString() : "null",
+							Foreground = Brushes.DarkBlue
+						} );
+				}
 
 				int i = 0;
 
@@ -115,14 +129,6 @@ namespace LiveCoding.Extension.ViewModels
 		public override MethodExecutionState State
 		{
 			get { return MethodExecutionState.Executing; }
-		}
-	}
-
-	public static class DispatcherExtensions
-	{
-		public static void BeginInvoke( this Dispatcher dispatcher, Action callback, DispatcherPriority priority )
-		{
-			dispatcher.BeginInvoke( callback, priority );
 		}
 	}
 }

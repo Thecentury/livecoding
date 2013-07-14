@@ -21,13 +21,14 @@ namespace LiveCoding.Core
             _changes.Clear();
         }
 
-        public static void AddValue(string variableName, object value, [CallerMemberName]string methodName = "", [CallerFilePath]string filePath = "", [CallerLineNumber]int lineNumber = 0)
+        public static void AddValue(string variableName, object value, int originalLineNumber = 0, [CallerMemberName] string methodName = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0)
         {
             _changes.Add(new ValueChange
             {
                 VariableName = variableName,
                 FilePath = filePath,
                 LineNumber = lineNumber,
+				OriginalLineNumber = originalLineNumber,
                 MethodName = methodName,
                 Value = value,
                 TimestampUtc = DateTime.UtcNow
