@@ -3,6 +3,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media;
+using System.Windows.Shapes;
+using System.Windows.Threading;
 using LiveCoding.Core;
 using Roslyn.Compilers.CSharp;
 using Roslyn.Scripting;
@@ -11,7 +14,7 @@ using VSLangProj;
 
 namespace LiveCoding.Extension.ViewModels
 {
-	public sealed class MethodExecutingState : MethodExecutionStateBase
+	public sealed class ExecutingState : MethodExecutionStateBase
 	{
 		private sealed class MethodExecutionContext
 		{
@@ -92,14 +95,34 @@ namespace LiveCoding.Extension.ViewModels
 			var classSyntax = rewritten.ChildNodes().OfType<ClassDeclarationSyntax>().First();
 			string className = classSyntax.Identifier.ValueText;
 
+			VariablesTracker.ClearRecords();
+
 			_context.Stopwatch = Stopwatch.StartNew();
 			session.Execute( String.Format( "{0}.{1}();", className, methodName ) );
 			_context.Stopwatch.Stop();
+
+			Owner.View.VisualElement.Dispatcher.BeginInvoke( () =>
+			{
+				var layer = Owner.View.GetAdornmentLayer( LiveCodingAdornmentLayers.LiveCodingLayer );
+				bool added = layer.AddAdornment( textViewLine.GetTextElementSpan( textViewLine.Start ), null,
+					new Ellipse { Width = 10, Height = 10, Stretch = Stretch.Uniform, Fill = Brushes.DarkOrange } );
+
+				int i = 0;
+
+			}, DispatcherPriority.Background );
 		}
 
 		public override MethodExecutionState State
 		{
 			get { return MethodExecutionState.Executing; }
+		}
+	}
+
+	public static class DispatcherExtensions
+	{
+		public static void BeginInvoke( this Dispatcher dispatcher, Action callback, DispatcherPriority priority )
+		{
+			dispatcher.BeginInvoke( callback, priority );
 		}
 	}
 }
