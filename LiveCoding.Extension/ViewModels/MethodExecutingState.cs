@@ -9,7 +9,7 @@ using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 using VSLangProj;
 
-namespace LiveCoding.Extension
+namespace LiveCoding.Extension.ViewModels
 {
 	public sealed class MethodExecutingState : MethodExecutionStateBase
 	{

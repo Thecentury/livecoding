@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LiveCoding.Extension
+namespace LiveCoding.Extension.ViewModels
 {
 	public static class MethodExecutingStateOwnerExtensions
 	{

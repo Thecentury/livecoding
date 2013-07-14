@@ -125,22 +125,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyResolver.cs" />
-    <Compile Include="CanceledState.cs" />
+    <Compile Include="ViewModels\CanceledState.cs" />
     <Compile Include="ClassFromNamespaceRewriter.cs" />
     <Compile Include="ClassificationConstants.cs" />
-    <Compile Include="ExecutedState.cs" />
+    <Compile Include="ViewModels\ExecutedState.cs" />
     <Compile Include="ExecuteMethodControl.xaml.cs">
       <DependentUpon>ExecuteMethodControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FailedState.cs" />
-    <Compile Include="IMethodExecutingStateOwner.cs" />
-    <Compile Include="MethodExecutingState.cs" />
-    <Compile Include="MethodExecutingStateOwnerExtensions.cs" />
-    <Compile Include="MethodExecution.cs" />
-    <Compile Include="MethodExecutionState.cs" />
-    <Compile Include="MethodExecutionStateBase.cs" />
+    <Compile Include="ViewModels\FailedState.cs" />
+    <Compile Include="ViewModels\IMethodExecutingStateOwner.cs" />
+    <Compile Include="ViewModels\MethodExecutingState.cs" />
+    <Compile Include="ViewModels\MethodExecutingStateOwnerExtensions.cs" />
+    <Compile Include="ViewModels\MethodExecutionState.cs" />
+    <Compile Include="ViewModels\MethodExecutionStateBase.cs" />
     <Compile Include="MethodExecutionTemplateConverter.cs" />
-    <Compile Include="MethodExecutionViewModel.cs" />
+    <Compile Include="ViewModels\MethodExecutionViewModel.cs" />
     <Compile Include="MethodGlyphFactory.cs" />
     <Compile Include="MethodGlyphTag.cs" />
     <Compile Include="MethodTag.cs" />
@@ -150,7 +149,7 @@
     <Compile Include="MethodExecutionTag.cs" />
     <Compile Include="MethodExecutionTaggerProvider.cs" />
     <Compile Include="ProjectHelper.cs" />
-    <Compile Include="ReadyToExecuteState.cs" />
+    <Compile Include="ViewModels\ReadyToExecuteState.cs" />
     <Compile Include="Support\IntraTextAdornmentTagger.cs" />
     <Compile Include="Support\IntraTextAdornmentTagTransformer.cs" />
     <Compile Include="Support\RegexTagger.cs" />

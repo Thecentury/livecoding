@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using LiveCoding.Extension.ViewModels;
 
 namespace LiveCoding.Extension
 {
@@ -23,6 +24,15 @@ namespace LiveCoding.Extension
 		public ExecuteMethodControl()
 		{
 			InitializeComponent();
+		}
+
+		private void OnMouseLeftButtonDown( object sender, MouseButtonEventArgs e )
+		{
+			MethodExecutionViewModel viewModel = (MethodExecutionViewModel)DataContext;
+
+			viewModel.ExecuteCommand.Execute( null );
+
+			e.Handled = true;
 		}
 	}
 }

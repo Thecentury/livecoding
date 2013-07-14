@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace LiveCoding.Extension
+namespace LiveCoding.Extension.ViewModels
 {
 	public abstract class MethodExecutionStateBase : ISupportInitialize
 	{

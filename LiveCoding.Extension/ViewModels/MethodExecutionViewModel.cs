@@ -3,9 +3,8 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Formatting;
 
-namespace LiveCoding.Extension
+namespace LiveCoding.Extension.ViewModels
 {
 	public sealed class MethodExecutionViewModel : ViewModelBase, IMethodExecutingStateOwner
 	{
