@@ -16,6 +16,11 @@ namespace LiveCoding.Extension.ViewModels
 			get { return MethodExecutionState.Executed; }
 		}
 
+		public override void ExecuteMainAction()
+		{
+			Owner.GotoState( new ExecutingState() );
+		}
+
 		public TimeSpan ExecutionDuration
 		{
 			get { return _executionDuration; }

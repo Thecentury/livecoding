@@ -4,7 +4,7 @@
 	{
 		public override void ExecuteMainAction()
 		{
-			Owner.GotoState( new MethodExecutingState() );
+			Owner.GotoState( new ExecutingState() );
 		}
 
 		public override MethodExecutionState State

@@ -125,6 +125,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyResolver.cs" />
+    <Compile Include="LiveCodingAdornmentLayer.cs" />
+    <Compile Include="LiveCodingAdornmentLayers.cs" />
     <Compile Include="ViewModels\CanceledState.cs" />
     <Compile Include="ClassFromNamespaceRewriter.cs" />
     <Compile Include="ClassificationConstants.cs" />
@@ -134,7 +136,7 @@
     </Compile>
     <Compile Include="ViewModels\FailedState.cs" />
     <Compile Include="ViewModels\IMethodExecutingStateOwner.cs" />
-    <Compile Include="ViewModels\MethodExecutingState.cs" />
+    <Compile Include="ViewModels\ExecutingState.cs" />
     <Compile Include="ViewModels\MethodExecutingStateOwnerExtensions.cs" />
     <Compile Include="ViewModels\MethodExecutionState.cs" />
     <Compile Include="ViewModels\MethodExecutionStateBase.cs" />
