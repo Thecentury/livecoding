@@ -5,8 +5,6 @@ using Roslyn.Compilers.CSharp;
 
 namespace LiveCoding.Extension
 {
-
-
     public sealed class ValuesTrackingRewriter : SyntaxRewriter
     {
         private const string VariablesTracker = "global::LiveCoding.Core.VariablesTracker";
