@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using LiveCoding.Extension.ViewModels;
 
-namespace LiveCoding.Extension
+namespace LiveCoding.Extension.Views
 {
 	public sealed class MethodExecutionTemplateConverter : IValueConverter
 	{

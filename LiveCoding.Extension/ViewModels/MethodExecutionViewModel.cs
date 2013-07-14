@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LiveCoding.Extension.VisualStudio;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace LiveCoding.Extension.ViewModels

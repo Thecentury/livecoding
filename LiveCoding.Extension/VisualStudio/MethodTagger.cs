@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 
-namespace LiveCoding.Extension
+namespace LiveCoding.Extension.VisualStudio
 {
 	internal sealed class MethodTagger : ITagger<MethodTag>
 	{

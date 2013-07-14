@@ -1,4 +1,4 @@
-﻿namespace LiveCoding.Extension
+﻿namespace LiveCoding.Extension.VisualStudio
 {
     internal static class ClassificationConstants
     {

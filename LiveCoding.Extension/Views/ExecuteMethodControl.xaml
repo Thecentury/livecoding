@@ -6,6 +6,7 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:LiveCoding.Extension.ViewModels"
+             xmlns:views="clr-namespace:LiveCoding.Extension.Views"
              d:DataContext="{d:DesignInstance viewModels:MethodExecutionViewModel}"
              d:DesignHeight="300"
              d:DesignWidth="300"
@@ -46,12 +47,12 @@
                    ToolTip="Canceled" />
         </DataTemplate>
 
-        <extension:MethodExecutionTemplateConverter x:Key="TemplateConverter"
-                                                    CanceledTemplate="{StaticResource CanceledTemplate}"
-                                                    ExecutedTemplate="{StaticResource ExecutedTemplate}"
-                                                    ExecutingTemplate="{StaticResource ExecutingTemplate}"
-                                                    FailedTemplate="{StaticResource FailedTemplate}"
-                                                    ReadyToExecuteTemplate="{StaticResource ReadyToExecuteTemplate}" />
+        <views:MethodExecutionTemplateConverter x:Key="TemplateConverter"
+                                                CanceledTemplate="{StaticResource CanceledTemplate}"
+                                                ExecutedTemplate="{StaticResource ExecutedTemplate}"
+                                                ExecutingTemplate="{StaticResource ExecutingTemplate}"
+                                                FailedTemplate="{StaticResource FailedTemplate}"
+                                                ReadyToExecuteTemplate="{StaticResource ReadyToExecuteTemplate}" />
     </UserControl.Resources>
 
     <Grid Background="Transparent"

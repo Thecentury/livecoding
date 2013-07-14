@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.Text.Formatting;
 
-namespace LiveCoding.Extension
+namespace LiveCoding.Extension.VisualStudio
 {
     public sealed class MethodGlyphTag
     {
