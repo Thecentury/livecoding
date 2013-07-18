@@ -1,9 +1,4 @@
-﻿using System.ComponentModel.Composition;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Tagging;
-using Microsoft.VisualStudio.Utilities;
-
-namespace LiveCoding.Extension.VisualStudio
+﻿namespace LiveCoding.Extension.VisualStudio
 {
 	// todo brinchuk 
 	//[Export( typeof( IGlyphFactoryProvider ) )]

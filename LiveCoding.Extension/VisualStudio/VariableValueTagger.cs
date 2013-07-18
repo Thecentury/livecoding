@@ -1,20 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Controls;
+using IntraTextAdornmentSample;
 using LiveCoding.Core;
 using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace LiveCoding.Extension.VisualStudio
 {
-	internal sealed class VariableValueTagger : ITagger<VariableValueTag>
+	internal sealed class VariableValueTagger : IntraTextAdornmentTagger<VariableValueTag, TextBlock>, IDisposable
 	{
-		private readonly IClassifier _classifier;
+		private readonly ITagAggregator<VariableValueTag> _tagAggregator;
 
-		public VariableValueTagger( IClassifier classifier )
+		public VariableValueTagger( IWpfTextView view, ITagAggregator<VariableValueTag> tagAggregator )
+			: base( view )
 		{
-			_classifier = classifier;
+			_tagAggregator = tagAggregator;
 		}
 
 		private List<ValueChange> _changes;
@@ -25,18 +28,29 @@ namespace LiveCoding.Extension.VisualStudio
 
 			foreach ( var snapshotSpan in spans )
 			{
-				TagsChanged.Raise( this, new SnapshotSpanEventArgs( snapshotSpan ) );
+				RaiseTagsChanged( snapshotSpan );
 			}
 		}
 
-		public IEnumerable<ITagSpan<VariableValueTag>> GetTags( NormalizedSnapshotSpanCollection spans )
+		protected override TextBlock CreateAdornment( VariableValueTag data, SnapshotSpan span )
+		{
+			return new TextBlock { Text = data.Change.GetValueString() };
+		}
+
+		protected override bool UpdateAdornment( TextBlock adornment, VariableValueTag data )
+		{
+			adornment.Text = data.Change.GetValueString();
+			return true;
+		}
+
+		protected override IEnumerable<Tuple<SnapshotSpan, PositionAffinity?, VariableValueTag>> GetAdornmentData( NormalizedSnapshotSpanCollection spans )
 		{
 			if ( _changes == null || _changes.Count == 0 )
 			{
 				yield break;
 			}
 
-			foreach ( var span in spans.Take( 1 ) )
+			foreach ( var span in spans )
 			{
 				int lineNumber = span.Snapshot.GetLineNumberFromPosition( span.Start.Position );
 				var line = span.Snapshot.GetLineFromLineNumber( lineNumber );
@@ -44,12 +58,16 @@ namespace LiveCoding.Extension.VisualStudio
 				var change = _changes.FirstOrDefault( c => c.OriginalLineNumber == lineNumber );
 				if ( change != null )
 				{
-					var snapshotSpan = new SnapshotSpan( line.Start, line.End );
-					yield return new TagSpan<VariableValueTag>( snapshotSpan, new VariableValueTag( change ) );
+					var snapshotSpan = new SnapshotSpan( line.End, 0 );
+					yield return Tuple.Create( snapshotSpan, (PositionAffinity?)PositionAffinity.Successor, new VariableValueTag( change ) );
 				}
 			}
 		}
 
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+		public void Dispose()
+		{
+			_tagAggregator.Dispose();
+			view.Properties.RemoveProperty( typeof( VariableValueTagger ) );
+		}
 	}
 }

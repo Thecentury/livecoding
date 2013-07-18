@@ -1,16 +1,16 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
 namespace LiveCoding.Extension.VisualStudio
 {
-	[Export( typeof( ITaggerProvider ) )]
+	[Export( typeof( IViewTaggerProvider ) )]
 	[ContentType( "code" )]
-	[TagType( typeof( VariableValueTag ) )]
-	internal sealed class VariableValueTaggerProvider : ITaggerProvider
+	[TagType( typeof( IntraTextAdornmentTag ) )]
+	internal sealed class VariableValueTaggerProvider : IViewTaggerProvider
 	{
 		static VariableValueTaggerProvider()
 		{
@@ -18,16 +18,25 @@ namespace LiveCoding.Extension.VisualStudio
 		}
 
 		[Import]
-		internal IClassifierAggregatorService AggregatorService;
+		internal IBufferTagAggregatorFactoryService BufferTagAggregatorFactoryService;
 
-		public ITagger<T> CreateTagger<T>( ITextBuffer buffer ) where T : ITag
+		public ITagger<T> CreateTagger<T>( ITextView textView, ITextBuffer buffer ) where T : ITag
 		{
 			if ( buffer == null )
 			{
 				throw new ArgumentNullException( "buffer" );
 			}
 
-			var tagger = buffer.Properties.GetOrCreateSingletonProperty( typeof( VariableValueTagger ), () => new VariableValueTagger( AggregatorService.GetClassifier( buffer ) ) as ITagger<T> );
+			var tagAggregator = new Lazy<ITagAggregator<VariableValueTag>>(
+				() => BufferTagAggregatorFactoryService.CreateTagAggregator<VariableValueTag>( textView.TextBuffer ) );
+
+			ITagger<T> tagger;
+			bool found = buffer.Properties.TryGetProperty<ITagger<T>>( typeof( VariableValueTagger ), out tagger );
+			if ( tagger == null || !found )
+			{
+				tagger = new VariableValueTagger( (IWpfTextView)textView, tagAggregator.Value ) as ITagger<T>;
+				buffer.Properties[typeof( VariableValueTagger )] = tagger;
+			}
 			return tagger;
 		}
 	}

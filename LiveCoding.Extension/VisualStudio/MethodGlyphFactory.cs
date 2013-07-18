@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using LiveCoding.Extension.ViewModels;
+using LiveCoding.Extension.Views;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Formatting;
 

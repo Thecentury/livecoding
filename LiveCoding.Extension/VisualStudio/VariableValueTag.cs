@@ -1,6 +1,5 @@
 ﻿using LiveCoding.Core;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Tagging;
 
 namespace LiveCoding.Extension.VisualStudio
 {
