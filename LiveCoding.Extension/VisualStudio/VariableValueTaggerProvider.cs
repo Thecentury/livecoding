@@ -9,10 +9,10 @@ namespace LiveCoding.Extension.VisualStudio
 {
 	[Export( typeof( ITaggerProvider ) )]
 	[ContentType( "code" )]
-	[TagType( typeof( MethodTag ) )]
-	internal sealed class MethodTaggerProvider : ITaggerProvider
+	[TagType( typeof( VariableValueTag ) )]
+	internal sealed class VariableValueTaggerProvider : ITaggerProvider
 	{
-		static MethodTaggerProvider()
+		static VariableValueTaggerProvider()
 		{
 			AssemblyResolver.Attach();
 		}
@@ -27,7 +27,8 @@ namespace LiveCoding.Extension.VisualStudio
 				throw new ArgumentNullException( "buffer" );
 			}
 
-			return buffer.Properties.GetOrCreateSingletonProperty( typeof( MethodTagger ), () => new MethodTagger( AggregatorService.GetClassifier( buffer ) ) as ITagger<T> );
+			var tagger = buffer.Properties.GetOrCreateSingletonProperty( typeof( VariableValueTagger ), () => new VariableValueTagger( AggregatorService.GetClassifier( buffer ) ) as ITagger<T> );
+			return tagger;
 		}
 	}
 }

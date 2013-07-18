@@ -1,15 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using LiveCoding.Core;
 using LiveCoding.Extension.Views;
 using LiveCoding.Extension.VisualStudio;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
 using Roslyn.Compilers.CSharp;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
@@ -110,16 +114,36 @@ namespace LiveCoding.Extension.ViewModels
 
 				var view = Owner.View;
 
-				foreach ( var valueChange in VariablesTracker.Changes )
+				VariableValueTagger tagger;
+				var found = view.TextBuffer.Properties.TryGetProperty( typeof( VariableValueTagger ), out tagger );
+
+				if ( found )
 				{
-					var line2 = view.TextSnapshot.GetLineFromPosition( valueChange.OriginalLineNumber );
-					bool added = layer.AddAdornment( view.GetTextElementSpan( line2.End ), null,
-						new TextBlock
-						{
-							Text = valueChange.Value != null ? valueChange.Value.ToString() : "null",
-							Foreground = Brushes.DarkBlue
-						} );
+					List<SnapshotSpan> spans = new List<SnapshotSpan>();
+
+					foreach ( var value in VariablesTracker.Changes )
+					{
+						var valueLine = view.TextSnapshot.GetLineFromLineNumber( value.OriginalLineNumber );
+						var span = view.GetTextElementSpan( valueLine.Start );
+						spans.Add( new SnapshotSpan( span.Start, span.End ) );
+					}
+
+					tagger.SetVariableValues( VariablesTracker.Changes, spans );
 				}
+				//foreach ( var valueChange in VariablesTracker.Changes )
+				//{
+				//	var line2 = view.TextSnapshot.GetLineFromLineNumber( valueChange.OriginalLineNumber );
+				//	var textElementSpan = view.GetTextElementSpan( line2.End );
+				//	bool added = layer.AddAdornment( AdornmentPositioningBehavior.TextRelative, new SnapshotSpan( line2.Start, line2.End ), null,
+				//		new TextBlock
+				//		{
+				//			Text = valueChange.Value != null ? valueChange.Value.ToString() : "null",
+				//			Foreground = Brushes.DarkBlue
+				//		}, ( tag, element ) =>
+				//		{
+
+				//		} );
+				//}
 
 				int i = 0;
 
