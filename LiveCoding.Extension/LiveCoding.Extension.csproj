@@ -125,6 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyResolver.cs" />
+    <Compile Include="VisualStudio\EventExtensions.cs" />
     <Compile Include="VisualStudio\LiveCodingAdornmentLayer.cs" />
     <Compile Include="VisualStudio\LiveCodingAdornmentLayers.cs" />
     <Compile Include="ViewModels\CanceledState.cs" />
@@ -161,6 +162,11 @@
     <Compile Include="VisualStudio\MethodGlyphFactoryProvider.cs" />
     <Compile Include="ValuesTrackingRewriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VisualStudio\VariableValueGlyphFactory.cs" />
+    <Compile Include="VisualStudio\VariableValueGlyphFactoryProvider.cs" />
+    <Compile Include="VisualStudio\VariableValueTag.cs" />
+    <Compile Include="VisualStudio\VariableValueTagger.cs" />
+    <Compile Include="VisualStudio\VariableValueTaggerProvider.cs" />
     <Compile Include="VisualStudio\WpfTextViewExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
