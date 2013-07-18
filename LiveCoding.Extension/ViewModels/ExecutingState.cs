@@ -4,16 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Media;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 using LiveCoding.Core;
 using LiveCoding.Extension.Views;
 using LiveCoding.Extension.VisualStudio;
 using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
 using Roslyn.Compilers.CSharp;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
@@ -130,20 +125,6 @@ namespace LiveCoding.Extension.ViewModels
 
 					tagger.SetVariableValues( VariablesTracker.Changes, spans );
 				}
-				//foreach ( var valueChange in VariablesTracker.Changes )
-				//{
-				//	var line2 = view.TextSnapshot.GetLineFromLineNumber( valueChange.OriginalLineNumber );
-				//	var textElementSpan = view.GetTextElementSpan( line2.End );
-				//	bool added = layer.AddAdornment( AdornmentPositioningBehavior.TextRelative, new SnapshotSpan( line2.Start, line2.End ), null,
-				//		new TextBlock
-				//		{
-				//			Text = valueChange.Value != null ? valueChange.Value.ToString() : "null",
-				//			Foreground = Brushes.DarkBlue
-				//		}, ( tag, element ) =>
-				//		{
-
-				//		} );
-				//}
 
 				int i = 0;
 

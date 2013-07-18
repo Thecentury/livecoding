@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 
 namespace LiveCoding.Extension
@@ -113,6 +112,10 @@ namespace LiveCoding.Extension
 						}
 						else
 						{
+							PostfixUnaryExpressionSyntax postfixUnaryExpressionSyntax = expressionSyntax.Expression as PostfixUnaryExpressionSyntax;
+
+							// todo brinchuk 
+
 							statements.Add( visited );
 						}
 					}

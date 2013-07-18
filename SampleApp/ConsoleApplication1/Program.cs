@@ -17,9 +17,9 @@ namespace ConsoleApplication1
         {
             int i = 0;
             var rnd = new Random();
-            if (rnd.NextDouble() > 2)
+            if (rnd.NextDouble() < 2)
             {
-                i++;
+                i += 3;
             }
 
             MessageBox.Show("123");

@@ -6,5 +6,10 @@
 		{
 			get { return MethodExecutionState.Canceled; }
 		}
+
+		public override void ExecuteMainAction()
+		{
+			Owner.GotoState( new ExecutingState() );
+		}
 	}
 }
