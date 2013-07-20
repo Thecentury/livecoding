@@ -30,6 +30,9 @@ namespace LiveCoding.Extension.Tests
 
             b = i + 1;
 
+			b++;
+			++b;
+
             Console.WriteLine(""QQ"");
         }
     }
