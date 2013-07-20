@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -25,6 +26,25 @@ namespace ConsoleApplication1
             }
 
             MessageBox.Show("123");
+        }
+
+        private static void SlowMethod()
+        {
+            int i = 0;
+
+            Thread.Sleep(1000);
+
+            i++;
+
+            Thread.Sleep(1000);
+
+            i++;
+
+            Thread.Sleep(1000);
+
+            i++;
+
+            Console.WriteLine(i);
         }
     }
 }

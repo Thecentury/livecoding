@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Windows;
 using System.Windows.Controls;
 using IntraTextAdornmentSample;
 using LiveCoding.Core;
@@ -32,9 +34,20 @@ namespace LiveCoding.Extension.VisualStudio
 			}
 		}
 
+		public void AddVariableChange( ValueChange change, SnapshotSpan span )
+		{
+			if ( _changes == null )
+			{
+				_changes = new List<ValueChange>();
+			}
+
+			_changes.Add( change );
+			RaiseTagsChanged( span );
+		}
+
 		protected override TextBlock CreateAdornment( VariableValueTag data, SnapshotSpan span )
 		{
-			return new TextBlock { Text = data.Change.GetValueString() };
+			return new TextBlock { Text = data.Change.GetValueString(), Margin = new Thickness( 20, 0, 0, 0 ) };
 		}
 
 		protected override bool UpdateAdornment( TextBlock adornment, VariableValueTag data )
