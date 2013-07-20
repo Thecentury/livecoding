@@ -27,14 +27,13 @@ namespace LiveCoding.Extension.VisualStudio
 				throw new ArgumentNullException( "buffer" );
 			}
 
-			var tagAggregator = new Lazy<ITagAggregator<VariableValueTag>>(
-				() => BufferTagAggregatorFactoryService.CreateTagAggregator<VariableValueTag>( textView.TextBuffer ) );
+			var tagAggregator = BufferTagAggregatorFactoryService.CreateTagAggregator<VariableValueTag>( textView.TextBuffer );
 
 			ITagger<T> tagger;
-			bool found = buffer.Properties.TryGetProperty<ITagger<T>>( typeof( VariableValueTagger ), out tagger );
+			bool found = buffer.Properties.TryGetProperty( typeof( VariableValueTagger ), out tagger );
 			if ( tagger == null || !found )
 			{
-				tagger = new VariableValueTagger( (IWpfTextView)textView, tagAggregator.Value ) as ITagger<T>;
+				tagger = new VariableValueTagger( (IWpfTextView)textView, tagAggregator ) as ITagger<T>;
 				buffer.Properties[typeof( VariableValueTagger )] = tagger;
 			}
 			return tagger;

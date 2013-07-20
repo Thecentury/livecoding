@@ -144,7 +144,6 @@
     <Compile Include="ViewModels\MethodExecutionStateBase.cs" />
     <Compile Include="Views\MethodExecutionTemplateConverter.cs" />
     <Compile Include="ViewModels\MethodExecutionViewModel.cs" />
-    <Compile Include="VisualStudio\MethodGlyphFactory.cs" />
     <Compile Include="VisualStudio\MethodGlyphTag.cs" />
     <Compile Include="VisualStudio\MethodTag.cs" />
     <Compile Include="VisualStudio\MethodTagger.cs" />
@@ -159,11 +158,9 @@
     <Compile Include="Support\RegexTagger.cs" />
     <Compile Include="SyntaxTokenExtensions.cs" />
     <Compile Include="SyntaxTokenListExtensions.cs" />
-    <Compile Include="VisualStudio\MethodGlyphFactoryProvider.cs" />
     <Compile Include="ValuesTrackingRewriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VisualStudio\VariableValueGlyphFactory.cs" />
-    <Compile Include="VisualStudio\VariableValueGlyphFactoryProvider.cs" />
     <Compile Include="VisualStudio\VariableValueTag.cs" />
     <Compile Include="VisualStudio\VariableValueTagger.cs" />
     <Compile Include="VisualStudio\VariableValueTaggerProvider.cs" />

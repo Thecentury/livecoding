@@ -8,10 +8,10 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace LiveCoding.Extension.VisualStudio
 {
-	[Export( typeof( ITaggerProvider ) )]
+	[Export( typeof( IViewTaggerProvider ) )]
 	[ContentType( "code" )]
-	[TagType( typeof( MethodTag ) )]
-	internal sealed class MethodTaggerProvider : ITaggerProvider
+	[TagType( typeof( IntraTextAdornmentTag ) )]
+	internal sealed class MethodTaggerProvider : IViewTaggerProvider
 	{
 		static MethodTaggerProvider()
 		{
@@ -21,14 +21,14 @@ namespace LiveCoding.Extension.VisualStudio
 		[Import]
 		internal IClassifierAggregatorService AggregatorService;
 
-		public ITagger<T> CreateTagger<T>( ITextBuffer buffer ) where T : ITag
+		public ITagger<T> CreateTagger<T>( ITextView textView, ITextBuffer buffer ) where T : ITag
 		{
 			if ( buffer == null )
 			{
 				throw new ArgumentNullException( "buffer" );
 			}
 
-			return buffer.Properties.GetOrCreateSingletonProperty( typeof( MethodTagger ), () => new MethodTagger( AggregatorService.GetClassifier( buffer ) ) as ITagger<T> );
+			return buffer.Properties.GetOrCreateSingletonProperty( typeof( MethodTagger ), () => new MethodTagger( AggregatorService.GetClassifier( buffer ), (IWpfTextView)textView ) as ITagger<T> );
 		}
 	}
 }
