@@ -27,7 +27,7 @@
         <DataTemplate x:Key="ExecutingTemplate" DataType="viewModels:MethodExecutionViewModel">
             <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/ui-progress-bar-indeterminate.png"
                    Style="{StaticResource IconStyle}"
-                   ToolTip="Executing" />
+                   ToolTip="Cancel" />
         </DataTemplate>
 
         <DataTemplate x:Key="ExecutedTemplate" DataType="viewModels:MethodExecutionViewModel">

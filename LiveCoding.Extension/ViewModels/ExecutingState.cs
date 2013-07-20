@@ -104,6 +104,8 @@ namespace LiveCoding.Extension.ViewModels
 
 			EventHandler<ValueAddedEventArgs> valueAddedHandler = ( sender, args ) =>
 			{
+				token.ThrowIfCancellationRequested();
+
 				var change = args.AddedValue;
 				dispatcher.BeginInvoke( () =>
 				{
@@ -119,7 +121,9 @@ namespace LiveCoding.Extension.ViewModels
 			_context.Stopwatch = Stopwatch.StartNew();
 			try
 			{
-				session.Execute( String.Format( "{0}.{1}();", className, methodName ) );
+				string parameterValues = String.Join( ", ",
+					methodSyntax.ParameterList.Parameters.Select( p => String.Format( "default({0})", p.Type.ToString() ) ) );
+				session.Execute( String.Format( "{0}.{1}( {2} );", className, methodName, parameterValues ) );
 			}
 			finally
 			{
