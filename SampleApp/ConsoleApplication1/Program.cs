@@ -28,6 +28,18 @@ namespace ConsoleApplication1
             MessageBox.Show("123");
         }
 
+        public static void SlowMethodWithLoop()
+        {
+            int i = 0;
+
+            for (int j = 0; j < 10; j++)
+            {
+                i++;
+
+                Thread.Sleep(1000);
+            }
+        }
+
         private static void SlowMethod()
         {
             int i = 0;
