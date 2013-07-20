@@ -15,6 +15,154 @@ namespace LiveCoding.Extension
 			return String.Format( QuotedValueStringFormat, value );
 		}
 
+		private IEnumerable<StatementSyntax> VisitStatement( dynamic statement )
+		{
+			return VisitStatement( statement );
+		}
+
+		private static IEnumerable<StatementSyntax> VisitStatement( StatementSyntax statement )
+		{
+			yield return statement;
+		}
+
+		private static IEnumerable<StatementSyntax> VisitStatement( LocalDeclarationStatementSyntax localDeclaration )
+		{
+			yield return localDeclaration;
+
+			var identifier = localDeclaration.Declaration.Variables[0].Identifier;
+
+			string identifierName = Quote( identifier.ValueText );
+
+			var lineSpan = localDeclaration.SyntaxTree.GetLineSpan( localDeclaration.Span, usePreprocessorDirectives: true );
+
+			var separatedList = Syntax.SeparatedList<ArgumentSyntax>(
+				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression, Syntax.Literal( identifierName, identifierName ) ) ),
+				 Syntax.Token( SyntaxKind.CommaToken ),
+				Syntax.Argument( Syntax.IdentifierName( localDeclaration.Declaration.Variables[0].Identifier ) ),
+				Syntax.Token( SyntaxKind.CommaToken ),
+				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( lineSpan.StartLinePosition.Line ) ) )
+				);
+
+			var track = CreateVariableTrackingExpression( separatedList );
+
+			yield return track;
+		}
+
+		private static IEnumerable<StatementSyntax> VisitStatement( ExpressionStatementSyntax expression )
+		{
+			var rewritten = RewriteExpressionStatement( (dynamic)expression.Expression );
+			return rewritten;
+		}
+
+		private IEnumerable<StatementSyntax> RewriteExpressionStatement( dynamic expression )
+		{
+			return RewriteExpressionStatement( expression );
+		}
+
+		private static IEnumerable<StatementSyntax> RewriteExpressionStatement( ExpressionSyntax expression )
+		{
+			yield return (StatementSyntax)expression.Parent;
+		}
+
+		private static IEnumerable<StatementSyntax> RewriteExpressionStatement( PostfixUnaryExpressionSyntax postfixExpression )
+		{
+			yield return (StatementSyntax)postfixExpression.Parent;
+
+			var lineSpan = postfixExpression.SyntaxTree.GetLineSpan( postfixExpression.Span, usePreprocessorDirectives: true );
+			string quotedOperand = Quote( postfixExpression.Operand.ToString() );
+			var arguments = Syntax.SeparatedList<ArgumentSyntax>(
+				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression,
+					Syntax.Literal( quotedOperand, quotedOperand ) ) ),
+				Syntax.Token( SyntaxKind.CommaToken ),
+				Syntax.Argument( Syntax.IdentifierName( postfixExpression.Operand.ToString() ) ),
+				Syntax.Token( SyntaxKind.CommaToken ),
+				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( lineSpan.StartLinePosition.Line ) ) )
+				);
+
+			var track = CreateVariableTrackingExpression( arguments );
+			yield return track;
+		}
+
+		private static IEnumerable<StatementSyntax> RewriteExpressionStatement( PrefixUnaryExpressionSyntax prefixExpression )
+		{
+			yield return (StatementSyntax)prefixExpression.Parent;
+
+			var lineSpan = prefixExpression.SyntaxTree.GetLineSpan( prefixExpression.Span, usePreprocessorDirectives: true );
+			string quotedOperand = Quote( prefixExpression.Operand.ToString() );
+			var arguments = Syntax.SeparatedList<ArgumentSyntax>(
+				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression,
+					Syntax.Literal( quotedOperand, quotedOperand ) ) ),
+				Syntax.Token( SyntaxKind.CommaToken ),
+				Syntax.Argument( Syntax.IdentifierName( prefixExpression.Operand.ToString() ) ),
+				Syntax.Token( SyntaxKind.CommaToken ),
+				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( lineSpan.StartLinePosition.Line ) ) )
+				);
+
+			var track = CreateVariableTrackingExpression( arguments );
+			yield return track;
+		}
+
+		private static IEnumerable<StatementSyntax> RewriteExpressionStatement( BinaryExpressionSyntax binaryExpression )
+		{
+			if ( !ChangesValue( binaryExpression.Kind ) )
+			{
+				yield return (StatementSyntax)binaryExpression.Parent;
+			}
+
+			string tempVariableName = GenerateTempVariableName();
+
+			var initializer = binaryExpression.Kind == SyntaxKind.AssignExpression ? binaryExpression.Right : binaryExpression.Left;
+
+			LocalDeclarationStatementSyntax localVariable =
+				Syntax.LocalDeclarationStatement(
+					Syntax.VariableDeclaration( Syntax.IdentifierName( "var" ) )
+						.WithVariables( Syntax.SeparatedList(
+							Syntax.VariableDeclarator( Syntax.Identifier( tempVariableName ) )
+								.WithInitializer( Syntax.EqualsValueClause( initializer ) ) ) ) );
+			yield return localVariable;
+
+			if ( binaryExpression.Kind == SyntaxKind.AssignExpression )
+			{
+				var operation =
+					Syntax.ExpressionStatement( Syntax.BinaryExpression( binaryExpression.Kind,
+						binaryExpression.Left,
+						Syntax.IdentifierName( tempVariableName ) ) );
+
+				yield return operation;
+			}
+			else
+			{
+				var operation =
+					Syntax.ExpressionStatement( Syntax.BinaryExpression( binaryExpression.Kind,
+					Syntax.IdentifierName( tempVariableName ),
+					binaryExpression.Right
+						) );
+
+				yield return operation;
+
+				var assignment =
+					Syntax.ExpressionStatement( Syntax.BinaryExpression( SyntaxKind.AssignExpression,
+						binaryExpression.Left, Syntax.IdentifierName( tempVariableName ) ) );
+				yield return assignment;
+			}
+
+			string assignmentLeftSideName = Quote( binaryExpression.Left.ToString() );
+
+			var lineSpan = binaryExpression.SyntaxTree.GetLineSpan( binaryExpression.Span, usePreprocessorDirectives: true );
+			var arguments = Syntax.SeparatedList<ArgumentSyntax>(
+				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression,
+					Syntax.Literal( assignmentLeftSideName, assignmentLeftSideName ) ) ),
+				Syntax.Token( SyntaxKind.CommaToken ),
+				Syntax.Argument( Syntax.IdentifierName( tempVariableName ) ),
+				Syntax.Token( SyntaxKind.CommaToken ),
+				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( lineSpan.StartLinePosition.Line ) ) )
+				);
+
+			var track = CreateVariableTrackingExpression( arguments );
+			yield return track;
+		}
+
+
 		public override SyntaxNode VisitBlock( BlockSyntax node )
 		{
 			List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -23,107 +171,7 @@ namespace LiveCoding.Extension
 			{
 				StatementSyntax visited = (StatementSyntax)Visit( statement );
 
-				LocalDeclarationStatementSyntax localDeclaration = visited as LocalDeclarationStatementSyntax;
-
-				if ( localDeclaration != null )
-				{
-					statements.Add( localDeclaration );
-
-					var identifier = localDeclaration.Declaration.Variables[0].Identifier;
-
-
-					string identifierName = Quote( identifier.ValueText );
-
-					var lineSpan = node.SyntaxTree.GetLineSpan( localDeclaration.Span, usePreprocessorDirectives: true );
-
-					var separatedList = Syntax.SeparatedList<ArgumentSyntax>(
-						Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression, Syntax.Literal( identifierName, identifierName ) ) ),
-						 Syntax.Token( SyntaxKind.CommaToken ),
-						Syntax.Argument( Syntax.IdentifierName( localDeclaration.Declaration.Variables[0].Identifier ) ),
-						Syntax.Token( SyntaxKind.CommaToken ),
-						Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( lineSpan.StartLinePosition.Line ) ) )
-						);
-
-					var track = CreateVariableTrackingExpression( separatedList );
-
-					statements.Add( track );
-				}
-				else
-				{
-					ExpressionStatementSyntax expressionSyntax = visited as ExpressionStatementSyntax;
-					if ( expressionSyntax != null )
-					{
-						BinaryExpressionSyntax binaryExpression = expressionSyntax.Expression as BinaryExpressionSyntax;
-
-						if ( binaryExpression != null && ChangesValue( binaryExpression.Kind ) )
-						{
-							string tempVariableName = GenerateTempVariableName();
-
-							var initializer = binaryExpression.Kind == SyntaxKind.AssignExpression ? binaryExpression.Right : binaryExpression.Left;
-
-							LocalDeclarationStatementSyntax localVariable =
-								Syntax.LocalDeclarationStatement(
-									Syntax.VariableDeclaration( Syntax.IdentifierName( "var" ) )
-										.WithVariables( Syntax.SeparatedList(
-											Syntax.VariableDeclarator( Syntax.Identifier( tempVariableName ) )
-												.WithInitializer( Syntax.EqualsValueClause( initializer ) ) ) ) );
-							statements.Add( localVariable );
-
-							if ( binaryExpression.Kind == SyntaxKind.AssignExpression )
-							{
-								var operation =
-									Syntax.ExpressionStatement( Syntax.BinaryExpression( binaryExpression.Kind,
-										binaryExpression.Left,
-										Syntax.IdentifierName( tempVariableName ) ) );
-
-								statements.Add( operation );
-							}
-							else
-							{
-								var operation =
-									Syntax.ExpressionStatement( Syntax.BinaryExpression( binaryExpression.Kind,
-									Syntax.IdentifierName( tempVariableName ),
-									binaryExpression.Right
-										) );
-
-								statements.Add( operation );
-
-								var assignment =
-									Syntax.ExpressionStatement( Syntax.BinaryExpression( SyntaxKind.AssignExpression,
-										binaryExpression.Left, Syntax.IdentifierName( tempVariableName ) ) );
-								statements.Add( assignment );
-							}
-
-							string assignmentLeftSideName = Quote( binaryExpression.Left.ToString() );
-
-
-							var lineSpan = node.SyntaxTree.GetLineSpan( expressionSyntax.Span, usePreprocessorDirectives: true );
-							var arguments = Syntax.SeparatedList<ArgumentSyntax>(
-								Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression,
-									Syntax.Literal( assignmentLeftSideName, assignmentLeftSideName ) ) ),
-								Syntax.Token( SyntaxKind.CommaToken ),
-								Syntax.Argument( Syntax.IdentifierName( tempVariableName ) ),
-								Syntax.Token( SyntaxKind.CommaToken ),
-								Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( lineSpan.StartLinePosition.Line ) ) )
-								);
-
-							var track = CreateVariableTrackingExpression( arguments );
-							statements.Add( track );
-						}
-						else
-						{
-							PostfixUnaryExpressionSyntax postfixUnaryExpressionSyntax = expressionSyntax.Expression as PostfixUnaryExpressionSyntax;
-
-							// todo brinchuk 
-
-							statements.Add( visited );
-						}
-					}
-					else
-					{
-						statements.Add( visited );
-					}
-				}
+				statements.AddRange( VisitStatement( (dynamic)visited ) );
 			}
 
 			var result = Syntax.Block( statements );

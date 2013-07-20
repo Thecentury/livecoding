@@ -15,11 +15,13 @@ namespace ConsoleApplication1
 
         public static void Q()
         {
-            int i = 0;
+            int i = 1;
             var rnd = new Random();
             if (rnd.NextDouble() < 2)
             {
                 i += 3;
+                i++;
+                ++i;
             }
 
             MessageBox.Show("123");

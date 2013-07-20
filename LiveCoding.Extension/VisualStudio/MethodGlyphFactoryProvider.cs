@@ -10,6 +10,7 @@ namespace LiveCoding.Extension.VisualStudio
 	[Order( Before = PredefinedMarginNames.LineNumber )]
 	[ContentType( "code" )]
 	[TagType( typeof( MethodTag ) )]
+	//[MarginContainer( PredefinedMarginNames.Right )]
 	internal sealed class MethodGlyphFactoryProvider : IGlyphFactoryProvider
 	{
 		public IGlyphFactory GetGlyphFactory( IWpfTextView view, IWpfTextViewMargin margin )
