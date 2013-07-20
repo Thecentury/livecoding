@@ -47,12 +47,15 @@ namespace LiveCoding.Extension.VisualStudio
 
 		protected override TextBlock CreateAdornment( VariableValueTag data, SnapshotSpan span )
 		{
-			return new TextBlock { Text = data.Change.GetValueString(), Margin = new Thickness( 20, 0, 0, 0 ) };
+			var change = data.Change;
+			return new TextBlock { Text = change.GetValueString(), Margin = new Thickness( 20, 0, 0, 0 ), ToolTip = change.TimestampUtc };
 		}
 
 		protected override bool UpdateAdornment( TextBlock adornment, VariableValueTag data )
 		{
-			adornment.Text = data.Change.GetValueString();
+			var change = data.Change;
+			adornment.Text = change.GetValueString();
+			adornment.ToolTip = change.TimestampUtc;
 			return true;
 		}
 
@@ -68,7 +71,7 @@ namespace LiveCoding.Extension.VisualStudio
 				int lineNumber = span.Snapshot.GetLineNumberFromPosition( span.Start.Position );
 				var line = span.Snapshot.GetLineFromLineNumber( lineNumber );
 
-				var change = _changes.FirstOrDefault( c => c.OriginalLineNumber == lineNumber );
+				var change = _changes.LastOrDefault( c => c.OriginalLineNumber == lineNumber );
 				if ( change != null )
 				{
 					var snapshotSpan = new SnapshotSpan( line.End, 0 );
