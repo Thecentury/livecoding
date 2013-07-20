@@ -7,6 +7,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:LiveCoding.Extension.ViewModels"
              xmlns:views="clr-namespace:LiveCoding.Extension.Views"
+             Cursor="{x:Static Cursors.Hand}"
              d:DataContext="{d:DesignInstance viewModels:MethodExecutionViewModel}"
              d:DesignHeight="300"
              d:DesignWidth="300"
@@ -55,25 +56,21 @@
                                                 ReadyToExecuteTemplate="{StaticResource ReadyToExecuteTemplate}" />
     </UserControl.Resources>
 
-    <Grid Background="Transparent"
-          MouseLeftButtonDown="OnMouseLeftButtonDown"
-          PreviewMouseLeftButtonDown="OnMouseLeftButtonDown">
-        <ContentControl Width="12"
-                        Height="12"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        HorizontalContentAlignment="Stretch"
-                        VerticalContentAlignment="Stretch"
-                        Background="Red"
-                        Content="{Binding}"
-                        ContentTemplate="{Binding State,
-                                                  Converter={StaticResource TemplateConverter}}" />
-        <!--
-            <i:Interaction.Triggers>
-            <i:EventTrigger EventName="MouseLeftButtonDown">
-            <i:InvokeCommandAction Command="{Binding ExecuteCommand}" />
-            </i:EventTrigger>
-            </i:Interaction.Triggers>
-        -->
-    </Grid>
+    <Canvas>
+        <Grid Canvas.Top="-10"
+              Background="Transparent"
+              MouseLeftButtonDown="OnMouseLeftButtonDown"
+              PreviewMouseLeftButtonDown="OnMouseLeftButtonDown">
+            <ContentControl Width="12"
+                            Height="12"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"
+                            Background="Red"
+                            Content="{Binding}"
+                            ContentTemplate="{Binding State,
+                                                      Converter={StaticResource TemplateConverter}}" />
+        </Grid>
+    </Canvas>
 </UserControl>

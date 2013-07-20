@@ -86,9 +86,8 @@ namespace LiveCoding.Extension.ViewModels
 
 			session.Execute( rewritten.ToString() );
 
-			var textViewLine = Owner.Data.Line;
-			var snapshot = textViewLine.Snapshot;
-			var line = snapshot.GetLineFromLineNumber( snapshot.GetLineNumberFromPosition( textViewLine.Start.Position ) );
+			var snapshot = Owner.Data.SnapshotSpan.Snapshot;
+			var line = snapshot.GetLineFromLineNumber( snapshot.GetLineNumberFromPosition( Owner.Data.SnapshotSpan.Start.Position ) );
 			string text = line.GetText();
 
 			var methodTree = SyntaxTree.ParseText( text, cancellationToken: token );

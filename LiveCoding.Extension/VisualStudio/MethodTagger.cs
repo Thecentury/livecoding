@@ -1,26 +1,43 @@
-﻿	using System;
+﻿using System;
 using System.Collections.Generic;
+using IntraTextAdornmentSample;
+using LiveCoding.Extension.ViewModels;
+using LiveCoding.Extension.Views;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Text.Tagging;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace LiveCoding.Extension.VisualStudio
 {
-	internal sealed class MethodTagger : ITagger<MethodTag>
+	internal sealed class MethodTagger : IntraTextAdornmentTagger<MethodTag, ExecuteMethodControl>
 	{
 		private readonly IClassifier _сlassifier;
+		private readonly IWpfTextView _view;
 
-		internal MethodTagger( IClassifier classifier )
+		internal MethodTagger( IClassifier classifier, IWpfTextView view )
+			: base( view )
 		{
 			_сlassifier = classifier;
+			_view = view;
 		}
 
-		IEnumerable<ITagSpan<MethodTag>> ITagger<MethodTag>.GetTags( NormalizedSnapshotSpanCollection spans )
+		protected override ExecuteMethodControl CreateAdornment( MethodTag data, SnapshotSpan span )
+		{
+			return new ExecuteMethodControl
+			{
+				DataContext = new MethodExecutionViewModel( new MethodGlyphTag( span ), _view )
+			};
+		}
+
+		protected override bool UpdateAdornment( ExecuteMethodControl adornment, MethodTag data )
+		{
+			return false;
+		}
+
+		protected override IEnumerable<Tuple<SnapshotSpan, PositionAffinity?, MethodTag>> GetAdornmentData( NormalizedSnapshotSpanCollection spans )
 		{
 			foreach ( SnapshotSpan span in spans )
 			{
-				//look at each classification span
-
 				bool yielded = false;
 				foreach ( ClassificationSpan classification in _сlassifier.GetClassificationSpans( span ) )
 				{
@@ -30,13 +47,11 @@ namespace LiveCoding.Extension.VisualStudio
 						if ( !yielded )
 						{
 							yielded = true;
-							yield return new TagSpan<MethodTag>( new SnapshotSpan( classification.Span.Start, classification.Span.Length ), new MethodTag() );
+							yield return Tuple.Create( new SnapshotSpan( span.Start, 0 ), (PositionAffinity?)PositionAffinity.Predecessor, new MethodTag() );
 						}
 					}
 				}
 			}
 		}
-
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 	}
 }
