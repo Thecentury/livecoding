@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using IntraTextAdornmentSample;
 using LiveCoding.Extension.ViewModels;
 using LiveCoding.Extension.Views;

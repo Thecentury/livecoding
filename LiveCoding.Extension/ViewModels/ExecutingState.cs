@@ -98,36 +98,34 @@ namespace LiveCoding.Extension.ViewModels
 
 			VariablesTracker.ClearRecords();
 
-			_context.Stopwatch = Stopwatch.StartNew();
-			session.Execute( String.Format( "{0}.{1}();", className, methodName ) );
-			_context.Stopwatch.Stop();
+			Dispatcher dispatcher = Owner.View.VisualElement.Dispatcher;
+			var view = Owner.View;
+			VariableValueTagger tagger = view.TextBuffer.Properties.GetProperty<VariableValueTagger>( typeof( VariableValueTagger ) );
 
-			Owner.View.VisualElement.Dispatcher.BeginInvoke( () =>
+			EventHandler<ValueAddedEventArgs> valueAddedHandler = ( sender, args ) =>
 			{
-				var layer = Owner.View.GetAdornmentLayer( LiveCodingAdornmentLayers.LiveCodingLayer );
-
-				var view = Owner.View;
-
-				VariableValueTagger tagger;
-				var found = view.TextBuffer.Properties.TryGetProperty( typeof( VariableValueTagger ), out tagger );
-
-				if ( found )
+				var change = args.AddedValue;
+				dispatcher.BeginInvoke( () =>
 				{
-					List<SnapshotSpan> spans = new List<SnapshotSpan>();
+					var valueLine = view.TextSnapshot.GetLineFromLineNumber( change.OriginalLineNumber );
+					var span = view.GetTextElementSpan( valueLine.Start );
 
-					foreach ( var value in VariablesTracker.Changes )
-					{
-						var valueLine = view.TextSnapshot.GetLineFromLineNumber( value.OriginalLineNumber );
-						var span = view.GetTextElementSpan( valueLine.Start );
-						spans.Add( new SnapshotSpan( span.Start, span.End ) );
-					}
+					tagger.AddVariableChange( change, span );
+				}, DispatcherPriority.Normal );
+			};
 
-					tagger.SetVariableValues( VariablesTracker.Changes, spans );
-				}
+			VariablesTracker.ValueAdded += valueAddedHandler;
 
-				int i = 0;
-
-			}, DispatcherPriority.Background );
+			_context.Stopwatch = Stopwatch.StartNew();
+			try
+			{
+				session.Execute( String.Format( "{0}.{1}();", className, methodName ) );
+			}
+			finally
+			{
+				_context.Stopwatch.Stop();
+				VariablesTracker.ValueAdded -= valueAddedHandler;
+			}
 		}
 
 		public override MethodExecutionState State
