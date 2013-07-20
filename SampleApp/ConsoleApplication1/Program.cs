@@ -11,11 +11,12 @@ namespace ConsoleApplication1
 {
     class Program
     {
-        public static void Main(string[] args)
+        //@ Program.Main("123");
+        public static void Main(params string[] args)
         {
-            if (args == null)
+            if (args != null && args.Length > 0)
             {
-                Debugger.Break();
+                MessageBox.Show(args[0]);
             }
         }
 

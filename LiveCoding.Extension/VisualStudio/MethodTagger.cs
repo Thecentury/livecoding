@@ -26,7 +26,7 @@ namespace LiveCoding.Extension.VisualStudio
 		{
 			return new ExecuteMethodControl
 			{
-				DataContext = new MethodExecutionViewModel( new MethodGlyphTag( span ), _view )
+				DataContext = new MethodExecutionViewModel( new MethodExecutionData( span ), _view )
 			};
 		}
 

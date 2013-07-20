@@ -2,7 +2,8 @@
 
 namespace LiveCoding.Extension.VisualStudio
 {
-    internal sealed class MethodExecutionTag : IGlyphTag
+    internal sealed class ParametrizedMethodTag : IGlyphTag
     {
+	    public string Call { get; set; }
     }
 }

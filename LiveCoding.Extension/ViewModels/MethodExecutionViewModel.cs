@@ -9,10 +9,10 @@ namespace LiveCoding.Extension.ViewModels
 {
 	public sealed class MethodExecutionViewModel : ViewModelBase, IMethodExecutingStateOwner
 	{
-		private readonly MethodGlyphTag _data;
+		private readonly MethodExecutionData _data;
 		private readonly IWpfTextView _view;
 
-		public MethodGlyphTag Data
+		public MethodExecutionData Data
 		{
 			get { return _data; }
 		}
@@ -22,7 +22,7 @@ namespace LiveCoding.Extension.ViewModels
 			get { return _view; }
 		}
 
-		public MethodExecutionViewModel( MethodGlyphTag data, IWpfTextView view )
+		public MethodExecutionViewModel( MethodExecutionData data, IWpfTextView view )
 		{
 			if ( data == null )
 			{

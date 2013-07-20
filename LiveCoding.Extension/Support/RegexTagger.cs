@@ -16,7 +16,7 @@ using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 
-namespace IntraTextAdornmentSample
+namespace LiveCoding.Extension.Support
 {
     /// <summary>
     /// Helper base class for writing simple taggers based on regular expressions.
@@ -27,17 +27,16 @@ namespace IntraTextAdornmentSample
     /// <typeparam name="T">The type of tags that will be produced by this tagger.</typeparam>
     internal abstract class RegexTagger<T> : ITagger<T> where T : ITag
     {
-        private readonly IEnumerable<Regex> matchExpressions;
+        private readonly IEnumerable<Regex> _matchExpressions;
 
         public RegexTagger(ITextBuffer buffer, IEnumerable<Regex> matchExpressions)
         {
             if (matchExpressions.Any(re => (re.Options & RegexOptions.Multiline) == RegexOptions.Multiline))
                 throw new ArgumentException("Multiline regular expressions are not supported.");
 
-            this.matchExpressions = matchExpressions;
+            this._matchExpressions = matchExpressions;
 
             buffer.Changed += (sender, args) => HandleBufferChanged(args);
-
         }
 
         #region ITagger implementation
@@ -50,7 +49,7 @@ namespace IntraTextAdornmentSample
             {
                 string text = line.GetText();
 
-                foreach (var regex in this.matchExpressions)
+                foreach (var regex in this._matchExpressions)
                 {
                     foreach (var match in regex.Matches(text).Cast<Match>())
                     {
@@ -72,6 +71,7 @@ namespace IntraTextAdornmentSample
         {
             if (spans.Count == 0)
                 yield break;
+
             int lastVisitedLineNumber = -1;
             ITextSnapshot snapshot = spans[0].Snapshot;
             foreach (var span in spans)

@@ -86,16 +86,6 @@ namespace LiveCoding.Extension.ViewModels
 
 			session.Execute( rewritten.ToString() );
 
-			var snapshot = Owner.Data.SnapshotSpan.Snapshot;
-			var line = snapshot.GetLineFromLineNumber( snapshot.GetLineNumberFromPosition( Owner.Data.SnapshotSpan.Start.Position ) );
-			string text = line.GetText();
-
-			var methodTree = SyntaxTree.ParseText( text, cancellationToken: token );
-			MethodDeclarationSyntax methodSyntax = methodTree.GetRoot( token ).ChildNodes().OfType<MethodDeclarationSyntax>().First();
-			string methodName = methodSyntax.Identifier.ValueText;
-			var classSyntax = rewritten.ChildNodes().OfType<ClassDeclarationSyntax>().First();
-			string className = classSyntax.Identifier.ValueText;
-
 			VariablesTracker.ClearRecords();
 
 			Dispatcher dispatcher = Owner.View.VisualElement.Dispatcher;
@@ -118,12 +108,32 @@ namespace LiveCoding.Extension.ViewModels
 
 			VariablesTracker.ValueAdded += valueAddedHandler;
 
-			_context.Stopwatch = Stopwatch.StartNew();
 			try
 			{
-				string parameterValues = String.Join( ", ",
-					methodSyntax.ParameterList.Parameters.Select( p => String.Format( "default({0})", p.Type.ToString() ) ) );
-				session.Execute( String.Format( "{0}.{1}( {2} );", className, methodName, parameterValues ) );
+				if ( Owner.Data.Call == null )
+				{
+					var snapshot = Owner.Data.SnapshotSpan.Snapshot;
+
+					var line = snapshot.GetLineFromLineNumber( snapshot.GetLineNumberFromPosition( Owner.Data.SnapshotSpan.Start.Position ) );
+					string text = line.GetText();
+
+					var methodTree = SyntaxTree.ParseText( text, cancellationToken: token );
+					MethodDeclarationSyntax methodSyntax = methodTree.GetRoot( token ).ChildNodes().OfType<MethodDeclarationSyntax>().First();
+					string methodName = methodSyntax.Identifier.ValueText;
+					var classSyntax = rewritten.ChildNodes().OfType<ClassDeclarationSyntax>().First();
+					string className = classSyntax.Identifier.ValueText;
+
+					string parameterValues = String.Join( ", ",
+						methodSyntax.ParameterList.Parameters.Select( p => String.Format( "default({0})", p.Type.ToString() ) ) );
+
+					_context.Stopwatch = Stopwatch.StartNew();
+					session.Execute( String.Format( "{0}.{1}( {2} );", className, methodName, parameterValues ) );
+				}
+				else
+				{
+					_context.Stopwatch = Stopwatch.StartNew();
+					session.Execute( Owner.Data.Call );
+				}
 			}
 			finally
 			{

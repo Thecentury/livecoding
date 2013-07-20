@@ -144,13 +144,13 @@
     <Compile Include="ViewModels\MethodExecutionStateBase.cs" />
     <Compile Include="Views\MethodExecutionTemplateConverter.cs" />
     <Compile Include="ViewModels\MethodExecutionViewModel.cs" />
-    <Compile Include="VisualStudio\MethodGlyphTag.cs" />
+    <Compile Include="VisualStudio\MethodExecutionData.cs" />
     <Compile Include="VisualStudio\MethodTag.cs" />
     <Compile Include="VisualStudio\MethodTagger.cs" />
-    <Compile Include="VisualStudio\MethodExecutionTagger.cs" />
+    <Compile Include="VisualStudio\ParametrizedMethodTagger.cs" />
     <Compile Include="VisualStudio\MethodTaggerProvider.cs" />
-    <Compile Include="VisualStudio\MethodExecutionTag.cs" />
-    <Compile Include="VisualStudio\MethodExecutionTaggerProvider.cs" />
+    <Compile Include="VisualStudio\ParametrizedMethodTag.cs" />
+    <Compile Include="VisualStudio\ParametrizedMethodTaggerProvider.cs" />
     <Compile Include="VisualStudio\ProjectHelper.cs" />
     <Compile Include="ViewModels\ReadyToExecuteState.cs" />
     <Compile Include="Support\IntraTextAdornmentTagger.cs" />
