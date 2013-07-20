@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace LiveCoding.Core
 {
@@ -29,7 +30,8 @@ namespace LiveCoding.Core
 				OriginalLineNumber = originalLineNumber,
 				MethodName = methodName,
 				Value = value,
-				TimestampUtc = DateTime.UtcNow
+				TimestampUtc = DateTime.UtcNow,
+				ThreadId = Thread.CurrentThread.ManagedThreadId
 			};
 			_changes.Add( valueChange );
 

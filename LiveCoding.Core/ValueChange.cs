@@ -19,5 +19,7 @@ namespace LiveCoding.Core
 		public DateTime TimestampUtc { get; set; }
 
 		public int OriginalLineNumber { get; set; }
+		
+		public int ThreadId { get; set; }
 	}
 }
