@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using IntraTextAdornmentSample;
+using LiveCoding.Extension.Support;
 using LiveCoding.Extension.ViewModels;
 using LiveCoding.Extension.Views;
 using Microsoft.VisualStudio.Text;
@@ -32,7 +33,7 @@ namespace LiveCoding.Extension.VisualStudio
 
 		protected override bool UpdateAdornment( ExecuteMethodControl adornment, MethodTag data )
 		{
-			return false;
+			return true;
 		}
 
 		protected override IEnumerable<Tuple<SnapshotSpan, PositionAffinity?, MethodTag>> GetAdornmentData( NormalizedSnapshotSpanCollection spans )

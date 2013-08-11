@@ -15,6 +15,11 @@ namespace LiveCoding.Extension
 			return String.Format( QuotedValueStringFormat, value );
 		}
 
+		public override SyntaxNode VisitForStatement( ForStatementSyntax node )
+		{
+			return base.VisitForStatement( node );
+		}
+
 		private IEnumerable<StatementSyntax> VisitStatement( dynamic statement )
 		{
 			return VisitStatement( statement );

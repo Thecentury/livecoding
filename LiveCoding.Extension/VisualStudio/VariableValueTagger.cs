@@ -6,9 +6,11 @@ using System.Windows;
 using System.Windows.Controls;
 using IntraTextAdornmentSample;
 using LiveCoding.Core;
+using LiveCoding.Extension.Support;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
+using Roslyn.Compilers;
 
 namespace LiveCoding.Extension.VisualStudio
 {

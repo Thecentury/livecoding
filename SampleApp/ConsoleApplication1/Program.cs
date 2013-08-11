@@ -20,6 +20,24 @@ namespace ConsoleApplication1
             }
         }
 
+        public static void WithException()
+        {
+            //in i;
+            try
+            {
+                int i = 1;
+
+                throw new Exception();
+
+                int j = 1;
+            }
+            catch (Exception exc)
+            {
+                string s = exc.StackTrace;
+                //throw;
+            }
+        }
+
         public static void Q()
         {
             int i = 1;
@@ -31,7 +49,30 @@ namespace ConsoleApplication1
                 ++i;
             }
 
-            MessageBox.Show("123");
+            //MessageBox.Show("123");
+        }
+
+        public static void ForLoop()
+        {
+            for (int i = 0; i < 10; i++) 
+            {
+
+            }
+        }
+
+        public static void ForeachLoop()
+        {
+            int j = 0;
+            for (int i = 0; i < 10; i++)
+            {
+                j++;
+            }
+
+            int[] array = new[] { 1, 2, 3, 4 };
+            foreach (var item in array)
+            {
+                Console.WriteLine(item);
+            }
         }
 
         public static void SlowMethodWithLoop()

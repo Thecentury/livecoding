@@ -15,5 +15,10 @@ namespace LiveCoding.Extension.ViewModels
 		{
 			get { return MethodExecutionState.Failed; }
 		}
+
+		public override void ExecuteMainAction()
+		{
+			Owner.GotoState( new ExecutingState() );
+		}
 	}
 }
