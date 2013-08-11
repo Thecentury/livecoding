@@ -9,6 +9,8 @@ using LiveCoding.Core;
 using LiveCoding.Extension.Views;
 using LiveCoding.Extension.VisualStudio;
 using Microsoft.VisualStudio.Text;
+using Roslyn.Compilers;
+using Roslyn.Compilers.Common;
 using Roslyn.Compilers.CSharp;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
@@ -32,7 +34,7 @@ namespace LiveCoding.Extension.ViewModels
 		{
 			var cancellationToken = _cancellationTokenSource.Token;
 			var executeTask = Task.Factory.StartNew( () => RewriteAndExecute( cancellationToken ), cancellationToken );
-			executeTask.ContinueWith( t => OnCompleted( t ), TaskContinuationOptions.None );
+			executeTask.ContinueWith( t => OnCompleted( t ), TaskContinuationOptions.OnlyOnRanToCompletion );
 			executeTask.ContinueWith( t => OnFailed( t ), TaskContinuationOptions.OnlyOnFaulted );
 			executeTask.ContinueWith( t => OnCanceled( t ), TaskContinuationOptions.OnlyOnCanceled );
 		}
@@ -80,11 +82,27 @@ namespace LiveCoding.Extension.ViewModels
 			}
 			engine.AddReference( typeof( VariablesTracker ).Assembly );
 
+			//var compilation = Compilation.Create( "1.dll",
+			//	new CompilationOptions( OutputKind.DynamicallyLinkedLibrary, debugInformationKind: DebugInformationKind.Full ) )
+			//	.AddSyntaxTrees( rewritten.SyntaxTree )
+			//	.AddReferences(
+			//		project.GetReferences()
+			//			.References.OfType<Reference>()
+			//			.Select( r => MetadataReference.CreateAssemblyReference( r.Name ) ) )
+			//	.AddReferences( MetadataReference.CreateAssemblyReference( typeof( VariablesTracker ).Assembly.FullName ) );
+
 			var session = engine.CreateSession();
 
 			_context.Session = session;
 
-			session.Execute( rewritten.ToString() );
+			try
+			{
+				session.Execute(rewritten.ToString());
+			}
+			catch (CompilationErrorException exc)
+			{
+				throw;
+			}
 
 			VariablesTracker.ClearRecords();
 

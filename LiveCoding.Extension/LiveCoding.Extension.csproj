@@ -126,6 +126,9 @@
   <ItemGroup>
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="VisualStudio\EventExtensions.cs" />
+    <Compile Include="VisualStudio\ForLoopTag.cs" />
+    <Compile Include="VisualStudio\ForLoopTagger.cs" />
+    <Compile Include="VisualStudio\ForLoopTaggerProvider.cs" />
     <Compile Include="VisualStudio\LiveCodingAdornmentLayer.cs" />
     <Compile Include="VisualStudio\LiveCodingAdornmentLayers.cs" />
     <Compile Include="ViewModels\CanceledState.cs" />
