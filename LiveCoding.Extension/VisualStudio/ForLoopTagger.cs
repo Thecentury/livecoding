@@ -37,7 +37,7 @@ namespace LiveCoding.Extension.VisualStudio
 			{
 				Fill = Brushes.LightGreen,
 				Width = 30,
-				Height = data.RowsCount * data.LineHeight
+				Height = data.LoopHeight
 			};
 
 			Canvas.SetTop( rectangle, -10 );
@@ -49,6 +49,10 @@ namespace LiveCoding.Extension.VisualStudio
 
 		protected override bool UpdateAdornment( Canvas adornment, ForLoopTag data )
 		{
+			Rectangle child = (Rectangle) adornment.Children[0];
+
+			child.Height = data.LoopHeight;
+
 			return true;
 		}
 

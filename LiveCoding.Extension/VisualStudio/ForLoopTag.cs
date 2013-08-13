@@ -7,5 +7,10 @@ namespace LiveCoding.Extension.VisualStudio
 		public int RowsCount { get; set; }
 
 		public double LineHeight { get; set; }
+
+		public double LoopHeight
+		{
+			get { return LineHeight*RowsCount; }
+		}
 	}
 }
