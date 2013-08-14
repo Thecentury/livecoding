@@ -53,6 +53,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ForLoopFinishedEvent.cs" />
+    <Compile Include="ForLoopIterationEvent.cs" />
+    <Compile Include="ForLoopStartedEvent.cs" />
+    <Compile Include="LiveEvent.cs" />
     <Compile Include="ValueAddedEventArgs.cs" />
     <Compile Include="ValueChangeExtensions.cs" />
     <Compile Include="VariablesTracker.cs" />
