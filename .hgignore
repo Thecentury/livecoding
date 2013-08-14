@@ -6,3 +6,4 @@ syntax: glob
 packages/*
 *.csproj.user
 *.suo
+*/obj/*

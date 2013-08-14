@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace LiveCoding.Core
 {
@@ -15,14 +14,5 @@ namespace LiveCoding.Core
 		public string FilePath { get; set; }
 
 		public int OriginalLineNumber { get; set; }
-		
-		public int ThreadId { get; set; }
-	}
-
-	public abstract class LiveEvent
-	{
-		public DateTime TimestampUtc { get; set; }
-
-		public string MethodName { get; set; }
 	}
 }

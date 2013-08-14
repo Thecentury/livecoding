@@ -31,20 +31,49 @@ namespace LiveCoding.Core
 				LineNumber = lineNumber,
 				OriginalLineNumber = originalLineNumber,
 				MethodName = methodName,
-				Value = value,
-				TimestampUtc = DateTime.UtcNow,
-				ThreadId = Thread.CurrentThread.ManagedThreadId
+				Value = value
 			};
-			_events.Add( valueChange );
 
-			RaiseEventAdded( valueChange );
+			AddEvent( valueChange );
+		}
+
+		public static Guid StartForLoop( int lineNumber )
+		{
+			var evt = new ForLoopStartedEvent
+			{
+				LoopStartLineNumber = lineNumber
+			};
+
+			AddEvent( evt );
+
+			return evt.LoopId;
+		}
+
+		public static void RegisterLoopIteration( Guid loopId, object iteratorValue )
+		{
+			var evt = new ForLoopIterationEvent( loopId, iteratorValue );
+
+			AddEvent( evt );
+		}
+
+		public static void EndForLoop( Guid loopId )
+		{
+			var evt = new ForLoopFinishedEvent( loopId );
+
+			AddEvent( evt );
+		}
+
+		private static void AddEvent( LiveEvent evt )
+		{
+			_events.Add( evt );
+			RaiseEventAdded( evt );
 		}
 
 		public static event EventHandler<LiveEventAddedEventArgs> EventAdded;
 
-		private static readonly IObservable<LiveEvent> eventsObservable = 
+		private static readonly IObservable<LiveEvent> eventsObservable =
 			Observable.FromEventPattern<LiveEventAddedEventArgs>(
-				h => EventAdded += h, 
+				h => EventAdded += h,
 				h => EventAdded -= h )
 			.Select( e => e.EventArgs.AddedEvent );
 

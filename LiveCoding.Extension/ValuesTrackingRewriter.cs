@@ -8,6 +8,8 @@ namespace LiveCoding.Extension
 	{
 		private const string VariablesTracker = "global::LiveCoding.Core.VariablesTracker";
 		private const string AddValueMethod = "AddValue";
+		private const string StartForLoopMethod = "StartForLoop";
+		private const string RegisterLoopIterationMethod = "RegisterLoopIteration";
 		private const string QuotedValueStringFormat = "\"{0}\"";
 
 		private static string Quote( string value )
@@ -17,7 +19,67 @@ namespace LiveCoding.Extension
 
 		public override SyntaxNode VisitForStatement( ForStatementSyntax node )
 		{
-			return base.VisitForStatement( node );
+			var loopSpan = node.SyntaxTree.GetLineSpan( node.Span, usePreprocessorDirectives: true );
+			ForStatementSyntax rewrittenFor = (ForStatementSyntax)base.VisitForStatement( node );
+
+			Guid loopIdHolderId = Guid.NewGuid();
+			SyntaxToken loopIdentifier = Syntax.Identifier( String.Format( "__loop_id_{0}", loopIdHolderId.ToString( "N" ) ) );
+
+			List<StatementSyntax> loopBodyStatements = new List<StatementSyntax>();
+
+			loopBodyStatements.Add( Syntax.ExpressionStatement(
+				Syntax.InvocationExpression(
+					Syntax.MemberAccessExpression(
+					SyntaxKind.MemberAccessExpression,
+					Syntax.IdentifierName( VariablesTracker ),
+					Syntax.IdentifierName( RegisterLoopIterationMethod ) ) )
+					.WithArgumentList(
+						Syntax.ArgumentList(
+							Syntax.SeparatedList<ArgumentSyntax>(
+								Syntax.Argument( Syntax.IdentifierName( loopIdentifier ) ),
+								Syntax.Token( SyntaxKind.CommaToken ),
+								Syntax.Argument( Syntax.IdentifierName( rewrittenFor.Declaration.Variables[0].Identifier ) ) ) ) ) ) );
+
+			BlockSyntax previousLoopBodyBlock = rewrittenFor.Statement as BlockSyntax;
+			if ( previousLoopBodyBlock != null )
+			{
+				loopBodyStatements.AddRange( previousLoopBodyBlock.Statements );
+			}
+			else
+			{
+				loopBodyStatements.Add( rewrittenFor.Statement );
+			}
+
+			rewrittenFor = rewrittenFor.WithStatement( Syntax.Block( loopBodyStatements ) );
+
+			var block = Syntax.Block(
+				Syntax.LocalDeclarationStatement(
+					Syntax.VariableDeclaration(
+						Syntax.IdentifierName(
+							Syntax.Identifier(
+								@"var",
+								Syntax.TriviaList() ) ) )
+						.WithVariables(
+							Syntax.SeparatedList(
+								Syntax.VariableDeclarator(
+									loopIdentifier )
+									.WithInitializer(
+										Syntax.EqualsValueClause(
+											Syntax.InvocationExpression(
+												Syntax.MemberAccessExpression(
+													SyntaxKind.MemberAccessExpression,
+													Syntax.IdentifierName(
+														VariablesTracker ),
+													Syntax.IdentifierName(
+														StartForLoopMethod ) ) )
+											.WithArgumentList(
+												Syntax.ArgumentList(
+													Syntax.SeparatedList(
+														Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression,
+														Syntax.Literal( loopSpan.StartLinePosition.Line ) ) ) ) ) ) ) ) ) ) ),
+														rewrittenFor );
+
+			return block;
 		}
 
 		private IEnumerable<StatementSyntax> VisitStatement( dynamic statement )
