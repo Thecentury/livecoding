@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
@@ -8,16 +10,16 @@ namespace LiveCoding.Core
 	public static class VariablesTracker
 	{
 		// todo brinchuk thread safety
-		private static readonly List<ValueChange> _changes = new List<ValueChange>();
+		private static readonly List<LiveEvent> _events = new List<LiveEvent>();
 
-		public static IReadOnlyList<ValueChange> Changes
+		public static IReadOnlyList<LiveEvent> Events
 		{
-			get { return _changes.AsReadOnly(); }
+			get { return _events.AsReadOnly(); }
 		}
 
-		public static void ClearRecords()
+		public static void ClearEvents()
 		{
-			_changes.Clear();
+			_events.Clear();
 		}
 
 		public static void AddValue( string variableName, object value, int originalLineNumber = 0, [CallerMemberName] string methodName = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0 )
@@ -33,19 +35,30 @@ namespace LiveCoding.Core
 				TimestampUtc = DateTime.UtcNow,
 				ThreadId = Thread.CurrentThread.ManagedThreadId
 			};
-			_changes.Add( valueChange );
+			_events.Add( valueChange );
 
-			RaiseValueAdded( valueChange );
+			RaiseEventAdded( valueChange );
 		}
 
-		public static event EventHandler<ValueAddedEventArgs> ValueAdded;
+		public static event EventHandler<LiveEventAddedEventArgs> EventAdded;
 
-		private static void RaiseValueAdded( ValueChange valueChange )
+		private static readonly IObservable<LiveEvent> eventsObservable = 
+			Observable.FromEventPattern<LiveEventAddedEventArgs>(
+				h => EventAdded += h, 
+				h => EventAdded -= h )
+			.Select( e => e.EventArgs.AddedEvent );
+
+		public static IObservable<LiveEvent> EventsObservable
 		{
-			EventHandler<ValueAddedEventArgs> handler = ValueAdded;
+			get { return eventsObservable; }
+		}
+
+		private static void RaiseEventAdded( LiveEvent evt )
+		{
+			EventHandler<LiveEventAddedEventArgs> handler = EventAdded;
 			if ( handler != null )
 			{
-				handler( null, new ValueAddedEventArgs( valueChange ) );
+				handler( null, new LiveEventAddedEventArgs( evt ) );
 			}
 		}
 	}

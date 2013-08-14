@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
@@ -104,27 +106,25 @@ namespace LiveCoding.Extension.ViewModels
 				throw;
 			}
 
-			VariablesTracker.ClearRecords();
+			VariablesTracker.ClearEvents();
 
 			Dispatcher dispatcher = Owner.View.VisualElement.Dispatcher;
 			var view = Owner.View;
 			VariableValueTagger tagger = view.TextBuffer.Properties.GetProperty<VariableValueTagger>( typeof( VariableValueTagger ) );
 
-			EventHandler<ValueAddedEventArgs> valueAddedHandler = ( sender, args ) =>
-			{
-				token.ThrowIfCancellationRequested();
-
-				var change = args.AddedValue;
-				dispatcher.BeginInvoke( () =>
+			var subscription = VariablesTracker.EventsObservable.OfType<ValueChange>().Subscribe( Observer.Create<ValueChange>(
+				change =>
 				{
-					var valueLine = view.TextSnapshot.GetLineFromLineNumber( change.OriginalLineNumber );
-					var span = view.GetTextElementSpan( valueLine.Start );
+					token.ThrowIfCancellationRequested();
 
-					tagger.AddVariableChange( change, span );
-				}, DispatcherPriority.Normal );
-			};
+					dispatcher.BeginInvoke( () =>
+					{
+						var valueLine = view.TextSnapshot.GetLineFromLineNumber( change.OriginalLineNumber );
+						var span = view.GetTextElementSpan( valueLine.Start );
 
-			VariablesTracker.ValueAdded += valueAddedHandler;
+						tagger.AddVariableChange( change, span );
+					}, DispatcherPriority.Normal );
+				} ) );
 
 			try
 			{
@@ -156,7 +156,7 @@ namespace LiveCoding.Extension.ViewModels
 			finally
 			{
 				_context.Stopwatch.Stop();
-				VariablesTracker.ValueAdded -= valueAddedHandler;
+				subscription.Dispose();
 			}
 		}
 

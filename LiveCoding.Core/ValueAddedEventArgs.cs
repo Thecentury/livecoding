@@ -2,13 +2,13 @@
 
 namespace LiveCoding.Core
 {
-	public sealed class ValueAddedEventArgs : EventArgs
+	public sealed class LiveEventAddedEventArgs : EventArgs
 	{
-		public ValueAddedEventArgs( ValueChange addedValue )
+		public LiveEventAddedEventArgs( LiveEvent addedEvent )
 		{
-			AddedValue = addedValue;
+			AddedEvent = addedEvent;
 		}
 
-		public ValueChange AddedValue { get; private set; }
+		public LiveEvent AddedEvent { get; private set; }
 	}
 }
