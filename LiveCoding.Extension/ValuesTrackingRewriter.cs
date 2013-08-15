@@ -9,6 +9,7 @@ namespace LiveCoding.Extension
 		private const string VariablesTracker = "global::LiveCoding.Core.VariablesTracker";
 		private const string AddValueMethod = "AddValue";
 		private const string StartForLoopMethod = "StartForLoop";
+		private const string EndForLoopMethod = "EndForLoop";
 		private const string RegisterLoopIterationMethod = "RegisterLoopIteration";
 		private const string QuotedValueStringFormat = "\"{0}\"";
 
@@ -77,7 +78,14 @@ namespace LiveCoding.Extension
 													Syntax.SeparatedList(
 														Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression,
 														Syntax.Literal( loopSpan.StartLinePosition.Line ) ) ) ) ) ) ) ) ) ) ),
-														rewrittenFor );
+														rewrittenFor,
+					Syntax.ExpressionStatement(
+						Syntax.InvocationExpression(
+						Syntax.MemberAccessExpression(
+							SyntaxKind.MemberAccessExpression,
+							Syntax.IdentifierName( VariablesTracker ),
+							Syntax.IdentifierName( EndForLoopMethod ) ) )
+							.WithArgumentList( Syntax.ArgumentList( Syntax.SeparatedList( Syntax.Argument( Syntax.IdentifierName( loopIdentifier ) ) ) ) ) ) );
 
 			return block;
 		}
