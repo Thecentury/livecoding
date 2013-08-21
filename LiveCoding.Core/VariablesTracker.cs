@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Runtime.CompilerServices;
@@ -71,7 +72,7 @@ namespace LiveCoding.Core
 
 		public static event EventHandler<LiveEventAddedEventArgs> EventAdded;
 
-		private static readonly IObservable<LiveEvent> eventsObservable =
+		private static readonly IObservable<LiveEvent> _eventsObservable =
 			Observable.FromEventPattern<LiveEventAddedEventArgs>(
 				h => EventAdded += h,
 				h => EventAdded -= h )
@@ -79,11 +80,24 @@ namespace LiveCoding.Core
 
 		public static IObservable<LiveEvent> EventsObservable
 		{
-			get { return eventsObservable; }
+			get { return _eventsObservable; }
 		}
+
+		static VariablesTracker()
+		{
+			_forLoopHandler = new ForLoopHandler( _forLoops );
+		}
+
+		private static readonly Subject<ForLoopInfo> _forLoops = new Subject<ForLoopInfo>();
+		private static readonly ForLoopHandler _forLoopHandler;
 
 		private static void RaiseEventAdded( LiveEvent evt )
 		{
+			if ( _forLoopHandler.Accept( evt ) )
+			{
+				return;
+			}
+
 			EventHandler<LiveEventAddedEventArgs> handler = EventAdded;
 			if ( handler != null )
 			{
