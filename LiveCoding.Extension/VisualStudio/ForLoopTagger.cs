@@ -111,6 +111,7 @@ namespace LiveCoding.Extension.VisualStudio
 					{
 						yield return Tuple.Create( new SnapshotSpan( loopInfo.StartLine.End, 0 ), new PositionAffinity?( PositionAffinity.Predecessor ), new ForLoopTag
 						{
+							LoopStartLineNumber = loopInfo.StartLine.LineNumber,
 							LineHeight = view.LineHeight,
 							RowsCount = loopInfo.LinesHeight
 						} );
