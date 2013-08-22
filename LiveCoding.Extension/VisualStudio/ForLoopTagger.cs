@@ -35,24 +35,13 @@ namespace LiveCoding.Extension.VisualStudio
 
 		protected override ForLoopView CreateAdornment( ForLoopTag data, SnapshotSpan span )
 		{
-			ForLoopView canvas = new ForLoopView();
-			//var rectangle = new Rectangle
-			//{
-			//	Fill = Brushes.LightGreen,
-			//	Width = 30,
-			//	Height = data.LoopHeight
-			//};
-
-			//Canvas.SetTop( rectangle, -10 );
-			//Canvas.SetLeft( rectangle, 0 );
-
-			//canvas.Children.Add( rectangle );
+			ForLoopView canvas = new ForLoopView( data );
 			return canvas;
 		}
 
 		protected override bool UpdateAdornment( ForLoopView adornment, ForLoopTag data )
 		{
-			var child = (FrameworkElement) adornment.Children[0];
+			var child = (FrameworkElement)adornment.Children[0];
 
 			child.Height = data.LoopHeight;
 

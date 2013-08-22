@@ -140,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyResolver.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Views\ForLoopView.cs" />
     <Compile Include="VisualStudio\EventExtensions.cs" />
     <Compile Include="VisualStudio\ForLoopTag.cs" />
