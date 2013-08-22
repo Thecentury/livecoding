@@ -126,5 +126,10 @@ namespace LiveCoding.Extension.VisualStudio
 
 			loopView.BeginWatching( loop );
 		}
+
+		public void Clear()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

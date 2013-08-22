@@ -84,5 +84,13 @@ namespace LiveCoding.Extension.VisualStudio
 			_tagAggregator.Dispose();
 			View.Properties.RemoveProperty( typeof( VariableValueTagger ) );
 		}
+
+		public void ClearVariableChanges()
+		{
+			_changes = null;
+
+			var snapshot = View.TextBuffer.CurrentSnapshot;
+			RaiseTagsChanged( new SnapshotSpan( snapshot, 0, snapshot.Length ) );
+		}
 	}
 }

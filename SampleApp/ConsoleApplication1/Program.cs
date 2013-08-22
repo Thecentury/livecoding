@@ -54,7 +54,7 @@ namespace ConsoleApplication1
 
         public static void ForLoop()
         {
-            for (int i = 0; i < 10; i++) 
+            for (int i = 0; i < 10; i++)
             {
 
             }
@@ -84,6 +84,16 @@ namespace ConsoleApplication1
                 i++;
 
                 Thread.Sleep(1000);
+            }
+        }
+
+        public static void LoopWithStrings()
+        {
+            string s = null;
+
+            for (int i = 0; i < 10; i++)
+            {
+                s += i + " ";
             }
         }
 

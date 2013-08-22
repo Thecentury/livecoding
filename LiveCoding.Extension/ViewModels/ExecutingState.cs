@@ -169,7 +169,10 @@ namespace LiveCoding.Extension.ViewModels
 			}
 			finally
 			{
-				_context.Stopwatch.Stop();
+				if (_context.Stopwatch != null)
+				{
+					_context.Stopwatch.Stop();
+				}
 				subscription.Dispose();
 				forLoopSubscription.Dispose();
 			}
