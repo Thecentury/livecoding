@@ -37,8 +37,18 @@ namespace LiveCoding.Extension.ViewModels
 			_view = view;
 
 			_executeCommand = new RelayCommand( Execute );
+			_clearCommand = new RelayCommand( Clear );
 
 			this.GotoState( new ReadyToExecuteState() );
+		}
+
+		private void Clear()
+		{
+			var variableValueTagger = _view.TextBuffer.Properties.GetProperty<VariableValueTagger>( typeof( VariableValueTagger ) );
+			variableValueTagger.ClearVariableChanges();
+
+			var forLoopTagger = _view.TextBuffer.Properties.GetProperty<ForLoopTagger>(typeof (ForLoopTagger));
+			forLoopTagger.Clear();
 		}
 
 		public MethodExecutionState State
@@ -52,6 +62,13 @@ namespace LiveCoding.Extension.ViewModels
 		public ICommand ExecuteCommand
 		{
 			get { return _executeCommand; }
+		}
+
+		private readonly RelayCommand _clearCommand;
+
+		public ICommand ClearCommand
+		{
+			get { return _clearCommand; }
 		}
 
 		private void Execute()

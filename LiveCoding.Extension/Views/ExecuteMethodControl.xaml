@@ -18,34 +18,79 @@
             <Setter Property="Stretch" Value="Uniform" />
         </Style>
 
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="Template" Value="{x:Null}" />
+        </Style>
+
         <DataTemplate x:Key="ReadyToExecuteTemplate" DataType="viewModels:MethodExecutionViewModel">
-            <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/leaf.png"
-                   Style="{StaticResource IconStyle}"
-                   ToolTip="Execute" />
+            <Button Command="{Binding ExecuteCommand}">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/leaf.png"
+                               Style="{StaticResource IconStyle}"
+                               ToolTip="Execute" />
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </DataTemplate>
 
         <DataTemplate x:Key="ExecutingTemplate" DataType="viewModels:MethodExecutionViewModel">
-            <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/ui-progress-bar-indeterminate.png"
-                   Style="{StaticResource IconStyle}"
-                   ToolTip="Cancel" />
+            <Button Command="{Binding ExecuteCommand}">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/ui-progress-bar-indeterminate.png"
+                               Style="{StaticResource IconStyle}"
+                               ToolTip="Cancel" />
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </DataTemplate>
 
         <DataTemplate x:Key="ExecutedTemplate" DataType="viewModels:MethodExecutionViewModel">
-            <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/tick.png"
-                   Style="{StaticResource IconStyle}"
-                   ToolTip="Done" />
+            <StackPanel Orientation="Horizontal">
+                <Button Command="{Binding ExecuteCommand}">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/tick.png"
+                                   Style="{StaticResource IconStyle}"
+                                   ToolTip="Done" />
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button Command="{Binding ClearCommand}">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/eraser.png"
+                                   Style="{StaticResource IconStyle}"
+                                   ToolTip="Clear" />
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="FailedTemplate" DataType="viewModels:MethodExecutionViewModel">
-            <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/exclamation-red.png"
-                   Style="{StaticResource IconStyle}"
-                   ToolTip="Failed" />
+            <Button Command="{Binding ExecuteCommand}">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/exclamation-red.png"
+                               Style="{StaticResource IconStyle}"
+                               ToolTip="Failed" />
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </DataTemplate>
 
         <DataTemplate x:Key="CanceledTemplate" DataType="viewModels:MethodExecutionViewModel">
-            <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/cross-circle.png"
-                   Style="{StaticResource IconStyle}"
-                   ToolTip="Canceled" />
+            <Button Command="{Binding ExecuteCommand}">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/cross-circle.png"
+                               Style="{StaticResource IconStyle}"
+                               ToolTip="Canceled" />
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </DataTemplate>
 
         <views:MethodExecutionTemplateConverter x:Key="TemplateConverter"
@@ -57,12 +102,8 @@
     </UserControl.Resources>
 
     <Canvas>
-        <Grid Canvas.Top="-10"
-              Background="Transparent"
-              MouseLeftButtonDown="OnMouseLeftButtonDown"
-              PreviewMouseLeftButtonDown="OnMouseLeftButtonDown">
-            <ContentControl Width="12"
-                            Height="12"
+        <Grid Canvas.Top="-10" Background="Transparent">
+            <ContentControl Height="12"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             HorizontalContentAlignment="Stretch"
