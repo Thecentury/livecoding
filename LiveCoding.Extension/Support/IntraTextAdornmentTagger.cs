@@ -33,18 +33,24 @@ namespace LiveCoding.Extension.Support
         : ITagger<IntraTextAdornmentTag>
         where TAdornment : UIElement
     {
-        protected readonly IWpfTextView view;
-        private Dictionary<SnapshotSpan, TAdornment> adornmentCache = new Dictionary<SnapshotSpan, TAdornment>();
-        protected ITextSnapshot snapshot { get; private set; }
-        private readonly List<SnapshotSpan> invalidatedSpans = new List<SnapshotSpan>();
+        protected readonly IWpfTextView View;
+        private Dictionary<SnapshotSpan, TAdornment> _adornmentCache = new Dictionary<SnapshotSpan, TAdornment>();
+        protected ITextSnapshot Snapshot { get; private set; }
+
+	    protected IDictionary<SnapshotSpan, TAdornment> AdornmentCache
+	    {
+		    get { return _adornmentCache; }
+	    }
+
+	    private readonly List<SnapshotSpan> _invalidatedSpans = new List<SnapshotSpan>();
 
         protected IntraTextAdornmentTagger(IWpfTextView view)
         {
-            this.view = view;
-            this.snapshot = view.TextBuffer.CurrentSnapshot;
+            this.View = view;
+            this.Snapshot = view.TextBuffer.CurrentSnapshot;
 
-            this.view.LayoutChanged += HandleLayoutChanged;
-            this.view.TextBuffer.Changed += HandleBufferChanged;
+            this.View.LayoutChanged += HandleLayoutChanged;
+            this.View.TextBuffer.Changed += HandleBufferChanged;
         }
 
         /// <param name="span">The span of text that this adornment will elide.</param>
@@ -78,13 +84,13 @@ namespace LiveCoding.Extension.Support
         /// </summary>
         protected void InvalidateSpans(IList<SnapshotSpan> spans)
         {
-            lock (this.invalidatedSpans)
+            lock (this._invalidatedSpans)
             {
-                bool wasEmpty = this.invalidatedSpans.Count == 0;
-                this.invalidatedSpans.AddRange(spans);
+                bool wasEmpty = this._invalidatedSpans.Count == 0;
+                this._invalidatedSpans.AddRange(spans);
 
-                if (wasEmpty && this.invalidatedSpans.Count > 0)
-                    this.view.VisualElement.Dispatcher.BeginInvoke(new Action(AsyncUpdate));
+                if (wasEmpty && this._invalidatedSpans.Count > 0)
+                    this.View.VisualElement.Dispatcher.BeginInvoke(new Action(AsyncUpdate));
             }
         }
 
@@ -92,23 +98,23 @@ namespace LiveCoding.Extension.Support
         {
             // Store the snapshot that we're now current with and send an event
             // for the text that has changed.
-            if (this.snapshot != this.view.TextBuffer.CurrentSnapshot)
+            if (this.Snapshot != this.View.TextBuffer.CurrentSnapshot)
             {
-                this.snapshot = this.view.TextBuffer.CurrentSnapshot;
+                this.Snapshot = this.View.TextBuffer.CurrentSnapshot;
 
                 Dictionary<SnapshotSpan, TAdornment> translatedAdornmentCache = new Dictionary<SnapshotSpan, TAdornment>();
 
-                foreach (var keyValuePair in this.adornmentCache)
-                    translatedAdornmentCache.Add(keyValuePair.Key.TranslateTo(this.snapshot, SpanTrackingMode.EdgeExclusive), keyValuePair.Value);
+                foreach (var keyValuePair in this.AdornmentCache)
+                    translatedAdornmentCache.Add(keyValuePair.Key.TranslateTo(this.Snapshot, SpanTrackingMode.EdgeExclusive), keyValuePair.Value);
 
-                this.adornmentCache = translatedAdornmentCache;
+                this._adornmentCache = translatedAdornmentCache;
             }
 
             List<SnapshotSpan> translatedSpans;
-            lock (this.invalidatedSpans)
+            lock (this._invalidatedSpans)
             {
-                translatedSpans = this.invalidatedSpans.Select(s => s.TranslateTo(this.snapshot, SpanTrackingMode.EdgeInclusive)).ToList();
-                this.invalidatedSpans.Clear();
+                translatedSpans = this._invalidatedSpans.Select(s => s.TranslateTo(this.Snapshot, SpanTrackingMode.EdgeInclusive)).ToList();
+                this._invalidatedSpans.Clear();
             }
 
             if (translatedSpans.Count == 0)
@@ -132,17 +138,17 @@ namespace LiveCoding.Extension.Support
 
         private void HandleLayoutChanged(object sender, TextViewLayoutChangedEventArgs e)
         {
-            SnapshotSpan visibleSpan = this.view.TextViewLines.FormattedSpan;
+            SnapshotSpan visibleSpan = this.View.TextViewLines.FormattedSpan;
 
             // Filter out the adornments that are no longer visible.
             List<SnapshotSpan> toRemove = new List<SnapshotSpan>(
                 from keyValuePair
-                in this.adornmentCache
+                in this.AdornmentCache
                 where !keyValuePair.Key.TranslateTo(visibleSpan.Snapshot, SpanTrackingMode.EdgeExclusive).IntersectsWith(visibleSpan)
                 select keyValuePair.Key);
 
             foreach (var span in toRemove)
-                this.adornmentCache.Remove(span);
+                this.AdornmentCache.Remove(span);
         }
 
 
@@ -156,7 +162,7 @@ namespace LiveCoding.Extension.Support
 
             ITextSnapshot requestedSnapshot = spans[0].Snapshot;
 
-            var translatedSpans = new NormalizedSnapshotSpanCollection(spans.Select(span => span.TranslateTo(this.snapshot, SpanTrackingMode.EdgeExclusive)));
+            var translatedSpans = new NormalizedSnapshotSpanCollection(spans.Select(span => span.TranslateTo(this.Snapshot, SpanTrackingMode.EdgeExclusive)));
 
             // Grab the adornments.
             foreach (var tagSpan in GetAdornmentTagsOnSnapshot(translatedSpans))
@@ -177,7 +183,7 @@ namespace LiveCoding.Extension.Support
 
             ITextSnapshot snapshot = spans[0].Snapshot;
 
-            System.Diagnostics.Debug.Assert(snapshot == this.snapshot);
+            System.Diagnostics.Debug.Assert(snapshot == this.Snapshot);
 
             // Since WPF UI objects have state (like mouse hover or animation) and are relatively expensive to create and lay out,
             // this code tries to reuse controls as much as possible.
@@ -186,7 +192,7 @@ namespace LiveCoding.Extension.Support
             // Mark which adornments fall inside the requested spans with Keep=false
             // so that they can be removed from the cache if they no longer correspond to data tags.
             HashSet<SnapshotSpan> toRemove = new HashSet<SnapshotSpan>();
-            foreach (var ar in this.adornmentCache)
+            foreach (var ar in this.AdornmentCache)
                 if (spans.IntersectsWith(new NormalizedSnapshotSpanCollection(ar.Key)))
                     toRemove.Add(ar.Key);
 
@@ -197,7 +203,7 @@ namespace LiveCoding.Extension.Support
                 SnapshotSpan snapshotSpan = spanDataPair.Item1;
                 PositionAffinity? affinity = spanDataPair.Item2;
                 TData adornmentData = spanDataPair.Item3;
-                if (this.adornmentCache.TryGetValue(snapshotSpan, out adornment))
+                if (this.AdornmentCache.TryGetValue(snapshotSpan, out adornment))
                 {
                     if (UpdateAdornment(adornment, adornmentData))
                         toRemove.Remove(snapshotSpan);
@@ -219,14 +225,14 @@ namespace LiveCoding.Extension.Support
                     // can help avoid the size change and the resulting unnecessary re-format.
                     adornment.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 
-                    this.adornmentCache.Add(snapshotSpan, adornment);
+                    this.AdornmentCache.Add(snapshotSpan, adornment);
                 }
 
                 yield return new TagSpan<IntraTextAdornmentTag>(snapshotSpan, new IntraTextAdornmentTag(adornment, null, affinity));
             }
 
             foreach (var snapshotSpan in toRemove)
-                this.adornmentCache.Remove(snapshotSpan);
+                this.AdornmentCache.Remove(snapshotSpan);
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;

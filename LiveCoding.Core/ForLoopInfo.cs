@@ -15,7 +15,7 @@ namespace LiveCoding.Core
 
 		public int LoopStartLineNumber { get; private set; }
 
-		private readonly Subject<ForLoopIteration> _iterations = new Subject<ForLoopIteration>();
+		private readonly ReplaySubject<ForLoopIteration> _iterations = new ReplaySubject<ForLoopIteration>();
 		private readonly List<ForLoopIteration> _iterationsCached = new List<ForLoopIteration>(); 
 
 		internal IObserver<ForLoopIteration> IterationsInternal

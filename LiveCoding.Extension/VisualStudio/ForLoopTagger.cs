@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using IntraTextAdornmentSample;
+using LiveCoding.Core;
 using LiveCoding.Extension.Support;
+using LiveCoding.Extension.Views;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Roslyn.Compilers.CSharp;
 
 namespace LiveCoding.Extension.VisualStudio
 {
-	internal sealed class ForLoopTagger : IntraTextAdornmentTagger<ForLoopTag, Canvas>
+	internal sealed class ForLoopTagger : IntraTextAdornmentTagger<ForLoopTag, ForLoopView>
 	{
 		private sealed class LoopInfo
 		{
@@ -30,26 +33,26 @@ namespace LiveCoding.Extension.VisualStudio
 		{
 		}
 
-		protected override Canvas CreateAdornment( ForLoopTag data, SnapshotSpan span )
+		protected override ForLoopView CreateAdornment( ForLoopTag data, SnapshotSpan span )
 		{
-			Canvas canvas = new Canvas();
-			var rectangle = new Rectangle
-			{
-				Fill = Brushes.LightGreen,
-				Width = 30,
-				Height = data.LoopHeight
-			};
+			ForLoopView canvas = new ForLoopView();
+			//var rectangle = new Rectangle
+			//{
+			//	Fill = Brushes.LightGreen,
+			//	Width = 30,
+			//	Height = data.LoopHeight
+			//};
 
-			Canvas.SetTop( rectangle, -10 );
-			Canvas.SetLeft( rectangle, 0 );
+			//Canvas.SetTop( rectangle, -10 );
+			//Canvas.SetLeft( rectangle, 0 );
 
-			canvas.Children.Add( rectangle );
+			//canvas.Children.Add( rectangle );
 			return canvas;
 		}
 
-		protected override bool UpdateAdornment( Canvas adornment, ForLoopTag data )
+		protected override bool UpdateAdornment( ForLoopView adornment, ForLoopTag data )
 		{
-			Rectangle child = (Rectangle) adornment.Children[0];
+			var child = (FrameworkElement) adornment.Children[0];
 
 			child.Height = data.LoopHeight;
 
@@ -63,7 +66,7 @@ namespace LiveCoding.Extension.VisualStudio
 				yield break;
 			}
 
-			if ( view.FormattedLineSource == null )
+			if ( View.FormattedLineSource == null )
 			{
 				yield break;
 			}
@@ -112,12 +115,27 @@ namespace LiveCoding.Extension.VisualStudio
 						yield return Tuple.Create( new SnapshotSpan( loopInfo.StartLine.End, 0 ), new PositionAffinity?( PositionAffinity.Predecessor ), new ForLoopTag
 						{
 							LoopStartLineNumber = loopInfo.StartLine.LineNumber,
-							LineHeight = view.LineHeight,
+							LineHeight = View.LineHeight,
 							RowsCount = loopInfo.LinesHeight
 						} );
 					}
 				}
 			}
+		}
+
+		public void BeginLoopWatch( ForLoopInfo loop, SnapshotSpan span )
+		{
+			ForLoopView loopView;
+
+			var key = new SnapshotSpan( span.Start, 0 );
+
+			if ( !AdornmentCache.TryGetValue( key, out loopView ) )
+			{
+				// todo brinchuk 
+				return;
+			}
+
+			loopView.BeginWatching( loop );
 		}
 	}
 }

@@ -21,6 +21,9 @@ namespace LiveCoding.Core
 		public static void ClearEvents()
 		{
 			_events.Clear();
+			_forLoops.Dispose();
+			_forLoops = new ReplaySubject<ForLoopInfo>();
+			_forLoopHandler = new ForLoopHandler( _forLoops );
 		}
 
 		public static void AddValue( string variableName, object value, int originalLineNumber = 0, [CallerMemberName] string methodName = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0 )
@@ -88,8 +91,13 @@ namespace LiveCoding.Core
 			_forLoopHandler = new ForLoopHandler( _forLoops );
 		}
 
-		private static readonly Subject<ForLoopInfo> _forLoops = new Subject<ForLoopInfo>();
-		private static readonly ForLoopHandler _forLoopHandler;
+		private static ReplaySubject<ForLoopInfo> _forLoops = new ReplaySubject<ForLoopInfo>();
+		private static ForLoopHandler _forLoopHandler;
+
+		public static IObservable<ForLoopInfo> ForLoops
+		{
+			get { return _forLoops; }
+		} 
 
 		private static void RaiseEventAdded( LiveEvent evt )
 		{
