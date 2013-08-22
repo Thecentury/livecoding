@@ -19,7 +19,7 @@ namespace LiveCoding.Core
 
 		public object IteratorValue { get; private set; }
 
-		private readonly Subject<LiveEvent> _eventsDuringIteration = new Subject<LiveEvent>();
+		private readonly ReplaySubject<LiveEvent> _eventsDuringIteration = new ReplaySubject<LiveEvent>();
 
 		internal IObserver<LiveEvent> EventsInternal
 		{

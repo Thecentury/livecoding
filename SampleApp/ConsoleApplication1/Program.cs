@@ -62,7 +62,7 @@ namespace ConsoleApplication1
 
         public static void ForeachLoop()
         {
-            int j = 0;
+            int j = 1;
             for (int i = 0; i < 10; i++)
             {
                 j++;

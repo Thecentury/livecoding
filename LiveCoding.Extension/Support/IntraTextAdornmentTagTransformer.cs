@@ -71,7 +71,7 @@ namespace IntraTextAdornmentSample
 
         private void HandleDataTagsChanged(object sender, TagsChangedEventArgs args)
         {
-            var changedSpans = args.Span.GetSpans(base.view.TextBuffer.CurrentSnapshot);
+            var changedSpans = args.Span.GetSpans(base.View.TextBuffer.CurrentSnapshot);
             InvalidateSpans(changedSpans);
         }
 

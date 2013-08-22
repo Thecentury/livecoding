@@ -126,6 +126,20 @@ namespace LiveCoding.Extension.ViewModels
 					}, DispatcherPriority.Normal );
 				} ) );
 
+			ForLoopTagger forLoopTagger = view.TextBuffer.Properties.GetProperty<ForLoopTagger>( typeof (ForLoopTagger) );
+			var forLoopSubscription = VariablesTracker.ForLoops.Subscribe( loop =>
+			{
+				token.ThrowIfCancellationRequested();
+
+				dispatcher.BeginInvoke( () =>
+				{
+					var loopLine = view.TextSnapshot.GetLineFromLineNumber( loop.LoopStartLineNumber );
+					var span = view.GetTextElementSpan( loopLine.End );
+					
+					forLoopTagger.BeginLoopWatch( loop, span );
+				}, DispatcherPriority.Normal );
+			} );
+
 			try
 			{
 				if ( Owner.Data.Call == null )
@@ -157,6 +171,7 @@ namespace LiveCoding.Extension.ViewModels
 			{
 				_context.Stopwatch.Stop();
 				subscription.Dispose();
+				forLoopSubscription.Dispose();
 			}
 		}
 

@@ -28,6 +28,11 @@ namespace LiveCoding.Core.Internal
 				_forLoopInfo.IterationsCached.Last().EventsInternal.OnCompleted();
 			}
 
+			foreach ( var watcher in _watchers.PreviewHeads().NotOfType<LiveEventWatcher, LoopIterationWatcher>() )
+			{
+				_watchers.Pop();
+			}
+
 			var iteration = new ForLoopIteration( _iterationNumber, evt.IteratorValue, _forLoopInfo );
 			_forLoopInfo.IterationsInternal.OnNext( iteration );
 

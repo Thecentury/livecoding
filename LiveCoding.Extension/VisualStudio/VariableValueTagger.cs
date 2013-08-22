@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using IntraTextAdornmentSample;
 using LiveCoding.Core;
 using LiveCoding.Extension.Support;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
-using Roslyn.Compilers;
 
 namespace LiveCoding.Extension.VisualStudio
 {
@@ -85,7 +82,7 @@ namespace LiveCoding.Extension.VisualStudio
 		public void Dispose()
 		{
 			_tagAggregator.Dispose();
-			view.Properties.RemoveProperty( typeof( VariableValueTagger ) );
+			View.Properties.RemoveProperty( typeof( VariableValueTagger ) );
 		}
 	}
 }
