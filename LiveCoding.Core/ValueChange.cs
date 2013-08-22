@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace LiveCoding.Core
 {
@@ -14,5 +15,10 @@ namespace LiveCoding.Core
 		public string FilePath { get; set; }
 
 		public int OriginalLineNumber { get; set; }
+
+		public override string ToString()
+		{
+			return String.Format( "{0}={1}", VariableName, Value );
+		}
 	}
 }
