@@ -75,7 +75,7 @@
                     <ControlTemplate>
                         <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/exclamation-red.png"
                                Style="{StaticResource IconStyle}"
-                               ToolTip="Failed" />
+                               ToolTip="{Binding CurrentState.(viewModels:FailedState.Exception)}" />
                     </ControlTemplate>
                 </Button.Template>
             </Button>

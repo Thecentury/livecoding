@@ -14,7 +14,12 @@ namespace ConsoleApplication1
     {
         private readonly int _field;
 
-        public void CommunicateWithClassFromExternalReferencedAssembly()
+        public void InstanceMethod()
+        {
+
+        }
+
+        public static void CommunicateWithClassFromExternalReferencedAssembly()
         {
             var logger = LogManager.GetCurrentClassLogger();
 

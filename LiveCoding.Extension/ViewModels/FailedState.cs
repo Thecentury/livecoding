@@ -4,9 +4,9 @@ namespace LiveCoding.Extension.ViewModels
 {
 	internal sealed class FailedState : MethodExecutionStateBase
 	{
-		private readonly AggregateException _exception;
+		private readonly Exception _exception;
 
-		public FailedState( AggregateException exception )
+		public FailedState( Exception exception )
 		{
 			_exception = exception;
 		}
@@ -14,6 +14,11 @@ namespace LiveCoding.Extension.ViewModels
 		public override MethodExecutionState State
 		{
 			get { return MethodExecutionState.Failed; }
+		}
+
+		public Exception Exception
+		{
+			get { return _exception; }
 		}
 
 		public override void ExecuteMainAction()
