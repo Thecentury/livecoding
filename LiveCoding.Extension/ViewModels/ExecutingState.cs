@@ -80,7 +80,8 @@ namespace LiveCoding.Extension.ViewModels
 
 			foreach ( Reference reference in project.GetReferences().References )
 			{
-				engine.AddReference( reference.Name );
+				// todo brinchuk file not found handling
+				engine.AddReference( reference.Path );
 			}
 			engine.AddReference( typeof( VariablesTracker ).Assembly );
 
@@ -159,6 +160,7 @@ namespace LiveCoding.Extension.ViewModels
 						methodSyntax.ParameterList.Parameters.Select( p => String.Format( "default({0})", p.Type.ToString() ) ) );
 
 					_context.Stopwatch = Stopwatch.StartNew();
+
 					session.Execute( String.Format( "{0}.{1}( {2} );", className, methodName, parameterValues ) );
 				}
 				else

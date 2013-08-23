@@ -33,23 +33,49 @@ namespace LiveCoding.Extension.VisualStudio
 
 		protected override bool UpdateAdornment( ExecuteMethodControl adornment, MethodTag data )
 		{
+			adornment.DataContext = new MethodExecutionViewModel( new MethodExecutionData( data.SnapshotSpan ), _view );
 			return true;
+		}
+
+		private static bool ContainsAccessModifier( string code )
+		{
+			return code.Contains( "public" ) || code.Contains( "private" ) || code.Contains( "internal" ) || code.Contains( "protected" );
 		}
 
 		protected override IEnumerable<Tuple<SnapshotSpan, PositionAffinity?, MethodTag>> GetAdornmentData( NormalizedSnapshotSpanCollection spans )
 		{
+			if ( spans.Count == 0 )
+			{
+				yield break;
+			}
+
+			var currentSnapshot = _view.TextBuffer.CurrentSnapshot;
+
 			foreach ( SnapshotSpan span in spans )
 			{
 				bool yielded = false;
+				string fullSpanLineText = currentSnapshot.GetLineFromPosition( span.Start ).GetText();
+
+				bool probablyIsMethod = fullSpanLineText.Contains( "(" );
+				if ( !probablyIsMethod )
+				{
+					continue;
+				}
+
+				if ( !ContainsAccessModifier( fullSpanLineText ) )
+				{
+					continue;
+				}
+
 				foreach ( ClassificationSpan classification in _сlassifier.GetClassificationSpans( span ) )
 				{
-					string spanText = span.ToString();
-					if ( classification.ClassificationType.Classification.ToLower().Contains( "keyword" ) && spanText.Contains( "public" ) || spanText.Contains( "private" ) || spanText.Contains( "internal" ) || spanText.Contains( "protected" ) )
+					if ( classification.ClassificationType.Classification.ToLower().Contains( "keyword" ) )
 					{
 						if ( !yielded )
 						{
 							yielded = true;
-							yield return Tuple.Create( new SnapshotSpan( span.Start, 0 ), (PositionAffinity?)PositionAffinity.Predecessor, new MethodTag() );
+							var snapshotSpan = new SnapshotSpan( span.Start, 0 );
+							yield return Tuple.Create( snapshotSpan, (PositionAffinity?)PositionAffinity.Predecessor, new MethodTag( snapshotSpan ) );
 						}
 					}
 				}
