@@ -14,9 +14,13 @@ namespace ConsoleApplication1
     {
         private readonly int _field;
 
-        public void InstanceMethod()
+        private Program()
         {
+        }
 
+        private void InstanceMethod()
+        {
+            int q = 1;
         }
 
         public static void CommunicateWithClassFromExternalReferencedAssembly()

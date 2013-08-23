@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
@@ -10,9 +9,7 @@ using System.Windows.Threading;
 using LiveCoding.Core;
 using LiveCoding.Extension.Views;
 using LiveCoding.Extension.VisualStudio;
-using Microsoft.VisualStudio.Text;
 using Roslyn.Compilers;
-using Roslyn.Compilers.Common;
 using Roslyn.Compilers.CSharp;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
@@ -100,9 +97,9 @@ namespace LiveCoding.Extension.ViewModels
 
 			try
 			{
-				session.Execute(rewritten.ToString());
+				session.Execute( rewritten.ToString() );
 			}
-			catch (CompilationErrorException exc)
+			catch ( CompilationErrorException exc )
 			{
 				throw;
 			}
@@ -127,7 +124,7 @@ namespace LiveCoding.Extension.ViewModels
 					}, DispatcherPriority.Normal );
 				} ) );
 
-			ForLoopTagger forLoopTagger = view.TextBuffer.Properties.GetProperty<ForLoopTagger>( typeof (ForLoopTagger) );
+			ForLoopTagger forLoopTagger = view.TextBuffer.Properties.GetProperty<ForLoopTagger>( typeof( ForLoopTagger ) );
 			var forLoopSubscription = VariablesTracker.ForLoops.Subscribe( loop =>
 			{
 				token.ThrowIfCancellationRequested();
@@ -136,7 +133,7 @@ namespace LiveCoding.Extension.ViewModels
 				{
 					var loopLine = view.TextSnapshot.GetLineFromLineNumber( loop.LoopStartLineNumber );
 					var span = view.GetTextElementSpan( loopLine.End );
-					
+
 					forLoopTagger.BeginLoopWatch( loop, span );
 				}, DispatcherPriority.Normal );
 			} );
@@ -151,17 +148,46 @@ namespace LiveCoding.Extension.ViewModels
 					string text = line.GetText();
 
 					var methodTree = SyntaxTree.ParseText( text, cancellationToken: token );
-					MethodDeclarationSyntax methodSyntax = methodTree.GetRoot( token ).ChildNodes().OfType<MethodDeclarationSyntax>().First();
-					string methodName = methodSyntax.Identifier.ValueText;
-					var classSyntax = rewritten.ChildNodes().OfType<ClassDeclarationSyntax>().First();
-					string className = classSyntax.Identifier.ValueText;
 
-					string parameterValues = String.Join( ", ",
-						methodSyntax.ParameterList.Parameters.Select( p => String.Format( "default({0})", p.Type.ToString() ) ) );
+					var methodDeclaration = methodTree.GetRoot( token ).ChildNodes().OfType<MethodDeclarationSyntax>().First();
+
+					string methodName = methodDeclaration.Identifier.ValueText;
+
+					// todo brinchuk do not take the first
+					var classDeclaration = rewritten.ChildNodes().OfType<ClassDeclarationSyntax>().First();
+					string className = classDeclaration.Identifier.ValueText;
+
+					string parameterValues = methodDeclaration.ParameterList.GetDefaultParametersValuesString();
 
 					_context.Stopwatch = Stopwatch.StartNew();
 
-					session.Execute( String.Format( "{0}.{1}( {2} );", className, methodName, parameterValues ) );
+					if ( methodDeclaration.IsStatic() )
+					{
+						session.Execute( String.Format( "{0}.{1}( {2} );", className, methodName, parameterValues ) );
+					}
+					else
+					{
+						bool hasParameterlessConstructor = classDeclaration.ChildNodes()
+							.OfType<ConstructorDeclarationSyntax>()
+							.Where( c => c.ParameterList.Parameters.Count == 0 )
+							.Any();
+
+						bool doesnotHaveConstructorDeclarationAtAll =
+							!classDeclaration.ChildNodes().OfType<ConstructorDeclarationSyntax>().Any();
+
+						if ( hasParameterlessConstructor || doesnotHaveConstructorDeclarationAtAll )
+						{
+							session.Execute( String.Format( "new {0}().{1}( {2} );", className, methodName, parameterValues ) );
+						}
+						else
+						{
+							var firstConstructor = classDeclaration.ChildNodes().OfType<ConstructorDeclarationSyntax>().First();
+
+							string constructorParameters = firstConstructor.ParameterList.GetDefaultParametersValuesString();
+							session.Execute(
+								String.Format( "new {0}( {1} ).{2}( {3} );", className, constructorParameters, methodName, parameterValues ) );
+						}
+					}
 				}
 				else
 				{
@@ -171,7 +197,7 @@ namespace LiveCoding.Extension.ViewModels
 			}
 			finally
 			{
-				if (_context.Stopwatch != null)
+				if ( _context.Stopwatch != null )
 				{
 					_context.Stopwatch.Stop();
 				}

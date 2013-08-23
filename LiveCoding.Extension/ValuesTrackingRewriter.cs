@@ -255,7 +255,7 @@ namespace LiveCoding.Extension
 
 		public override SyntaxNode VisitClassDeclaration( ClassDeclarationSyntax node )
 		{
-			ClassDeclarationSyntax visited = (ClassDeclarationSyntax)base.VisitClassDeclaration( node );
+			var visited = (ClassDeclarationSyntax)base.VisitClassDeclaration( node );
 			visited = visited.WithModifiers( visited.Modifiers.ToPublic() );
 			return visited;
 		}
@@ -264,6 +264,12 @@ namespace LiveCoding.Extension
 		{
 			MethodDeclarationSyntax methodDeclaration = (MethodDeclarationSyntax)base.VisitMethodDeclaration( node );
 			return methodDeclaration.WithModifiers( methodDeclaration.Modifiers.ToPublic() );
+		}
+
+		public override SyntaxNode VisitConstructorDeclaration( ConstructorDeclarationSyntax node )
+		{
+			var classDeclaration = (ConstructorDeclarationSyntax)base.VisitConstructorDeclaration( node );
+			return classDeclaration.WithModifiers( classDeclaration.Modifiers.ToPublic() );
 		}
 
 		private static string GenerateTempVariableName()
