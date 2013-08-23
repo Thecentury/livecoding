@@ -48,7 +48,7 @@ namespace LiveCoding.Extension.ViewModels
 			variableValueTagger.ClearVariableChanges();
 
 			var forLoopTagger = _view.TextBuffer.Properties.GetProperty<ForLoopTagger>(typeof (ForLoopTagger));
-			forLoopTagger.Clear();
+			//forLoopTagger.Clear();
 		}
 
 		public MethodExecutionState State

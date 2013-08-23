@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,8 +10,17 @@ using System.Windows.Forms;
 
 namespace ConsoleApplication1
 {
-    class Program
+    internal class Program
     {
+        private readonly int _field;
+
+        public void CommunicateWithClassFromExternalReferencedAssembly()
+        {
+            var logger = LogManager.GetCurrentClassLogger();
+
+            logger.Debug("message");
+        }
+
         //@ Program.Main("123");
         public static void Main(params string[] args)
         {
