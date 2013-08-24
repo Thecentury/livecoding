@@ -144,7 +144,8 @@ namespace LiveCoding.Extension.ViewModels
 				{
 					var snapshot = Owner.Data.SnapshotSpan.Snapshot;
 
-					var line = snapshot.GetLineFromLineNumber( snapshot.GetLineNumberFromPosition( Owner.Data.SnapshotSpan.Start.Position ) );
+					int methodStartPosition = Owner.Data.SnapshotSpan.Start.Position;
+					var line = snapshot.GetLineFromLineNumber( snapshot.GetLineNumberFromPosition( methodStartPosition ) );
 					string text = line.GetText();
 
 					var methodTree = SyntaxTree.ParseText( text, cancellationToken: token );
@@ -153,9 +154,11 @@ namespace LiveCoding.Extension.ViewModels
 
 					string methodName = methodDeclaration.Identifier.ValueText;
 
-					// todo brinchuk do not take the first
-					var classDeclaration = rewritten.ChildNodes().OfType<ClassDeclarationSyntax>().First();
-					string className = classDeclaration.Identifier.ValueText;
+					var liveCodingClass = rewritten.ChildNodes().OfType<ClassDeclarationSyntax>().First();
+
+					var classDeclaration = liveCodingClass.ChildNodes().OfType<ClassDeclarationSyntax>().Where( cd => cd.Span.Contains( methodStartPosition ) ).First();
+
+					string className = ClassFromNamespaceRewriter.LiveCodingWrapperClassName + "." + classDeclaration.Identifier.ValueText;
 
 					string parameterValues = methodDeclaration.ParameterList.GetDefaultParametersValuesString();
 

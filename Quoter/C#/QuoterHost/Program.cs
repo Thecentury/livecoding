@@ -7,12 +7,14 @@ namespace QuoterHost
     {
         static void Main(string[] args)
         {
-            var sourceText = @"class C {
-	void M()
-	{
-		Console.Writeline(1,2);
-	}
-}";
+            var sourceText = @"
+class C1 {
+	class Inner { }
+}
+
+class C2 {
+}
+";
             var sourceNode = SyntaxTree.ParseText(sourceText).GetRoot();
             var quoter = new Quoter
             {
