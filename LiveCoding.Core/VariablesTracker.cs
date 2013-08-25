@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using LiveCoding.Core.Capturing;
 
 namespace LiveCoding.Core
 {
@@ -28,6 +29,8 @@ namespace LiveCoding.Core
 
 		public static void AddValue( string variableName, object value, int originalLineNumber = 0, [CallerMemberName] string methodName = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0 )
 		{
+			object capturedValue = ValueCapturer.CreateCapturedValue( value );
+			
 			var valueChange = new ValueChange
 			{
 				VariableName = variableName,
@@ -35,7 +38,8 @@ namespace LiveCoding.Core
 				LineNumber = lineNumber,
 				OriginalLineNumber = originalLineNumber,
 				MethodName = methodName,
-				Value = value
+				OriginalValue = value,
+				CapturedValue = capturedValue
 			};
 
 			AddEvent( valueChange );
@@ -97,7 +101,7 @@ namespace LiveCoding.Core
 		public static IObservable<ForLoopInfo> ForLoops
 		{
 			get { return _forLoops; }
-		} 
+		}
 
 		private static void RaiseEventAdded( LiveEvent evt )
 		{

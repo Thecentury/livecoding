@@ -46,7 +46,7 @@ namespace LiveCoding.Extension.VisualStudio
 
 		protected override TextBlock CreateAdornment( VariableValueTag data, SnapshotSpan span )
 		{
-			var change = data.Change;
+			ValueChange change = data.Change;
 			return new TextBlock { Text = change.GetValueString(), Margin = new Thickness( 20, 0, 0, 0 ), ToolTip = change.TimestampUtc };
 		}
 
