@@ -12,7 +12,7 @@ namespace LiveCoding.Extension
 			return Syntax.ClassDeclaration( LiveCodingWrapperClassName )
 				.WithMembers(
 				Syntax.List(
-				node.Members.Select( m => Visit( m ) ).Cast<MemberDeclarationSyntax>()
+					node.Members.Select( m => Visit( m ) ).Cast<MemberDeclarationSyntax>()
 				) );
 		}
 	}

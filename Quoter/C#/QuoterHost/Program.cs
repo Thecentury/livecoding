@@ -8,6 +8,8 @@ namespace QuoterHost
         static void Main(string[] args)
         {
             var sourceText = @"
+using System;
+
 class C1 {
 	class Inner { }
 }

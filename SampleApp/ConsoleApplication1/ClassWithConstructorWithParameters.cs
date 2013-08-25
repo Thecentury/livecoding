@@ -28,6 +28,8 @@ namespace ConsoleApplication1
             int q = _i;
 
             ClassFromTheSameFile c = new ClassFromTheSameFile();
+
+            ClassWithParameterlessConstructor c2 = new ClassWithParameterlessConstructor();
         }
     }
 }

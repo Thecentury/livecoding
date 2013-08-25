@@ -1,19 +1,31 @@
-﻿using LiveCoding.Core;
+﻿using System.Reflection;
+using LiveCoding.Core;
 using NUnit.Framework;
 using Roslyn.Compilers.CSharp;
 using Roslyn.Scripting.CSharp;
 
 namespace LiveCoding.Extension.Tests
 {
-    [TestFixture]
-    public sealed class ValuesTrackingRewriterTests
-    {
-        [Test]
-        public void Rewrite()
-        {
-            ValuesTrackingRewriter rewriter = new ValuesTrackingRewriter();
+	[TestFixture]
+	public sealed class ValuesTrackingRewriterTests
+	{
+		[Test]
+		public void GetScriptAssemblyName()
+		{
+			ScriptEngine engine = new ScriptEngine();
+			var session = engine.CreateSession();
 
-            var tree = SyntaxTree.ParseText(@"
+			//Assembly.GetExecutingAssembly().FullName;
+
+			string executingAssemblyName = session.Execute<string>( "var s = System.Reflection.Assembly.GetExecutingAssembly().FullName; s" );
+		}
+
+		[Test]
+		public void Rewrite()
+		{
+			ValuesTrackingRewriter rewriter = new ValuesTrackingRewriter();
+
+			var tree = SyntaxTree.ParseText( @"
     using System;
 
     public class Program
@@ -36,20 +48,20 @@ namespace LiveCoding.Extension.Tests
             Console.WriteLine(""QQ"");
         }
     }
-");
+" );
 
-            var rewritten = tree.GetRoot().Accept(rewriter).NormalizeWhitespace();
+			var rewritten = tree.GetRoot().Accept( rewriter ).NormalizeWhitespace();
 
-            var compilation = Compilation.Create("1.dll")
-                .AddSyntaxTrees(SyntaxTree.Create(Syntax.CompilationUnit().WithMembers(Syntax.List(rewritten))));
+			var compilation = Compilation.Create( "1.dll" )
+				.AddSyntaxTrees( SyntaxTree.Create( Syntax.CompilationUnit().WithMembers( Syntax.List( rewritten ) ) ) );
 
-            ScriptEngine engine = new ScriptEngine();
-            engine.AddReference(typeof(VariablesTracker).Assembly);
+			ScriptEngine engine = new ScriptEngine();
+			engine.AddReference( typeof( VariablesTracker ).Assembly );
 
-            var session = engine.CreateSession();
-            session.Execute(rewritten.ToString());
+			var session = engine.CreateSession();
+			session.Execute( rewritten.ToString() );
 
-            session.Execute("Program.Method();");
-        }
-    }
+			session.Execute( "Program.Method();" );
+		}
+	}
 }

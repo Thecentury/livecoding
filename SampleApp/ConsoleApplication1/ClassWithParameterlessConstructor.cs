@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApplication1
 {
-    class ClassWithParameterlessConstructor
+    public class ClassWithParameterlessConstructor
     {
         public ClassWithParameterlessConstructor()
         {
