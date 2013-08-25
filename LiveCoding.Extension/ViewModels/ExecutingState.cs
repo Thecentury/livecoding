@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using EnvDTE;
 using LiveCoding.Core;
 using LiveCoding.Extension.Views;
 using LiveCoding.Extension.VisualStudio;
@@ -66,19 +69,50 @@ namespace LiveCoding.Extension.ViewModels
 
 			ValuesTrackingRewriter rewriter = new ValuesTrackingRewriter();
 
-			var rewritten = syntaxTree.GetRoot( token )
+			var compilationUnit = syntaxTree.GetRoot( token );
+
+			var rewritten = compilationUnit
 				.Accept( rewriter )
 				.Accept( new ClassFromNamespaceRewriter() )
 				.NormalizeWhitespace();
 
 			ScriptEngine engine = new ScriptEngine();
 
+			foreach ( var usingDirective in compilationUnit.Usings )
+			{
+				engine.ImportNamespace( usingDirective.Name.ToString() );
+			}
+
+			foreach ( var namespaceDeclaration in compilationUnit.ChildNodes().OfType<NamespaceDeclarationSyntax>() )
+			{
+				engine.ImportNamespace( namespaceDeclaration.Name.ToString() );
+			}
+
 			var project = ProjectHelper.GetContainingProject( filePath );
+
+			Configuration activeConfiguration = project.ConfigurationManager.ActiveConfiguration;
+			string outputName = project.Properties.Item( "OutputFileName" ).Value.ToString();
+			string outputPath = activeConfiguration.Properties.Item( "OutputPath" ).Value.ToString();
+			string projectPath = project.Properties.Item( "FullPath" ).Value.ToString();
+			string projectOutputFullPath = Path.Combine( projectPath, outputPath, outputName );
+			if ( project.IsDirty || !File.Exists( projectOutputFullPath ) )
+			{
+				Solution solution = project.CodeModel.DTE.Solution;
+
+				solution.SolutionBuild.BuildProject( solution.SolutionBuild.ActiveConfiguration.Name, project.UniqueName, true );
+			}
 
 			foreach ( Reference reference in project.GetReferences().References )
 			{
-				// todo brinchuk file not found handling
-				engine.AddReference( reference.Path );
+				if ( File.Exists( reference.Path ) )
+				{
+					engine.AddReference( reference.Path );
+				}
+			}
+
+			if ( File.Exists( projectOutputFullPath ) )
+			{
+				engine.AddReference( projectOutputFullPath );
 			}
 			engine.AddReference( typeof( VariablesTracker ).Assembly );
 
