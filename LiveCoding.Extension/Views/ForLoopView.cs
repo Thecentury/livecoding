@@ -16,6 +16,7 @@ using System.Windows.Data;
 using LiveCoding.Core;
 using LiveCoding.Extension.Annotations;
 using LiveCoding.Extension.VisualStudio;
+using LiveCoding.Extension.VisualStudio.ForLoops;
 
 namespace LiveCoding.Extension.Views
 {

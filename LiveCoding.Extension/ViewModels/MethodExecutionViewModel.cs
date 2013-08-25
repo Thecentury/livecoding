@@ -3,6 +3,8 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveCoding.Extension.VisualStudio;
+using LiveCoding.Extension.VisualStudio.ForLoops;
+using LiveCoding.Extension.VisualStudio.VariableValues;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace LiveCoding.Extension.ViewModels

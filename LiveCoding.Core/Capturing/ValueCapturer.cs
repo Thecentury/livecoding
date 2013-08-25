@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace LiveCoding.Core.Capturing
 {
@@ -20,7 +16,7 @@ namespace LiveCoding.Core.Capturing
 
 		private static object Capture( StringBuilder builder )
 		{
-			return builder.ToString();
+			return new StringBuilder( builder.ToString() );
 		}
 
 		private static object Capture( object o )

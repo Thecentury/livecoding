@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 
-namespace LiveCoding.Extension.VisualStudio
+namespace LiveCoding.Extension.VisualStudio.VariableValues
 {
 	internal sealed class VariableValueTagger : IntraTextAdornmentTagger<VariableValueTag, TextBlock>, IDisposable
 	{
@@ -50,7 +50,7 @@ namespace LiveCoding.Extension.VisualStudio
 			return new TextBlock { Text = change.GetValueString(), Margin = new Thickness( 20, 0, 0, 0 ), ToolTip = change.TimestampUtc };
 		}
 
-		protected override bool UpdateAdornment( TextBlock adornment, VariableValueTag data )
+		protected override bool UpdateAdornment( TextBlock adornment, VariableValueTag data, SnapshotSpan snapshotSpan )
 		{
 			var change = data.Change;
 			adornment.Text = change.GetValueString();

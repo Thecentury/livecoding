@@ -24,14 +24,32 @@ namespace HorizontalGridSample
 		{
 			InitializeComponent();
 
-			grid.Columns.Add( new DataGridTextColumn { Binding = new Binding( "." ) } );
-			grid.Columns.Add( new DataGridTextColumn { Binding = new Binding( "." ) } );
-			grid.Columns.Add( new DataGridTextColumn { Binding = new Binding( "." ) } );
-			grid.Columns.Add( new DataGridTextColumn { Binding = new Binding( "." ) } );
-			grid.Columns.Add( new DataGridTextColumn { Binding = new Binding( "." ) } );
-			grid.Columns.Add( new DataGridTextColumn { Binding = new Binding( "." ) } );
+			//grid.DataContext = new ClassWithProperties
+			//{
+			//	Count = 12,
+			//	Name = "123"
+			//};
 
-			DataContext = new[] { "123", "456" };
+			grid.DataContext = new List<ClassWithProperties>
+			{
+				new ClassWithProperties {Name = "1", Count = 1},
+				new ClassWithProperties {Name = "2", Count = 2}
+			};
+
+			grid.DataContext = Tuple.Create(
+				new List<ClassWithProperties>
+				{
+					new ClassWithProperties {Name = "1", Count = 1},
+					new ClassWithProperties {Name = "2", Count = 2}
+				}
+				);
 		}
+	}
+
+	public class ClassWithProperties
+	{
+		public string Name { get; set; }
+
+		public int Count { get; set; }
 	}
 }

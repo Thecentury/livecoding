@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ConsoleApplication1
 {
-    class WorkWithStringBuilder
+    class WorkWithMutableTypes
     {
-        public void Method()
+        public void StringBuilder()
         {
             StringBuilder builder1 = null;
 
@@ -19,6 +19,15 @@ namespace ConsoleApplication1
             builder2.Append("2");
 
             builder2.Append("3");
+        }
+
+        public void List()
+        {
+            List<int> list = new List<int>();
+
+            list.Add(1);
+            list.Add(2);
+            list.Add(3);
         }
     }
 }
