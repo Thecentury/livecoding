@@ -147,9 +147,9 @@
     <Compile Include="ViewModels\CannotExecuteException.cs" />
     <Compile Include="Views\ForLoopView.cs" />
     <Compile Include="VisualStudio\EventExtensions.cs" />
-    <Compile Include="VisualStudio\ForLoopTag.cs" />
-    <Compile Include="VisualStudio\ForLoopTagger.cs" />
-    <Compile Include="VisualStudio\ForLoopTaggerProvider.cs" />
+    <Compile Include="VisualStudio\ForLoops\ForLoopTag.cs" />
+    <Compile Include="VisualStudio\ForLoops\ForLoopTagger.cs" />
+    <Compile Include="VisualStudio\ForLoops\ForLoopTaggerProvider.cs" />
     <Compile Include="VisualStudio\LiveCodingAdornmentLayer.cs" />
     <Compile Include="VisualStudio\LiveCodingAdornmentLayers.cs" />
     <Compile Include="ViewModels\CanceledState.cs" />
@@ -169,12 +169,15 @@
     <Compile Include="Views\MethodExecutionTemplateConverter.cs" />
     <Compile Include="ViewModels\MethodExecutionViewModel.cs" />
     <Compile Include="VisualStudio\MethodExecutionData.cs" />
-    <Compile Include="VisualStudio\MethodTag.cs" />
-    <Compile Include="VisualStudio\MethodTagger.cs" />
-    <Compile Include="VisualStudio\ParametrizedMethodTagger.cs" />
-    <Compile Include="VisualStudio\MethodTaggerProvider.cs" />
-    <Compile Include="VisualStudio\ParametrizedMethodTag.cs" />
-    <Compile Include="VisualStudio\ParametrizedMethodTaggerProvider.cs" />
+    <Compile Include="VisualStudio\Method\MethodTag.cs" />
+    <Compile Include="VisualStudio\Method\MethodTagger.cs" />
+    <Compile Include="VisualStudio\NunitTestCase\NunitTestCaseTag.cs" />
+    <Compile Include="VisualStudio\NunitTestCase\NunitTestCaseTagger.cs" />
+    <Compile Include="VisualStudio\NunitTestCase\NunitTestCaseTaggerProvider.cs" />
+    <Compile Include="VisualStudio\ParametrizedMethod\ParametrizedMethodTagger.cs" />
+    <Compile Include="VisualStudio\Method\MethodTaggerProvider.cs" />
+    <Compile Include="VisualStudio\ParametrizedMethod\ParametrizedMethodTag.cs" />
+    <Compile Include="VisualStudio\ParametrizedMethod\ParametrizedMethodTaggerProvider.cs" />
     <Compile Include="VisualStudio\ProjectHelper.cs" />
     <Compile Include="ViewModels\ReadyToExecuteState.cs" />
     <Compile Include="Support\IntraTextAdornmentTagger.cs" />
@@ -185,9 +188,9 @@
     <Compile Include="ValuesTrackingRewriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VisualStudio\VariableValueGlyphFactory.cs" />
-    <Compile Include="VisualStudio\VariableValueTag.cs" />
-    <Compile Include="VisualStudio\VariableValueTagger.cs" />
-    <Compile Include="VisualStudio\VariableValueTaggerProvider.cs" />
+    <Compile Include="VisualStudio\VariableValues\VariableValueTag.cs" />
+    <Compile Include="VisualStudio\VariableValues\VariableValueTagger.cs" />
+    <Compile Include="VisualStudio\VariableValues\VariableValueTaggerProvider.cs" />
     <Compile Include="VisualStudio\WpfTextViewExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -12,6 +12,8 @@ using EnvDTE;
 using LiveCoding.Core;
 using LiveCoding.Extension.Views;
 using LiveCoding.Extension.VisualStudio;
+using LiveCoding.Extension.VisualStudio.ForLoops;
+using LiveCoding.Extension.VisualStudio.VariableValues;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 using Roslyn.Scripting;
@@ -102,6 +104,7 @@ namespace LiveCoding.Extension.ViewModels
 				Solution solution = project.CodeModel.DTE.Solution;
 
 				solution.SolutionBuild.BuildProject( solution.SolutionBuild.ActiveConfiguration.Name, project.UniqueName, true );
+				// todo brinchuk failed compilation handling
 			}
 
 			foreach ( Reference reference in project.GetReferences().References )

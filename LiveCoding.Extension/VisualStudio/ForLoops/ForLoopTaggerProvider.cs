@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
-namespace LiveCoding.Extension.VisualStudio
+namespace LiveCoding.Extension.VisualStudio.ForLoops
 {
 	[Export( typeof( IViewTaggerProvider ) )]
 	[ContentType( "code" )]

@@ -5,6 +5,7 @@ using IntraTextAdornmentSample;
 using LiveCoding.Extension.Support;
 using LiveCoding.Extension.ViewModels;
 using LiveCoding.Extension.Views;
+using LiveCoding.Extension.VisualStudio.Method;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
@@ -31,9 +32,9 @@ namespace LiveCoding.Extension.VisualStudio
 			};
 		}
 
-		protected override bool UpdateAdornment( ExecuteMethodControl adornment, MethodTag data )
+		protected override bool UpdateAdornment( ExecuteMethodControl adornment, MethodTag data, SnapshotSpan snapshotSpan )
 		{
-			adornment.DataContext = new MethodExecutionViewModel( new MethodExecutionData( data.SnapshotSpan ), _view );
+			adornment.DataContext = new MethodExecutionViewModel( new MethodExecutionData( snapshotSpan ), _view );
 			return true;
 		}
 
@@ -54,6 +55,12 @@ namespace LiveCoding.Extension.VisualStudio
 			foreach ( SnapshotSpan span in spans )
 			{
 				bool yielded = false;
+
+				if ( currentSnapshot.Length <= span.Start.Position )
+				{
+					continue;
+				}
+
 				string fullSpanLineText = currentSnapshot.GetLineFromPosition( span.Start ).GetText();
 
 				bool probablyIsMethod = fullSpanLineText.Contains( "(" );
@@ -75,7 +82,7 @@ namespace LiveCoding.Extension.VisualStudio
 						{
 							yielded = true;
 							var snapshotSpan = new SnapshotSpan( span.Start, 0 );
-							yield return Tuple.Create( snapshotSpan, (PositionAffinity?)PositionAffinity.Predecessor, new MethodTag( snapshotSpan ) );
+							yield return Tuple.Create( snapshotSpan, (PositionAffinity?)PositionAffinity.Predecessor, new MethodTag() );
 						}
 					}
 				}

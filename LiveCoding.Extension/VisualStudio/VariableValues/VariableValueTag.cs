@@ -1,7 +1,7 @@
 ﻿using LiveCoding.Core;
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace LiveCoding.Extension.VisualStudio
+namespace LiveCoding.Extension.VisualStudio.VariableValues
 {
 	internal sealed class VariableValueTag : IGlyphTag
 	{

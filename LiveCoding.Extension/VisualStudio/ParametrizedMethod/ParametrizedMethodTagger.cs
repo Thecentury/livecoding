@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using IntraTextAdornmentSample;
 using LiveCoding.Extension.Support;
 using LiveCoding.Extension.ViewModels;
 using LiveCoding.Extension.Views;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace LiveCoding.Extension.VisualStudio
+namespace LiveCoding.Extension.VisualStudio.ParametrizedMethod
 {
 	internal sealed class ParametrizedMethodTagger : IntraTextAdornmentTagger<ParametrizedMethodTag, ExecuteMethodControl>
 	{
 		private readonly IWpfTextView _view;
 
-		private static readonly Regex _commentRegex = new Regex( "//@ (?<call>.+)" );
+		private static readonly Regex _commentRegex = new Regex( "//@ (?<call>.+)", RegexOptions.Compiled );
 
 		internal ParametrizedMethodTagger( IWpfTextView view )
 			: base( view )
@@ -30,8 +29,9 @@ namespace LiveCoding.Extension.VisualStudio
 			};
 		}
 
-		protected override bool UpdateAdornment( ExecuteMethodControl adornment, ParametrizedMethodTag data )
+		protected override bool UpdateAdornment(ExecuteMethodControl adornment, ParametrizedMethodTag data, SnapshotSpan snapshotSpan)
 		{
+			adornment.DataContext = new MethodExecutionViewModel( new MethodExecutionData( snapshotSpan ) { Call = data.Call }, _view );
 			return true;
 		}
 
@@ -47,10 +47,8 @@ namespace LiveCoding.Extension.VisualStudio
 
 				string call = match.Groups["call"].Value;
 
-				yield return Tuple.Create( new SnapshotSpan( span.Start, 0 ), (PositionAffinity?)PositionAffinity.Predecessor, new ParametrizedMethodTag
-				{
-					Call = call
-				} );
+				SnapshotSpan snapshotSpan = new SnapshotSpan( span.Start, 0 );
+				yield return Tuple.Create( snapshotSpan, (PositionAffinity?)PositionAffinity.Predecessor, new ParametrizedMethodTag( call ) );
 			}
 		}
 	}

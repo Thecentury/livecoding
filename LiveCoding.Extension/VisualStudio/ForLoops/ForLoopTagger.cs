@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Shapes;
-using IntraTextAdornmentSample;
 using LiveCoding.Core;
 using LiveCoding.Extension.Support;
 using LiveCoding.Extension.Views;
@@ -13,7 +9,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Roslyn.Compilers.CSharp;
 
-namespace LiveCoding.Extension.VisualStudio
+namespace LiveCoding.Extension.VisualStudio.ForLoops
 {
 	internal sealed class ForLoopTagger : IntraTextAdornmentTagger<ForLoopTag, ForLoopView>
 	{
@@ -39,7 +35,7 @@ namespace LiveCoding.Extension.VisualStudio
 			return canvas;
 		}
 
-		protected override bool UpdateAdornment( ForLoopView adornment, ForLoopTag data )
+		protected override bool UpdateAdornment( ForLoopView adornment, ForLoopTag data, SnapshotSpan snapshotSpan )
 		{
 			var child = (FrameworkElement)adornment.Children[0];
 

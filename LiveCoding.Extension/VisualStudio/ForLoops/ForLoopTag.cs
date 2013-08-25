@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.Text.Tagging;
 
-namespace LiveCoding.Extension.VisualStudio
+namespace LiveCoding.Extension.VisualStudio.ForLoops
 {
 	internal sealed class ForLoopTag : ITag
 	{
