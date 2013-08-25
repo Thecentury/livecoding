@@ -95,7 +95,9 @@ namespace LiveCoding.Extension.ViewModels
 			string outputPath = activeConfiguration.Properties.Item( "OutputPath" ).Value.ToString();
 			string projectPath = project.Properties.Item( "FullPath" ).Value.ToString();
 			string projectOutputFullPath = Path.Combine( projectPath, outputPath, outputName );
-			if ( project.IsDirty || !File.Exists( projectOutputFullPath ) )
+
+			bool shouldBuild = project.IsDirty || !File.Exists( projectOutputFullPath );
+			if ( shouldBuild )
 			{
 				Solution solution = project.CodeModel.DTE.Solution;
 

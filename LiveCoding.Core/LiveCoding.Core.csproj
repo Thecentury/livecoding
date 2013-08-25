@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Capturing\ValueCapturer.cs" />
     <Compile Include="Internal\EnumerableExtensions.cs" />
     <Compile Include="ForLoopFinishedEvent.cs" />
     <Compile Include="Internal\ForLoopFinishWatcher.cs" />
