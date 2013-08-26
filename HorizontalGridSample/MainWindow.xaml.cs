@@ -30,19 +30,21 @@ namespace HorizontalGridSample
 			//	Name = "123"
 			//};
 
-			grid.DataContext = new List<ClassWithProperties>
-			{
-				new ClassWithProperties {Name = "1", Count = 1},
-				new ClassWithProperties {Name = "2", Count = 2}
-			};
+			//grid.DataContext = new List<ClassWithProperties>
+			//{
+			//	new ClassWithProperties {Name = "1", Count = 1},
+			//	new ClassWithProperties {Name = "2", Count = 2}
+			//};
 
-			grid.DataContext = Tuple.Create(
-				new List<ClassWithProperties>
-				{
-					new ClassWithProperties {Name = "1", Count = 1},
-					new ClassWithProperties {Name = "2", Count = 2}
-				}
-				);
+			//grid.DataContext = Tuple.Create(
+			//	new List<ClassWithProperties>
+			//	{
+			//		new ClassWithProperties {Name = "1", Count = 1},
+			//		new ClassWithProperties {Name = "2", Count = 2}
+			//	}
+			//	);
+
+			tvObjectGraph.DataContext = new ObjectViewModelHierarchy( new { Q = new { A = new[] { 1, 2, 3 } } } );
 		}
 	}
 

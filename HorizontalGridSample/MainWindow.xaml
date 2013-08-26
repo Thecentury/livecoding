@@ -4,6 +4,37 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <xctk:PropertyGrid Name="grid" AutoGenerateProperties="True" IsReadOnly="True" SelectedObject="{Binding}"/>
+        <!--<xctk:PropertyGrid Name="grid" AutoGenerateProperties="True" IsReadOnly="True" SelectedObject="{Binding}"/>-->
+        <TreeView Name="tvObjectGraph" ItemsSource="{Binding FirstGeneration}" Margin="12,41,12,12" FontSize="13" FontFamily="Consolas">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                    <Setter Property="FontWeight" Value="Normal" />
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="FontWeight" Value="Bold" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TreeView.ItemContainerStyle>
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{Binding Name}" Grid.Column="0" Grid.Row="0" Padding="2,0" />
+                        <TextBlock Text="{Binding Type}" Grid.Column="1" Grid.Row="0" Padding="2,0" />
+                        <TextBlock Text="{Binding Value}" Grid.Column="2" Grid.Row="0" Padding="2,0" />
+                    </Grid>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
     </Grid>
 </Window>
