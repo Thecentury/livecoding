@@ -44,10 +44,10 @@
                             <TextBlock Padding="2,0" Text="{Binding Name}" />
                             <Line VerticalAlignment="Stretch" Width="2" Stroke="LightGray" Stretch="Fill" Y1="0" Y2="1"/>
                         </StackPanel>
-                        <TextBlock Grid.Row="0"
+                        <!--<TextBlock Grid.Row="0"
                                    Grid.Column="1"
                                    Padding="2,0"
-                                   Text="{Binding Type}" />
+                                   Text="{Binding Type}" />-->
                         <TextBlock Grid.Row="0"
                                    Grid.Column="2"
                                    Padding="2,0"
