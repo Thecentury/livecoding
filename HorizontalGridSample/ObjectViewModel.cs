@@ -5,8 +5,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HorizontalGridSample
 {
@@ -49,11 +47,17 @@ namespace HorizontalGridSample
 				// exclude value types and strings from listing child members
 				if ( !IsPrintableType( _type ) )
 				{
-					// the public properties of this object are its children
-					var children = _type.GetProperties()
-						.Where( p => !p.GetIndexParameters().Any() ) // exclude indexed parameters for now
-						.Select( p => new ObjectViewModel( p.GetValue( _object, null ), p, this ) )
-						.ToList();
+					List<ObjectViewModel> children = new List<ObjectViewModel>();
+
+					bool shouldAddSelfProperties = !_type.IsArray;
+
+					if ( shouldAddSelfProperties )
+					{
+						// the public properties of this object are its children
+						children.AddRange( _type.GetProperties()
+							.Where( p => !p.GetIndexParameters().Any() ) // exclude indexed parameters for now
+							.Select( p => new ObjectViewModel( p.GetValue( _object, null ), p, this ) ) );
+					}
 
 					// if this is a collection type, add the contained items to the children
 					var collection = _object as IEnumerable;
@@ -134,10 +138,27 @@ namespace HorizontalGridSample
 		{
 			get
 			{
-				var value = string.Empty;
+				string value;
 				if ( _object != null )
 				{
-					if ( IsPrintableType( _type ) )
+					Type type = _object.GetType();
+
+					if ( type.IsArray )
+					{
+						Array array = (Array)_object;
+						Type arrayItemType = type.GetElementType();
+
+						value = String.Format( "{0}[ {1} ]", arrayItemType.Name, String.Join( ", ", Enumerable.Range( 0, array.Rank ).Select( d => array.GetLength( d ) ) ) );
+					}
+					else if ( type.IsGenericList() )
+					{
+						value = String.Format( "List<{0}>", String.Join( ", ", type.GetGenericArguments().Select( t => t.Name ) ) );
+					}
+					else if ( _object is string )
+					{
+						value = String.Format( "\"{0}\"", _object );
+					}
+					else
 					{
 						value = _object.ToString();
 					}
@@ -223,21 +244,5 @@ namespace HorizontalGridSample
 		}
 
 		#endregion
-	}
-
-	public class ObjectViewModelHierarchy
-	{
-		readonly ReadOnlyCollection<ObjectViewModel> _firstGeneration;
-
-		public ObjectViewModelHierarchy( object rootObject )
-		{
-			ObjectViewModel o = new ObjectViewModel( rootObject );
-			_firstGeneration = new ReadOnlyCollection<ObjectViewModel>( new[] { o } );
-		}
-
-		public ReadOnlyCollection<ObjectViewModel> FirstGeneration
-		{
-			get { return _firstGeneration; }
-		}
 	}
 }
