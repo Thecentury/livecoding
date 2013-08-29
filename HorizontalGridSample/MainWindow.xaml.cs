@@ -44,7 +44,8 @@ namespace HorizontalGridSample
 			//	}
 			//	);
 
-			tvObjectGraph.DataContext = new ObjectViewModelHierarchy( new { Q = new { A = new[] { 1, 2, 3 } } } );
+			var rootObject = new { Q = new { A = new[] { 1, 2, 3 } } };
+			tvObjectGraph.DataContext = new ObjectViewModelHierarchy( rootObject );
 		}
 	}
 
