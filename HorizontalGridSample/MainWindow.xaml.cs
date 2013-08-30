@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,7 +48,18 @@ namespace HorizontalGridSample
 
 			var a = new[] { 1, 2, 3 };
 
-			var rootObject = new { A = new[] { 1, 2, 3 }, L = new List<string> { "1", "2", "3" }, S = "string" };
+			var rootObject = new
+			{
+				A = new[] { 1, 2, 3 },
+				L = new List<string> { "1", "2", "3" },
+				S = "string",
+				D = new Dictionary<string, int> { { "1", 1 }, { "2", 2 } },
+				C = new Collection<int> { 1, 2, 3 },
+				NVC = new NameValueCollection { { "1", "V1" }, { "2", "V2" } },
+				G = Guid.NewGuid(),
+				Date = DateTime.Now,
+				TimeSpan = TimeSpan.FromSeconds( 74387429 )
+			};
 			tvObjectGraph.DataContext = new ObjectViewModelHierarchy( rootObject );
 		}
 	}
