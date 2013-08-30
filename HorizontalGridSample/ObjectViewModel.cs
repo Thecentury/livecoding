@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace HorizontalGridSample
 {
@@ -134,6 +133,11 @@ namespace HorizontalGridSample
 				}
 				return name;
 			}
+		}
+
+		public object RawValue
+		{
+			get { return _object; }
 		}
 
 		public string Value

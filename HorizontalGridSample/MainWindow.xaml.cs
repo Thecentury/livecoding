@@ -60,7 +60,8 @@ namespace HorizontalGridSample
 				G = Guid.NewGuid(),
 				Date = DateTime.Now,
 				TimeSpan = TimeSpan.FromSeconds( 74387429 ),
-				Regex = new Regex( @"\d\d" )
+				Regex = new Regex( @"\d\d" ),
+				WpfColor = Colors.Aquamarine,
 			};
 			tvObjectGraph.DataContext = new ObjectViewModelHierarchy( rootObject );
 		}
