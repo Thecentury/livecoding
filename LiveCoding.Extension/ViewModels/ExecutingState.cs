@@ -197,7 +197,8 @@ namespace LiveCoding.Extension.ViewModels
 
 					var classDeclaration = liveCodingClass.ChildNodes().OfType<ClassDeclarationSyntax>().Where( cd => cd.Span.Contains( methodStartPosition ) ).First();
 
-					string className = ClassFromNamespaceRewriter.LiveCodingWrapperClassName + "." + classDeclaration.Identifier.ValueText;
+					string className = classDeclaration.Identifier.ValueText;
+					string fullClassName = ClassFromNamespaceRewriter.LiveCodingWrapperClassName + "." + className;
 
 					string parameterValues = methodDeclaration.ParameterList.GetDefaultParametersValuesString();
 
@@ -205,10 +206,18 @@ namespace LiveCoding.Extension.ViewModels
 
 					if ( methodDeclaration.IsStatic() )
 					{
-						session.Execute( String.Format( "{0}.{1}( {2} );", className, methodName, parameterValues ) );
+						bool isStaticCtor = methodName == className;
+						if ( isStaticCtor )
+						{
+							throw new CannotExecuteException( "Cannot execute static ctor" );
+						}
+
+						session.Execute( String.Format( "{0}.{1}( {2} );", fullClassName, methodName, parameterValues ) );
 					}
 					else
 					{
+						string instanceVariableName = "__liveCodingInstance_" + Guid.NewGuid().ToString( "N" );
+
 						bool hasParameterlessConstructor = classDeclaration.ChildNodes()
 							.OfType<ConstructorDeclarationSyntax>()
 							.Where( c => c.ParameterList.Parameters.Count == 0 )
@@ -219,7 +228,7 @@ namespace LiveCoding.Extension.ViewModels
 
 						if ( hasParameterlessConstructor || doesnotHaveConstructorDeclarationAtAll )
 						{
-							session.Execute( String.Format( "new {0}().{1}( {2} );", className, methodName, parameterValues ) );
+							session.Execute( String.Format( "var {0} = new {1}();", instanceVariableName, fullClassName ) );
 						}
 						else
 						{
@@ -227,7 +236,13 @@ namespace LiveCoding.Extension.ViewModels
 
 							string constructorParameters = firstConstructor.ParameterList.GetDefaultParametersValuesString();
 							session.Execute(
-								String.Format( "new {0}( {1} ).{2}( {3} );", className, constructorParameters, methodName, parameterValues ) );
+								String.Format( "var {0} = new {1}( {2} );", instanceVariableName, fullClassName, constructorParameters ) );
+						}
+
+						bool ctorInvocation = className == methodName;
+						if ( !ctorInvocation )
+						{
+							session.Execute( String.Format( "{0}.{1}( {2} )", instanceVariableName, methodName, parameterValues ) );
 						}
 					}
 				}

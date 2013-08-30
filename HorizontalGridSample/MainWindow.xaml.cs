@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -58,7 +59,8 @@ namespace HorizontalGridSample
 				NVC = new NameValueCollection { { "1", "V1" }, { "2", "V2" } },
 				G = Guid.NewGuid(),
 				Date = DateTime.Now,
-				TimeSpan = TimeSpan.FromSeconds( 74387429 )
+				TimeSpan = TimeSpan.FromSeconds( 74387429 ),
+				Regex = new Regex( @"\d\d" )
 			};
 			tvObjectGraph.DataContext = new ObjectViewModelHierarchy( rootObject );
 		}
