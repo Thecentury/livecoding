@@ -5,16 +5,18 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace HorizontalGridSample
 {
 	public class ObjectViewModel : INotifyPropertyChanged
 	{
-		ReadOnlyCollection<ObjectViewModel> _children;
-		readonly ObjectViewModel _parent;
-		readonly object _object;
-		readonly PropertyInfo _info;
-		readonly Type _type;
+		private ReadOnlyCollection<ObjectViewModel> _children;
+		private readonly ObjectViewModel _parent;
+		private readonly object _object;
+		private readonly PropertyInfo _info;
+		private readonly Type _type;
+
 
 		bool _isExpanded;
 		bool _isSelected;
@@ -54,7 +56,7 @@ namespace HorizontalGridSample
 					if ( shouldAddSelfProperties )
 					{
 						// the public properties of this object are its children
-						children.AddRange( _type.GetProperties()
+						children.AddRange( _type.GetProperties( BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance )
 							.Where( p => !p.GetIndexParameters().Any() ) // exclude indexed parameters for now
 							.Select( p => new ObjectViewModel( p.GetValue( _object, null ), p, this ) ) );
 					}
@@ -138,7 +140,7 @@ namespace HorizontalGridSample
 		{
 			get
 			{
-				string value;
+				string value = String.Empty;
 				if ( _object != null )
 				{
 					Type type = _object.GetType();
@@ -150,13 +152,24 @@ namespace HorizontalGridSample
 
 						value = String.Format( "{0}[ {1} ]", arrayItemType.Name, String.Join( ", ", Enumerable.Range( 0, array.Rank ).Select( d => array.GetLength( d ) ) ) );
 					}
-					else if ( type.IsGenericList() )
+					else if ( type.IsGenericICollection() )
 					{
-						value = String.Format( "List<{0}>", String.Join( ", ", type.GetGenericArguments().Select( t => t.Name ) ) );
+						var list = (ICollection)_object;
+						string cleanedTypeName = TypePrettyPrinter.GetCleanedNameOfGenericType( type );
+						value = String.Format( "{0}<{1}>[ {2} ]", cleanedTypeName, String.Join( ", ", type.GetGenericArguments().Select( t => t.Name ) ), list.Count );
+					}
+					else if ( type.IsCollection() )
+					{
+						var collection = (ICollection)_object;
+						value = String.Format( "{0}[ {1} ]", TypePrettyPrinter.PrettyPrint( type ), collection.Count );
 					}
 					else if ( _object is string )
 					{
 						value = String.Format( "\"{0}\"", _object );
+					}
+					else if ( _object.ToString() == _object.GetType().ToString() )
+					{
+						value = TypePrettyPrinter.PrettyPrint( type );
 					}
 					else
 					{

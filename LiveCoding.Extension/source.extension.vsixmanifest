@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="LiveCoding..424AA355-C808-4D1C-8848-3E24A67172F8" Version="1.0" Language="en-US" Publisher="Mikhail Brinchuk" />
+    <Identity Id="LiveCoding..424AA355-C808-4D1C-8848-3E24A67172F8" Version="0.1.0" Language="en-US" Publisher="Mikhail Brinchuk" />
     <DisplayName>LiveCoding</DisplayName>
     <Description xml:space="preserve">Live coding extension, inspired by ideas of Bret Victor.</Description>
   </Metadata>
