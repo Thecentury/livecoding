@@ -153,12 +153,15 @@
     <Compile Include="ViewModels\ObjectVisualizing\ObjectViewModelHierarchy.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\TypePrettyPrinter.cs" />
     <Compile Include="Views\BooleanToZIndexConverter.cs" />
-    <Compile Include="Views\ForLoopView.cs" />
+    <Compile Include="Views\ForLoopView.xaml.cs">
+      <DependentUpon>ForLoopView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ObjectView.xaml.cs">
       <DependentUpon>ObjectView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ObjectViewViewModel.cs" />
     <Compile Include="Views\RawValueTemplateSelector.cs" />
+    <Compile Include="Views\ValueChangeViewModel.cs" />
     <Compile Include="VisualStudio\EventExtensions.cs" />
     <Compile Include="VisualStudio\ForLoops\ForLoopTag.cs" />
     <Compile Include="VisualStudio\ForLoops\ForLoopTagger.cs" />
@@ -237,6 +240,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\ExecuteMethodControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ForLoopView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

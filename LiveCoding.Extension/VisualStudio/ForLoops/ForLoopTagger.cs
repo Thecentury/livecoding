@@ -37,7 +37,7 @@ namespace LiveCoding.Extension.VisualStudio.ForLoops
 
 		protected override bool UpdateAdornment( ForLoopView adornment, ForLoopTag data, SnapshotSpan snapshotSpan )
 		{
-			var child = (FrameworkElement)adornment.Children[0];
+			var child = adornment.DataGrid;
 
 			child.Height = data.LoopHeight;
 
