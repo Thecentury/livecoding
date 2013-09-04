@@ -1,0 +1,45 @@
+﻿<UserControl x:Class="LiveCoding.Extension.Views.ForLoopView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:forLoops="clr-namespace:LiveCoding.Extension.VisualStudio.ForLoops"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DataContext="{d:DesignInstance forLoops:ForLoopTag}"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
+             x:ClassModifier="internal"
+             mc:Ignorable="d">
+    <Canvas>
+        <DataGrid Name="_dataGrid"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  CanUserReorderColumns="False"
+                  CanUserResizeColumns="False"
+                  CanUserResizeRows="False"
+                  CanUserSortColumns="False"
+                  IsReadOnly="True"
+                  SelectionMode="Single"
+                  SelectionUnit="Cell"
+                  GridLinesVisibility="None"
+                  RowDetailsVisibilityMode="Collapsed"
+                  RowHeight="{Binding LineHeight}">
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="BorderBrush" Value="{x:Null}"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Margin" Value="0"/>
+                </Style>
+            </DataGrid.CellStyle>
+            <DataGrid.Style>
+                <Style TargetType="DataGrid">
+                    <Style.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#AAADD8E6" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+                    </Style.Resources>
+                </Style>
+            </DataGrid.Style>
+        </DataGrid>
+    </Canvas>
+</UserControl>
