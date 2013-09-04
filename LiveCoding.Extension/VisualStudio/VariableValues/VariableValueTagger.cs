@@ -5,13 +5,14 @@ using System.Windows;
 using System.Windows.Controls;
 using LiveCoding.Core;
 using LiveCoding.Extension.Support;
+using LiveCoding.Extension.Views;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace LiveCoding.Extension.VisualStudio.VariableValues
 {
-	internal sealed class VariableValueTagger : IntraTextAdornmentTagger<VariableValueTag, TextBlock>, IDisposable
+	internal sealed class VariableValueTagger : IntraTextAdornmentTagger<VariableValueTag, ObjectView>, IDisposable
 	{
 		private readonly ITagAggregator<VariableValueTag> _tagAggregator;
 
@@ -44,16 +45,16 @@ namespace LiveCoding.Extension.VisualStudio.VariableValues
 			RaiseTagsChanged( span );
 		}
 
-		protected override TextBlock CreateAdornment( VariableValueTag data, SnapshotSpan span )
+		protected override ObjectView CreateAdornment( VariableValueTag data, SnapshotSpan span )
 		{
 			ValueChange change = data.Change;
-			return new TextBlock { Text = change.GetValueString(), Margin = new Thickness( 20, 0, 0, 0 ), ToolTip = change.TimestampUtc };
+			return new ObjectView( change.CapturedValue ) { Margin = new Thickness( 20, 0, 0, 0 ), ToolTip = change.TimestampUtc };
 		}
 
-		protected override bool UpdateAdornment( TextBlock adornment, VariableValueTag data, SnapshotSpan snapshotSpan )
+		protected override bool UpdateAdornment( ObjectView adornment, VariableValueTag data, SnapshotSpan snapshotSpan )
 		{
 			var change = data.Change;
-			adornment.Text = change.GetValueString();
+			adornment.SetRootObject( change.CapturedValue );
 			adornment.ToolTip = change.TimestampUtc;
 			return true;
 		}

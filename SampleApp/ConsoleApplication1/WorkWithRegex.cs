@@ -11,6 +11,8 @@ namespace ConsoleApplication1
     {
         public void Method()
         {
+            object o = null;
+
             Regex r = new Regex(@"(?<g>\d+)\s+");
 
             var matches = r.Matches("1 2 3 123 ");

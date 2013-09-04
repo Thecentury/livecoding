@@ -51,6 +51,9 @@
     <Reference Include="GalaSoft.MvvmLight.WPF45">
       <HintPath>..\packages\MvvmLightLibs.4.1.27.0\lib\net45\GalaSoft.MvvmLight.WPF45.dll</HintPath>
     </Reference>
+    <Reference Include="JetBrains.Annotations">
+      <HintPath>..\packages\JetBrains.Annotations.7.0\lib\net45\JetBrains.Annotations.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
@@ -142,10 +145,20 @@
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="BaseMethodDeclarationSyntaxExtensions.cs" />
     <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="ParameterListSyntaxExtensions.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModels\CannotExecuteException.cs" />
+    <Compile Include="ViewModels\ObjectVisualizing\ObjectViewModel.cs" />
+    <Compile Include="ViewModels\ObjectVisualizing\ObjectViewModelHierarchy.cs" />
+    <Compile Include="ViewModels\ObjectVisualizing\TypePrettyPrinter.cs" />
+    <Compile Include="Views\BooleanToZIndexConverter.cs" />
     <Compile Include="Views\ForLoopView.cs" />
+    <Compile Include="Views\ObjectView.xaml.cs">
+      <DependentUpon>ObjectView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ObjectViewViewModel.cs" />
+    <Compile Include="Views\RawValueTemplateSelector.cs" />
     <Compile Include="VisualStudio\EventExtensions.cs" />
     <Compile Include="VisualStudio\ForLoops\ForLoopTag.cs" />
     <Compile Include="VisualStudio\ForLoops\ForLoopTagger.cs" />
@@ -224,6 +237,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\ExecuteMethodControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ObjectView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
