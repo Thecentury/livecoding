@@ -7,3 +7,5 @@ packages/*
 *.csproj.user
 *.suo
 */obj/*
+*.sln.ide/*
+*.csproj.DotSettings

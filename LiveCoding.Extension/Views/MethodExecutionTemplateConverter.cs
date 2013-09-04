@@ -6,7 +6,7 @@ using LiveCoding.Extension.ViewModels;
 
 namespace LiveCoding.Extension.Views
 {
-	public sealed class MethodExecutionTemplateConverter : IValueConverter
+	internal sealed class MethodExecutionTemplateConverter : IValueConverter
 	{
 		public DataTemplate ReadyToExecuteTemplate { get; set; }
 
