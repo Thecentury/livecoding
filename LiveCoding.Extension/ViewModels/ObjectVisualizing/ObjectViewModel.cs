@@ -28,7 +28,7 @@ namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
 		{
 		}
 
-		ObjectViewModel( object obj, PropertyInfo info, ObjectViewModel parent )
+		private ObjectViewModel( object obj, PropertyInfo info, ObjectViewModel parent )
 		{
 			_object = obj;
 			_info = info;
@@ -102,6 +102,11 @@ namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
 		public PropertyInfo Info
 		{
 			get { return _info; }
+		}
+
+		public bool IsRoot
+		{
+			get { return _info != null; }
 		}
 
 		public ReadOnlyCollection<ObjectViewModel> Children
