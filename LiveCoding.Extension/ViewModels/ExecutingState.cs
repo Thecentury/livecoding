@@ -23,6 +23,32 @@ using VSLangProj;
 
 namespace LiveCoding.Extension.ViewModels
 {
+	internal sealed class CodeCompiler : MarshalByRefObject
+	{
+		private readonly ScriptEngine _scriptEngine = new ScriptEngine();
+
+		public void SetupScriptEngine( List<string> namespaces, List<string> references )
+		{
+			Guid sessionId = Guid.NewGuid();
+
+			foreach ( string ns in namespaces )
+			{
+				_scriptEngine.ImportNamespace( ns );
+			}
+
+			string copyDirectory = Path.Combine( Path.GetTempPath(), sessionId.ToString() );
+			Directory.CreateDirectory( copyDirectory );
+
+			foreach ( string reference in references )
+			{
+				if ( File.Exists( reference ) )
+				{
+					
+				}
+			}
+		}
+	}
+
 	public sealed class ExecutingState : MethodExecutionStateBase
 	{
 		private sealed class MethodExecutionContext
