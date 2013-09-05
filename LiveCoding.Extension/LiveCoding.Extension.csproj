@@ -149,6 +149,7 @@
     <Compile Include="ParameterListSyntaxExtensions.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModels\CannotExecuteException.cs" />
+    <Compile Include="ViewModels\CodeCompiler.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\ObjectViewModel.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\ObjectViewModelHierarchy.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\TypePrettyPrinter.cs" />

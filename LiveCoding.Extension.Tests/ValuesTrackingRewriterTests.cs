@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.IO;
+using System.Reflection;
 using LiveCoding.Core;
 using NUnit.Framework;
 using Roslyn.Compilers.CSharp;
