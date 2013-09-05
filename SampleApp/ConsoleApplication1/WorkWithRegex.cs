@@ -11,7 +11,7 @@ namespace ConsoleApplication1
     {
         public void PerformBinarySearch()
         {
-            const int count = 10000;
+            const int count = 100;
 
             int[] array = new int[count];
             for (int i = 0; i < count; i++)

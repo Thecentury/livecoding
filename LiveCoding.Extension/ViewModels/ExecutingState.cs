@@ -90,10 +90,12 @@ namespace LiveCoding.Extension.ViewModels
 
 			AppDomainSetup appDomainSetup = new AppDomainSetup
 			{
-				ApplicationBase = Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location )
+				ApplicationBase = Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ),
+				ShadowCopyFiles = "true"
 			};
 
-			AppDomain domain = AppDomain.CreateDomain( "LiveCodingCompilation_" + Guid.NewGuid().ToString( "N" ), null, appDomainSetup, new PermissionSet( PermissionState.Unrestricted ), new StrongName[0] );
+			AppDomain domain = AppDomain.CreateDomain( "LiveCodingCompilation_" + Guid.NewGuid().ToString( "N" ), 
+				null, appDomainSetup, new PermissionSet( PermissionState.Unrestricted ), new StrongName[0] );
 
 			CodeCompiler codeCompiler = null;
 			try
@@ -275,18 +277,7 @@ namespace LiveCoding.Extension.ViewModels
 			}
 			finally
 			{
-				string tempDirectory = null;
-				if ( codeCompiler != null )
-				{
-					tempDirectory = codeCompiler.TempDirectory;
-				}
-
 				AppDomain.Unload( domain );
-
-				if ( tempDirectory != null )
-				{
-					Directory.Delete( tempDirectory, true );
-				}
 			}
 		}
 
