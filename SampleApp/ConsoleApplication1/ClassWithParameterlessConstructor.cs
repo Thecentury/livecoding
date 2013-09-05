@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,12 @@ namespace ConsoleApplication1
     {
         public ClassWithParameterlessConstructor()
         {
+        }
+
+        [NotNull]
+        public object AnnotatedMethod()
+        {
+            return new object();
         }
 
         private void Method()

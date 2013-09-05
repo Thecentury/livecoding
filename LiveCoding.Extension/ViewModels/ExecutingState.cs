@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
@@ -109,15 +110,17 @@ namespace LiveCoding.Extension.ViewModels
 
 			foreach ( Reference reference in project.GetReferences().References )
 			{
-				if ( File.Exists( reference.Path ) )
+				string path = reference.Path;
+				if ( File.Exists( path ) )
 				{
-					engine.AddReference( reference.Path );
+					var assembly = Assembly.LoadFrom( path );
+					engine.AddReference( assembly );
 				}
 			}
 
 			if ( File.Exists( projectOutputFullPath ) )
 			{
-				engine.AddReference( projectOutputFullPath );
+				engine.AddReference( Assembly.LoadFrom( projectOutputFullPath ) );
 			}
 			engine.AddReference( typeof( VariablesTracker ).Assembly );
 

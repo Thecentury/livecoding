@@ -16,11 +16,11 @@ namespace HorizontalGridSample
 
 			FrameworkElement templatedParent = (FrameworkElement)presenter.TemplatedParent;
 
-			object foundResource = templatedParent.TryFindResource( new DataTemplateKey( item.GetType().Name ) );
+			object foundResource = templatedParent.TryFindResource( item.GetType() );
 
 			if ( foundResource == null )
 			{
-				foundResource = templatedParent.TryFindResource( new DataTemplateKey( "system:Object" ) );
+				foundResource = templatedParent.TryFindResource( typeof(object) );
 			}
 
 			return foundResource as DataTemplate;

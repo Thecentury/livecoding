@@ -54,7 +54,7 @@
                                 <horizontalGridSample:RawValueTemplateSelector/>
                             </ContentControl.ContentTemplateSelector>
                             <ContentControl.Resources>
-                                <DataTemplate DataType="Color" x:Key="{x:Type Color}">
+                                <DataTemplate DataType="{x:Type Color}" x:Key="{x:Type Color}">
                                     <Rectangle Width="15">
                                         <Rectangle.Fill>
                                             <SolidColorBrush Color="{Binding}"/>
@@ -62,7 +62,7 @@
                                     </Rectangle>
                                 </DataTemplate>
                                 
-                                <DataTemplate DataType="system:Object" x:Key="{x:Type system:Object}">
+                                <DataTemplate DataType="{x:Type system:Object}" x:Key="{x:Type system:Object}">
                                 </DataTemplate>
                             </ContentControl.Resources>
                         </ContentControl>
