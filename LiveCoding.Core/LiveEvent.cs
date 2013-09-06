@@ -3,6 +3,7 @@ using System.Threading;
 
 namespace LiveCoding.Core
 {
+	[Serializable]
 	public abstract class LiveEvent
 	{
 		protected LiveEvent()

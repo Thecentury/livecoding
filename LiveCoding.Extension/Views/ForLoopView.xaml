@@ -24,7 +24,8 @@
                   SelectionUnit="Cell"
                   GridLinesVisibility="None"
                   RowDetailsVisibilityMode="Collapsed"
-                  RowHeight="{Binding LineHeight}">
+                  RowHeight="{Binding LineHeight}"
+                  MaxWidth="500">
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">
                     <Setter Property="BorderBrush" Value="{x:Null}"/>

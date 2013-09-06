@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using IntraTextAdornmentSample;
 using LiveCoding.Extension.Support;
 using LiveCoding.Extension.ViewModels;
 using LiveCoding.Extension.Views;
@@ -51,6 +49,10 @@ namespace LiveCoding.Extension.VisualStudio
 			}
 
 			var currentSnapshot = _view.TextBuffer.CurrentSnapshot;
+			if ( currentSnapshot.ContentType.TypeName != VisualStudioLanguages.CSharp )
+			{
+				yield break;
+			}
 
 			foreach ( SnapshotSpan span in spans )
 			{
