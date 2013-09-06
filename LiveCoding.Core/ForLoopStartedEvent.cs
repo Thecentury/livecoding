@@ -2,6 +2,7 @@
 
 namespace LiveCoding.Core
 {
+	[Serializable]
 	public sealed class ForLoopStartedEvent : LiveEvent
 	{
 		public ForLoopStartedEvent()

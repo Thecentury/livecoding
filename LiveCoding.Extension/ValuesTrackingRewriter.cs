@@ -6,7 +6,7 @@ namespace LiveCoding.Extension
 {
 	public sealed class ValuesTrackingRewriter : SyntaxRewriter
 	{
-		private const string VariablesTracker = "global::LiveCoding.Core.VariablesTracker";
+		private const string VariablesTracker = "global::LiveCoding.Core.VariablesTrackerFacade";
 		private const string AddValueMethod = "AddValue";
 		private const string StartForLoopMethod = "StartForLoop";
 		private const string EndForLoopMethod = "EndForLoop";

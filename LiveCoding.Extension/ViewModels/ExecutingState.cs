@@ -24,6 +24,22 @@ using VSLangProj;
 
 namespace LiveCoding.Extension.ViewModels
 {
+	[Serializable]
+	internal sealed class ListenerSetter
+	{
+		private readonly ILiveEventListener _listener;
+
+		public ListenerSetter( ILiveEventListener listener )
+		{
+			_listener = listener;
+		}
+
+		public void SetListener()
+		{
+			VariablesTrackerFacade.SetListener( _listener );
+		}
+	}
+
 	public sealed class ExecutingState : MethodExecutionStateBase
 	{
 		private sealed class MethodExecutionContext
@@ -91,16 +107,20 @@ namespace LiveCoding.Extension.ViewModels
 			AppDomainSetup appDomainSetup = new AppDomainSetup
 			{
 				ApplicationBase = Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ),
-				ShadowCopyFiles = "true"
+				ShadowCopyFiles = "true",
+				LoaderOptimization = LoaderOptimization.MultiDomain
 			};
 
-			AppDomain domain = AppDomain.CreateDomain( "LiveCodingCompilation_" + Guid.NewGuid().ToString( "N" ), 
-				null, appDomainSetup, new PermissionSet( PermissionState.Unrestricted ), new StrongName[0] );
+			AppDomain domain = AppDomain.CreateDomain( "LiveCodingCompilation_" + Guid.NewGuid().ToString( "N" ),
+				AppDomain.CurrentDomain.Evidence, appDomainSetup, new PermissionSet( PermissionState.Unrestricted ), new StrongName[0] );
 
-			CodeCompiler codeCompiler = null;
 			try
 			{
-				codeCompiler = (CodeCompiler)domain.CreateInstanceAndUnwrap( Assembly.GetExecutingAssembly().FullName, typeof( CodeCompiler ).FullName );
+				var listener = new EventProxyListener();
+				var listenerSetter = new ListenerSetter( listener );
+				domain.DoCallBack( listenerSetter.SetListener );
+
+				CodeCompiler codeCompiler = (CodeCompiler)domain.CreateInstanceAndUnwrap( Assembly.GetExecutingAssembly().FullName, typeof( CodeCompiler ).FullName );
 
 				List<string> references = new List<string>();
 
@@ -202,10 +222,8 @@ namespace LiveCoding.Extension.ViewModels
 
 						string methodName = methodDeclaration.Identifier.ValueText;
 
-						var liveCodingClass = rewritten.ChildNodes().OfType<ClassDeclarationSyntax>().First();
-
 						var classDeclaration =
-							liveCodingClass.ChildNodes()
+							compilationUnit.DescendantNodes()
 								.OfType<ClassDeclarationSyntax>()
 								.Where( cd => cd.Span.Contains( methodStartPosition ) )
 								.First();

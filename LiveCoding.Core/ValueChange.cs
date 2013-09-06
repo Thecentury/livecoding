@@ -3,6 +3,7 @@ using System.Diagnostics;
 
 namespace LiveCoding.Core
 {
+	[Serializable]
 	[DebuggerDisplay( "Change {VariableName} = {OriginalValue} @ {LineNumber} on {TimestampUtc}" )]
 	public sealed class ValueChange : LiveEvent
 	{

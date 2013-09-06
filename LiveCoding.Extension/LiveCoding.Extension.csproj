@@ -188,6 +188,7 @@
     <Compile Include="VisualStudio\MethodExecutionData.cs" />
     <Compile Include="VisualStudio\Method\MethodTag.cs" />
     <Compile Include="VisualStudio\Method\MethodTagger.cs" />
+    <Compile Include="VisualStudio\Method\VisualStudioLanguages.cs" />
     <Compile Include="VisualStudio\NunitTestCase\NunitTestCaseTag.cs" />
     <Compile Include="VisualStudio\NunitTestCase\NunitTestCaseTagger.cs" />
     <Compile Include="VisualStudio\NunitTestCase\NunitTestCaseTaggerProvider.cs" />

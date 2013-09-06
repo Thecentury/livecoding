@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using LiveCoding.Core.Capturing;
 
 namespace LiveCoding.Core
 {
@@ -27,51 +23,7 @@ namespace LiveCoding.Core
 			_forLoopHandler = new ForLoopHandler( _forLoops );
 		}
 
-		public static void AddValue( string variableName, object value, int originalLineNumber = 0, [CallerMemberName] string methodName = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0 )
-		{
-			object capturedValue = ValueCapturer.CreateCapturedValue( value );
-			
-			var valueChange = new ValueChange
-			{
-				VariableName = variableName,
-				FilePath = filePath,
-				LineNumber = lineNumber,
-				OriginalLineNumber = originalLineNumber,
-				MethodName = methodName,
-				OriginalValue = value,
-				CapturedValue = capturedValue
-			};
-
-			AddEvent( valueChange );
-		}
-
-		public static Guid StartForLoop( int lineNumber )
-		{
-			var evt = new ForLoopStartedEvent
-			{
-				LoopStartLineNumber = lineNumber
-			};
-
-			AddEvent( evt );
-
-			return evt.LoopId;
-		}
-
-		public static void RegisterLoopIteration( Guid loopId, object iteratorValue )
-		{
-			var evt = new ForLoopIterationEvent( loopId, iteratorValue );
-
-			AddEvent( evt );
-		}
-
-		public static void EndForLoop( Guid loopId )
-		{
-			var evt = new ForLoopFinishedEvent( loopId );
-
-			AddEvent( evt );
-		}
-
-		private static void AddEvent( LiveEvent evt )
+		public static void AddEvent( LiveEvent evt )
 		{
 			_events.Add( evt );
 			RaiseEventAdded( evt );

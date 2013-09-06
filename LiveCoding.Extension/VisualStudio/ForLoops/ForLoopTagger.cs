@@ -7,6 +7,7 @@ using LiveCoding.Extension.Support;
 using LiveCoding.Extension.Views;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 
 namespace LiveCoding.Extension.VisualStudio.ForLoops
@@ -52,6 +53,12 @@ namespace LiveCoding.Extension.VisualStudio.ForLoops
 			}
 
 			if ( View.FormattedLineSource == null )
+			{
+				yield break;
+			}
+
+			var currentSnapshot = View.TextBuffer.CurrentSnapshot;
+			if ( currentSnapshot.ContentType.TypeName != VisualStudioLanguages.CSharp )
 			{
 				yield break;
 			}

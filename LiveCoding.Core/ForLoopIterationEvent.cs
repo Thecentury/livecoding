@@ -2,6 +2,7 @@
 
 namespace LiveCoding.Core
 {
+	[Serializable]
 	public sealed class ForLoopIterationEvent : LiveEvent
 	{
 		private readonly Guid _loopId;
