@@ -24,22 +24,6 @@ using VSLangProj;
 
 namespace LiveCoding.Extension.ViewModels
 {
-	[Serializable]
-	internal sealed class ListenerSetter
-	{
-		private readonly ILiveEventListener _listener;
-
-		public ListenerSetter( ILiveEventListener listener )
-		{
-			_listener = listener;
-		}
-
-		public void SetListener()
-		{
-			VariablesTrackerFacade.SetListener( _listener );
-		}
-	}
-
 	public sealed class ExecutingState : MethodExecutionStateBase
 	{
 		private sealed class MethodExecutionContext
@@ -104,24 +88,10 @@ namespace LiveCoding.Extension.ViewModels
 				namespaces.Add( namespaceDeclaration.Name.ToString() );
 			}
 
-			AppDomainSetup appDomainSetup = new AppDomainSetup
-			{
-				ApplicationBase = Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ),
-				ShadowCopyFiles = "true",
-				LoaderOptimization = LoaderOptimization.MultiDomain
-			};
-
-			AppDomain domain = AppDomain.CreateDomain( "LiveCodingCompilation_" + Guid.NewGuid().ToString( "N" ),
-				AppDomain.CurrentDomain.Evidence, appDomainSetup, new PermissionSet( PermissionState.Unrestricted ), new StrongName[0] );
+			AppDomainCodeCompiler codeCompiler = new AppDomainCodeCompiler();
 
 			try
 			{
-				var listener = new EventProxyListener();
-				var listenerSetter = new ListenerSetter( listener );
-				domain.DoCallBack( listenerSetter.SetListener );
-
-				CodeCompiler codeCompiler = (CodeCompiler)domain.CreateInstanceAndUnwrap( Assembly.GetExecutingAssembly().FullName, typeof( CodeCompiler ).FullName );
-
 				List<string> references = new List<string>();
 
 				var project = ProjectHelper.GetContainingProject( filePath );
@@ -152,6 +122,8 @@ namespace LiveCoding.Extension.ViewModels
 				references.Add( typeof( VariablesTracker ).Assembly.Location );
 
 				codeCompiler.SetupScriptEngine( namespaces, references );
+				
+				codeCompiler.SetLiveEventListener( new EventProxyListener() );
 
 				//var compilation = Compilation.Create( "1.dll",
 				//	new CompilationOptions( OutputKind.DynamicallyLinkedLibrary, debugInformationKind: DebugInformationKind.Full ) )
@@ -295,7 +267,7 @@ namespace LiveCoding.Extension.ViewModels
 			}
 			finally
 			{
-				AppDomain.Unload( domain );
+				codeCompiler.Dispose();
 			}
 		}
 

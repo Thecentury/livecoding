@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using LiveCoding.Core;
-using LiveCoding.Extension.Support;
 using LiveCoding.Extension.Views;
 using LiveCoding.Extension.VisualStudio.VariableValues;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
-using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 
 namespace LiveCoding.Extension.VisualStudio.ForLoops

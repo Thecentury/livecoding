@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using LiveCoding.Core;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 
 namespace LiveCoding.Extension.ViewModels
 {
-	internal sealed class CodeCompiler : MarshalByRefObject
+	internal sealed class CodeCompiler : MarshalByRefObject, ICodeCompiler
 	{
 		private readonly ScriptEngine _scriptEngine = new ScriptEngine();
 		private Session _session;
@@ -33,6 +34,15 @@ namespace LiveCoding.Extension.ViewModels
 		public void Compile( string code )
 		{
 			_session.Execute( code );
+		}
+
+		public void SetLiveEventListener( ILiveEventListener listener )
+		{
+			VariablesTrackerFacade.SetListener( listener );
+		}
+
+		public void Dispose()
+		{
 		}
 	}
 }
