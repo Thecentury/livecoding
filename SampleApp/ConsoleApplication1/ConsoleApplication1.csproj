@@ -57,6 +57,7 @@
     <Compile Include="ISomeInterface.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StringsOperations.cs" />
     <Compile Include="WorkWithMutableTypes.cs" />
     <Compile Include="WorkWithRegex.cs" />
   </ItemGroup>

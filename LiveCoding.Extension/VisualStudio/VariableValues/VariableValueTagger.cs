@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using LiveCoding.Core;
-using LiveCoding.Extension.Support;
+using LiveCoding.Extension.ViewModels.ObjectVisualizing;
 using LiveCoding.Extension.Views;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -12,7 +12,7 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace LiveCoding.Extension.VisualStudio.VariableValues
 {
-	internal sealed class VariableValueTagger : IntraTextAdornmentTagger<VariableValueTag, ObjectView>, IDisposable
+	internal sealed class VariableValueTagger : LiveCodingTagger<VariableValueTag, FrameworkElement>, IDisposable
 	{
 		private readonly ITagAggregator<VariableValueTag> _tagAggregator;
 
@@ -20,6 +20,11 @@ namespace LiveCoding.Extension.VisualStudio.VariableValues
 			: base( view )
 		{
 			_tagAggregator = tagAggregator;
+		}
+
+		protected override void OnTextBufferChanged( TextContentChangedEventArgs e )
+		{
+			_changes = null;
 		}
 
 		private List<ValueChange> _changes;
@@ -45,16 +50,40 @@ namespace LiveCoding.Extension.VisualStudio.VariableValues
 			RaiseTagsChanged( span );
 		}
 
-		protected override ObjectView CreateAdornment( VariableValueTag data, SnapshotSpan span )
+		protected override FrameworkElement CreateAdornment( VariableValueTag data, SnapshotSpan span )
 		{
 			ValueChange change = data.Change;
-			return new ObjectView( change.CapturedValue ) { Margin = new Thickness( 20, 0, 0, 0 ), ToolTip = change.TimestampUtc };
+			object capturedValue = change.CapturedValue;
+
+			Thickness margin = new Thickness( 20, 0, 0, 0 );
+
+			if ( TypeHelper.IsExpandable( capturedValue ) )
+			{
+				return new ObjectView( capturedValue ) { Margin = margin, ToolTip = change.TimestampUtc };
+			}
+			else
+			{
+				return new TextBox
+				{
+					IsReadOnly = true,
+					Text = change.GetValueString(),
+					BorderBrush = null,
+					BorderThickness = new Thickness(),
+					Margin = margin
+				};
+			}
 		}
 
-		protected override bool UpdateAdornment( ObjectView adornment, VariableValueTag data, SnapshotSpan snapshotSpan )
+		protected override bool UpdateAdornment( FrameworkElement adornment, VariableValueTag data, SnapshotSpan snapshotSpan )
 		{
 			var change = data.Change;
-			adornment.SetRootObject( change.CapturedValue );
+
+			ObjectView objectView = adornment as ObjectView;
+			if ( objectView != null )
+			{
+				objectView.SetRootObject( change.CapturedValue );
+			}
+
 			adornment.ToolTip = change.TimestampUtc;
 			return true;
 		}
