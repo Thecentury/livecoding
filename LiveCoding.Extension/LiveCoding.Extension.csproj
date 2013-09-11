@@ -148,8 +148,12 @@
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="ParameterListSyntaxExtensions.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="ViewModels\AppDomainCodeCompiler.cs" />
+    <Compile Include="ViewModels\AppDomainExtensions.cs" />
     <Compile Include="ViewModels\CannotExecuteException.cs" />
     <Compile Include="ViewModels\CodeCompiler.cs" />
+    <Compile Include="ViewModels\ICodeCompiler.cs" />
+    <Compile Include="ViewModels\ListenerSetter.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\ObjectViewModel.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\ObjectViewModelHierarchy.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\TypeHelper.cs" />
