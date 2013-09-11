@@ -50,9 +50,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbstractClass.cs" />
     <Compile Include="ClassWithConstructorWithParameters.cs" />
     <Compile Include="ClassWithoutConstructorDeclaration.cs" />
     <Compile Include="ClassWithParameterlessConstructor.cs" />
+    <Compile Include="ISomeInterface.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WorkWithMutableTypes.cs" />

@@ -76,6 +76,11 @@ namespace LiveCoding.Extension.VisualStudio
 					continue;
 				}
 
+				if ( fullSpanLineText.Contains( "abstract" ) )
+				{
+					continue;
+				}
+
 				foreach ( ClassificationSpan classification in _сlassifier.GetClassificationSpans( span ) )
 				{
 					if ( classification.ClassificationType.Classification.ToLower().Contains( "keyword" ) )
