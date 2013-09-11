@@ -5,6 +5,7 @@ using System.Windows;
 using LiveCoding.Core;
 using LiveCoding.Extension.Support;
 using LiveCoding.Extension.Views;
+using LiveCoding.Extension.VisualStudio.VariableValues;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Roslyn.Compilers;
@@ -12,7 +13,7 @@ using Roslyn.Compilers.CSharp;
 
 namespace LiveCoding.Extension.VisualStudio.ForLoops
 {
-	internal sealed class ForLoopTagger : IntraTextAdornmentTagger<ForLoopTag, ForLoopView>
+	internal sealed class ForLoopTagger : LiveCodingTagger<ForLoopTag, ForLoopView>
 	{
 		private sealed class LoopInfo
 		{
@@ -41,6 +42,7 @@ namespace LiveCoding.Extension.VisualStudio.ForLoops
 			var child = adornment.DataGrid;
 
 			child.Height = data.LoopHeight;
+			adornment.SetDataContext( data );
 
 			return true;
 		}

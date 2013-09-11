@@ -20,8 +20,6 @@ namespace ConsoleApplication1
             }
 
             int needle = count / 2 - 1;
-
-
         }
     }
 

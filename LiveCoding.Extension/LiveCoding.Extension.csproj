@@ -152,6 +152,7 @@
     <Compile Include="ViewModels\CodeCompiler.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\ObjectViewModel.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\ObjectViewModelHierarchy.cs" />
+    <Compile Include="ViewModels\ObjectVisualizing\TypeHelper.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\TypePrettyPrinter.cs" />
     <Compile Include="Views\BooleanToZIndexConverter.cs" />
     <Compile Include="Views\ForLoopView.xaml.cs">
@@ -206,6 +207,7 @@
     <Compile Include="ValuesTrackingRewriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VisualStudio\VariableValueGlyphFactory.cs" />
+    <Compile Include="VisualStudio\VariableValues\LiveCodingTagger.cs" />
     <Compile Include="VisualStudio\VariableValues\VariableValueTag.cs" />
     <Compile Include="VisualStudio\VariableValues\VariableValueTagger.cs" />
     <Compile Include="VisualStudio\VariableValues\VariableValueTaggerProvider.cs" />

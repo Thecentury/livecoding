@@ -37,6 +37,13 @@ namespace LiveCoding.Extension.Views
 			get { return _dataGrid; }
 		}
 
+		public void SetDataContext( ForLoopTag tag )
+		{
+			DataContext = tag;
+			_dataGrid.ItemsSource = null;
+			_dataGrid.Columns.Clear();
+		}
+
 		public void BeginWatching( ForLoopInfo loop )
 		{
 			ObservableCollection<ValueChangeViewModel> dataSource = new ObservableCollection<ValueChangeViewModel>();
@@ -70,7 +77,7 @@ namespace LiveCoding.Extension.Views
 			ValueChangeViewModel viewModel;
 			if ( dataSource.Count > lineIndexInLoop )
 			{
-				viewModel = dataSource[lineIndexInLoop];
+				viewModel = dataSource[ lineIndexInLoop ];
 			}
 			else
 			{

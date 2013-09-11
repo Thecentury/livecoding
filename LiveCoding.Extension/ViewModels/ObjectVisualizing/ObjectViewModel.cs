@@ -35,7 +35,7 @@ namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
 			if ( _object != null )
 			{
 				_type = obj.GetType();
-				if ( !IsPrintableType( _type ) )
+				if ( !TypeHelper.IsPrintableType( _type ) )
 				{
 					// load the _children object with an empty collection to allow the + expander to be shown
 					_children = new ReadOnlyCollection<ObjectViewModel>( new[] { new ObjectViewModel( null ) } );
@@ -52,7 +52,7 @@ namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
 			}
 
 			// exclude value types and strings from listing child members
-			if ( IsPrintableType( _type ) )
+			if ( TypeHelper.IsPrintableType( _type ) )
 			{
 				return;
 			}
@@ -83,16 +83,7 @@ namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
 			OnPropertyChanged( "Children" );
 		}
 
-		/// <summary>
-		/// Gets a value indicating if the object graph can display this type without enumerating its children
-		/// </summary>
-		static bool IsPrintableType( Type type )
-		{
-			return type != null && (
-				type.IsPrimitive ||
-				type.IsAssignableFrom( typeof( string ) ) ||
-				type.IsEnum );
-		}
+
 
 		public ObjectViewModel Parent
 		{
