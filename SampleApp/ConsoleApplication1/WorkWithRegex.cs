@@ -11,12 +11,13 @@ namespace ConsoleApplication1
     {
         public void PerformBinarySearch()
         {
-            const int count = 100;
+            const int count = 10;
 
             int[] array = new int[count];
             for (int i = 0; i < count; i++)
             {
                 array[i] = i;
+                string s = i.ToString();
             }
 
             int needle = count / 2 - 1;

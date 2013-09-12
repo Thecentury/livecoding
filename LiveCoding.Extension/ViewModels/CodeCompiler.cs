@@ -43,6 +43,7 @@ namespace LiveCoding.Extension.ViewModels
 
 		public void Dispose()
 		{
+			// do nothing
 		}
 	}
 }
