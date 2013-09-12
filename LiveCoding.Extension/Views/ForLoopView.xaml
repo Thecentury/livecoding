@@ -11,6 +11,7 @@
              mc:Ignorable="d">
     <Canvas>
         <DataGrid Name="_dataGrid"
+                  Canvas.Top="-12"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
@@ -25,13 +26,31 @@
                   GridLinesVisibility="None"
                   RowDetailsVisibilityMode="Collapsed"
                   RowHeight="{Binding LineHeight}"
-                  MaxWidth="500">
+                  MaxWidth="500"
+                  ColumnHeaderHeight="16"
+                  RowHeaderWidth="0"
+                  BorderBrush="{x:Null}"
+                  BorderThickness="0"
+                  Background="Transparent" 
+                  RowBackground="Transparent">
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="VerticalAlignment" Value="Top"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Margin" Value="0"/>
+                    <Setter Property="Padding" Value="0,-16,0,0"/>
+                    <Setter Property="VerticalContentAlignment" Value="Top"/>
+                    <Setter Property="SeparatorVisibility" Value="Collapsed"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">
                     <Setter Property="BorderBrush" Value="{x:Null}"/>
                     <Setter Property="BorderThickness" Value="0"/>
                     <Setter Property="Padding" Value="0"/>
                     <Setter Property="Margin" Value="0"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
                 </Style>
             </DataGrid.CellStyle>
             <DataGrid.Style>

@@ -3,33 +3,35 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:objectVisualizing="clr-namespace:LiveCoding.Extension.ViewModels.ObjectVisualizing"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:views="clr-namespace:LiveCoding.Extension.Views"
-             xmlns:objectVisualizing="clr-namespace:LiveCoding.Extension.ViewModels.ObjectVisualizing"
              Panel.ZIndex="{Binding IsExpanded,
                                     Converter={x:Static views:BooleanToZIndexConverter.Default}}"
              Cursor="{x:Static Cursors.Arrow}"
+             d:DataContext="{d:DesignInstance views:ObjectViewViewModel}"
              d:DesignHeight="300"
              d:DesignWidth="300"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance views:ObjectViewViewModel}">
-    <UserControl.Effect>
+             >
+    <!--
+        <UserControl.Effect>
         <DropShadowEffect BlurRadius="1"
-                          Direction="315"
-                          Opacity="0.4"
-                          ShadowDepth="2"
-                          Color="DeepSkyBlue" />
-    </UserControl.Effect>
+        Direction="315"
+        Opacity="0.4"
+        ShadowDepth="2"
+        Color="DeepSkyBlue" />
+        </UserControl.Effect>
+    -->
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-            </UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
     <Canvas>
         <TreeView Name="tvObjectGraph"
                   Canvas.Top="-16"
                   FocusVisualStyle="{x:Null}"
                   FontSize="13"
-                  ItemsSource="{Binding Root.FirstGeneration}"
-                  >
+                  ItemsSource="{Binding Root.FirstGeneration}">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}" d:DataContext="{d:DesignInstance objectVisualizing:ObjectViewModel}">
                     <Style.Resources>
@@ -37,13 +39,15 @@
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
                     </Style.Resources>
 
+                    <Setter Property="BorderBrush" Value="{x:Null}" />
+                    <Setter Property="BorderThickness" Value="0" />
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                    <Setter Property="FontWeight" Value="Normal" />
+                    <Setter Property="FontWeight" Value="Normal"/>
                 </Style>
             </TreeView.ItemContainerStyle>
             <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Children}" AlternationCount="2">
+                <HierarchicalDataTemplate AlternationCount="2" ItemsSource="{Binding Children}">
                     <StackPanel Orientation="Horizontal">
                         <StackPanel Orientation="Horizontal" Visibility="{Binding IsRoot, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <TextBlock Padding="2,0" Text="{Binding Name}" />

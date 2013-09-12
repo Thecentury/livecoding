@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -27,14 +28,8 @@ namespace LiveCoding.Extension.Views
 		public ForLoopView( ForLoopTag data )
 		{
 			InitializeComponent();
-			Canvas.SetTop( _dataGrid, -16 );
 
 			DataContext = data;
-		}
-
-		public DataGrid DataGrid
-		{
-			get { return _dataGrid; }
 		}
 
 		public void SetDataContext( ForLoopTag tag )
