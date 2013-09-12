@@ -40,7 +40,6 @@ namespace LiveCoding.Extension.VisualStudio
 			if ( TypeHelper.IsExpandable( change.CapturedValue ) )
 			{
 				var objectView = new FrameworkElementFactory( typeof( ObjectView ) );
-				//objectView.SetValue( FrameworkElement.DataContextProperty, new ObjectViewViewModel { Root = new ObjectViewModelHierarchy( change.CapturedValue ) } );
 				objectView.SetBinding( FrameworkElement.DataContextProperty, new Binding( "." )
 				{
 					Source = new ObjectViewViewModel

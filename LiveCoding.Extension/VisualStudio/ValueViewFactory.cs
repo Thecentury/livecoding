@@ -19,7 +19,7 @@ namespace LiveCoding.Extension.VisualStudio
 			object capturedValue = change.CapturedValue;
 			if ( TypeHelper.IsExpandable( capturedValue ) )
 			{
-				return new ObjectView( capturedValue );
+				return new ObjectViewContainer( capturedValue );
 			}
 			else
 			{

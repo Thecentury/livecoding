@@ -69,7 +69,7 @@ namespace LiveCoding.Extension.VisualStudio.VariableValues
 		{
 			var change = data.Change;
 
-			ObjectView objectView = adornment as ObjectView;
+			ObjectViewContainer objectView = adornment as ObjectViewContainer;
 			if ( objectView != null )
 			{
 				objectView.SetRootObject( change.CapturedValue );
