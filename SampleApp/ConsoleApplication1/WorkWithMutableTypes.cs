@@ -19,6 +19,8 @@ namespace ConsoleApplication1
             builder2.Append("2");
 
             builder2.Append("3");
+
+            StringBuilder b3 = new StringBuilder("123");
         }
 
         public void List()

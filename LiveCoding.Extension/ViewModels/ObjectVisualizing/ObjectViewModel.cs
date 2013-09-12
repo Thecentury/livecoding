@@ -170,7 +170,7 @@ namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
 						var collection = (ICollection)_object;
 						value = String.Format( "{0}[ {1} ]", TypePrettyPrinter.PrettyPrint( type ), collection.Count );
 					}
-					else if ( _object is string )
+					else if ( _object is string || _object is StringBuilder )
 					{
 						value = String.Format( "\"{0}\"", _object );
 					}

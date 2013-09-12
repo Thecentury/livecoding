@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using LiveCoding.Core;
 using LiveCoding.Extension.ViewModels.ObjectVisualizing;
 using LiveCoding.Extension.Views;
@@ -69,7 +70,8 @@ namespace LiveCoding.Extension.VisualStudio.VariableValues
 					Text = change.GetValueString(),
 					BorderBrush = null,
 					BorderThickness = new Thickness(),
-					Margin = margin
+					Margin = margin,
+					Background = Brushes.Transparent
 				};
 			}
 		}
