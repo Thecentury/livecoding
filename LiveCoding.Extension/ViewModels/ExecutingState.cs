@@ -30,14 +30,16 @@ namespace LiveCoding.Extension.ViewModels
 
 		private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 		private readonly MethodExecutionContext _context = new MethodExecutionContext();
+		private Task _executeTask;
+		private ICodeCompiler _codeCompiler;
 
 		public override void Enter()
 		{
 			var cancellationToken = _cancellationTokenSource.Token;
-			var executeTask = Task.Factory.StartNew( () => RewriteAndExecute( cancellationToken ), cancellationToken );
-			executeTask.ContinueWith( t => OnCompleted( t ), TaskContinuationOptions.OnlyOnRanToCompletion );
-			executeTask.ContinueWith( t => OnFailed( t ), TaskContinuationOptions.OnlyOnFaulted );
-			executeTask.ContinueWith( t => OnCanceled( t ), TaskContinuationOptions.OnlyOnCanceled );
+			_executeTask = Task.Factory.StartNew( () => RewriteAndExecute( cancellationToken ), cancellationToken );
+			_executeTask.ContinueWith( t => OnCompleted( t ), TaskContinuationOptions.OnlyOnRanToCompletion );
+			_executeTask.ContinueWith( t => OnFailed( t ), TaskContinuationOptions.OnlyOnFaulted );
+			_executeTask.ContinueWith( t => OnCanceled( t ), TaskContinuationOptions.OnlyOnCanceled );
 		}
 
 		private void OnCanceled( Task task )
@@ -58,6 +60,12 @@ namespace LiveCoding.Extension.ViewModels
 		public override void ExecuteMainAction()
 		{
 			_cancellationTokenSource.Cancel();
+			if ( _codeCompiler != null )
+			{
+				var compiler = _codeCompiler;
+				_codeCompiler = null;
+				compiler.Dispose();
+			}
 		}
 
 		private void RewriteAndExecute( CancellationToken token )
@@ -85,7 +93,7 @@ namespace LiveCoding.Extension.ViewModels
 				namespaces.Add( namespaceDeclaration.Name.ToString() );
 			}
 
-			AppDomainCodeCompiler codeCompiler = new AppDomainCodeCompiler();
+			_codeCompiler = new AppDomainCodeCompiler();
 
 			try
 			{
@@ -118,9 +126,9 @@ namespace LiveCoding.Extension.ViewModels
 				}
 				references.Add( typeof( VariablesTracker ).Assembly.Location );
 
-				codeCompiler.SetupScriptEngine( namespaces, references );
+				_codeCompiler.SetupScriptEngine( namespaces, references );
 				
-				codeCompiler.SetLiveEventListener( new EventProxyListener() );
+				_codeCompiler.SetLiveEventListener( new EventProxyListener() );
 
 				//var compilation = Compilation.Create( "1.dll",
 				//	new CompilationOptions( OutputKind.DynamicallyLinkedLibrary, debugInformationKind: DebugInformationKind.Full ) )
@@ -133,7 +141,7 @@ namespace LiveCoding.Extension.ViewModels
 
 				try
 				{
-					codeCompiler.Compile( rewritten.ToString() );
+					_codeCompiler.Compile( rewritten.ToString() );
 				}
 				catch ( CompilationErrorException exc )
 				{
@@ -212,7 +220,7 @@ namespace LiveCoding.Extension.ViewModels
 								throw new CannotExecuteException( "Cannot execute static ctor" );
 							}
 
-							codeCompiler.Compile( String.Format( "{0}.{1}( {2} );", fullClassName, methodName, parameterValues ) );
+							_codeCompiler.Compile( String.Format( "{0}.{1}( {2} );", fullClassName, methodName, parameterValues ) );
 						}
 						else
 						{
@@ -228,28 +236,28 @@ namespace LiveCoding.Extension.ViewModels
 
 							if ( hasParameterlessConstructor || doesnotHaveConstructorDeclarationAtAll )
 							{
-								codeCompiler.Compile( String.Format( "var {0} = new {1}();", instanceVariableName, fullClassName ) );
+								_codeCompiler.Compile( String.Format( "var {0} = new {1}();", instanceVariableName, fullClassName ) );
 							}
 							else
 							{
 								var firstConstructor = classDeclaration.ChildNodes().OfType<ConstructorDeclarationSyntax>().First();
 
 								string constructorParameters = firstConstructor.ParameterList.GetDefaultParametersValuesString();
-								codeCompiler.Compile(
+								_codeCompiler.Compile(
 									String.Format( "var {0} = new {1}( {2} );", instanceVariableName, fullClassName, constructorParameters ) );
 							}
 
 							bool ctorInvocation = className == methodName;
 							if ( !ctorInvocation )
 							{
-								codeCompiler.Compile( String.Format( "{0}.{1}( {2} )", instanceVariableName, methodName, parameterValues ) );
+								_codeCompiler.Compile( String.Format( "{0}.{1}( {2} )", instanceVariableName, methodName, parameterValues ) );
 							}
 						}
 					}
 					else
 					{
 						_context.Stopwatch = Stopwatch.StartNew();
-						codeCompiler.Compile( Owner.Data.Call );
+						_codeCompiler.Compile( Owner.Data.Call );
 					}
 				}
 				finally
@@ -264,7 +272,10 @@ namespace LiveCoding.Extension.ViewModels
 			}
 			finally
 			{
-				codeCompiler.Dispose();
+				if ( _codeCompiler != null )
+				{
+					_codeCompiler.Dispose();
+				}
 			}
 		}
 
