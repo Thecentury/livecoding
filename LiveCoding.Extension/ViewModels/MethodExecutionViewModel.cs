@@ -3,7 +3,7 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveCoding.Extension.VisualStudio;
-using LiveCoding.Extension.VisualStudio.ForLoops;
+using LiveCoding.Extension.VisualStudio.Loops;
 using LiveCoding.Extension.VisualStudio.VariableValues;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -49,7 +49,7 @@ namespace LiveCoding.Extension.ViewModels
 			var variableValueTagger = _view.TextBuffer.Properties.GetProperty<VariableValueTagger>( typeof( VariableValueTagger ) );
 			variableValueTagger.ClearVariableChanges();
 
-			var forLoopTagger = _view.TextBuffer.Properties.GetProperty<ForLoopTagger>(typeof (ForLoopTagger));
+			var forLoopTagger = _view.TextBuffer.Properties.GetProperty<LoopTagger>(typeof (LoopTagger));
 			//forLoopTagger.Clear();
 		}
 

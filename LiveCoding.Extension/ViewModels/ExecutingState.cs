@@ -13,7 +13,7 @@ using LiveCoding.Core;
 using LiveCoding.Extension.Rewriting;
 using LiveCoding.Extension.Views;
 using LiveCoding.Extension.VisualStudio;
-using LiveCoding.Extension.VisualStudio.ForLoops;
+using LiveCoding.Extension.VisualStudio.Loops;
 using LiveCoding.Extension.VisualStudio.VariableValues;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
@@ -161,7 +161,7 @@ namespace LiveCoding.Extension.ViewModels
 						}, DispatcherPriority.Normal );
 					} ) );
 
-				ForLoopTagger forLoopTagger = view.TextBuffer.Properties.GetProperty<ForLoopTagger>( typeof( ForLoopTagger ) );
+				LoopTagger loopTagger = view.TextBuffer.Properties.GetProperty<LoopTagger>( typeof( LoopTagger ) );
 				var forLoopSubscription = VariablesTracker.ForLoops.Subscribe( loop =>
 				{
 					token.ThrowIfCancellationRequested();
@@ -171,7 +171,7 @@ namespace LiveCoding.Extension.ViewModels
 						var loopLine = view.TextSnapshot.GetLineFromLineNumber( loop.LoopStartLineNumber );
 						var span = view.GetTextElementSpan( loopLine.End );
 
-						forLoopTagger.BeginLoopWatch( loop, span );
+						loopTagger.BeginLoopWatch( loop, span );
 					}, DispatcherPriority.Normal );
 				} );
 

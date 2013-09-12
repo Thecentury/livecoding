@@ -1,8 +1,8 @@
 ﻿using Microsoft.VisualStudio.Text.Tagging;
 
-namespace LiveCoding.Extension.VisualStudio.ForLoops
+namespace LiveCoding.Extension.VisualStudio.Loops
 {
-	internal sealed class ForLoopTag : ITag
+	internal sealed class LoopTag : ITag
 	{
 		public int LoopStartLineNumber { get; set; }
 
