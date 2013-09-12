@@ -176,9 +176,9 @@
     <Compile Include="Views\RawValueTemplateSelector.cs" />
     <Compile Include="Views\ValueChangeViewModel.cs" />
     <Compile Include="VisualStudio\EventExtensions.cs" />
-    <Compile Include="VisualStudio\ForLoops\ForLoopTag.cs" />
-    <Compile Include="VisualStudio\ForLoops\ForLoopTagger.cs" />
-    <Compile Include="VisualStudio\ForLoops\ForLoopTaggerProvider.cs" />
+    <Compile Include="VisualStudio\Loops\LoopTag.cs" />
+    <Compile Include="VisualStudio\Loops\LoopTagger.cs" />
+    <Compile Include="VisualStudio\Loops\LoopTaggerProvider.cs" />
     <Compile Include="VisualStudio\LiveCodingAdornmentLayer.cs" />
     <Compile Include="VisualStudio\LiveCodingAdornmentLayers.cs" />
     <Compile Include="ViewModels\CanceledState.cs" />

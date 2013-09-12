@@ -8,9 +8,9 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Roslyn.Compilers.CSharp;
 
-namespace LiveCoding.Extension.VisualStudio.ForLoops
+namespace LiveCoding.Extension.VisualStudio.Loops
 {
-	internal sealed class ForLoopTagger : LiveCodingTagger<ForLoopTag, ForLoopView>
+	internal sealed class LoopTagger : LiveCodingTagger<LoopTag, ForLoopView>
 	{
 		private sealed class LoopInfo
 		{
@@ -23,25 +23,25 @@ namespace LiveCoding.Extension.VisualStudio.ForLoops
 			public int LinesHeight { get; set; }
 		}
 
-		public ForLoopTagger( IWpfTextView view )
+		public LoopTagger( IWpfTextView view )
 			: base( view )
 		{
 		}
 
-		protected override ForLoopView CreateAdornment( ForLoopTag data, SnapshotSpan span )
+		protected override ForLoopView CreateAdornment( LoopTag data, SnapshotSpan span )
 		{
 			ForLoopView canvas = new ForLoopView( data );
 			return canvas;
 		}
 
-		protected override bool UpdateAdornment( ForLoopView adornment, ForLoopTag data, SnapshotSpan snapshotSpan )
+		protected override bool UpdateAdornment( ForLoopView adornment, LoopTag data, SnapshotSpan snapshotSpan )
 		{
 			//adornment.SetDataContext( data );
 
 			return true;
 		}
 
-		protected override IEnumerable<Tuple<SnapshotSpan, PositionAffinity?, ForLoopTag>> GetAdornmentData( NormalizedSnapshotSpanCollection spans )
+		protected override IEnumerable<Tuple<SnapshotSpan, PositionAffinity?, LoopTag>> GetAdornmentData( NormalizedSnapshotSpanCollection spans )
 		{
 			if ( spans.Count == 0 )
 			{
@@ -59,7 +59,7 @@ namespace LiveCoding.Extension.VisualStudio.ForLoops
 				yield break;
 			}
 
-			var firstSpan = spans[0];
+			var firstSpan = spans[ 0 ];
 
 			var textSnapshot = firstSpan.Snapshot;
 			string fullText = textSnapshot.GetText();
@@ -68,11 +68,17 @@ namespace LiveCoding.Extension.VisualStudio.ForLoops
 			// todo brinchuk compilation errors handling
 
 			var root = syntaxTree.GetRoot();
-			var forLoops = root.DescendantNodes().OfType<ForStatementSyntax>().ToList();
+			
+			var loops = new List<StatementSyntax>();
 
-			var loopInfos = new List<LoopInfo>( forLoops.Count );
+			loops.AddRange( root.DescendantNodes().OfType<ForStatementSyntax>() );
+			loops.AddRange( root.DescendantNodes().OfType<DoStatementSyntax>() );
+			loops.AddRange( root.DescendantNodes().OfType<WhileStatementSyntax>() );
+			loops.AddRange( root.DescendantNodes().OfType<ForEachStatementSyntax>() );
 
-			foreach ( var loop in forLoops )
+			var loopInfos = new List<LoopInfo>( loops.Count );
+
+			foreach ( var loop in loops )
 			{
 				var firstTokenSpan = loop.GetFirstToken().GetLocation().SourceSpan;
 				var startLine = textSnapshot.GetLineFromPosition( firstTokenSpan.Start );
@@ -100,7 +106,7 @@ namespace LiveCoding.Extension.VisualStudio.ForLoops
 				{
 					if ( span.IntersectsWith( loopInfo.LoopSpan ) )
 					{
-						yield return Tuple.Create( new SnapshotSpan( loopInfo.StartLine.End, 0 ), new PositionAffinity?( PositionAffinity.Predecessor ), new ForLoopTag
+						yield return Tuple.Create( new SnapshotSpan( loopInfo.StartLine.End, 0 ), new PositionAffinity?( PositionAffinity.Predecessor ), new LoopTag
 						{
 							LoopStartLineNumber = loopInfo.StartLine.LineNumber,
 							LineHeight = View.LineHeight,

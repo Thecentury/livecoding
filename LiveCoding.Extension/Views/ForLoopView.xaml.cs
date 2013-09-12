@@ -17,7 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using LiveCoding.Core;
 using LiveCoding.Extension.VisualStudio;
-using LiveCoding.Extension.VisualStudio.ForLoops;
+using LiveCoding.Extension.VisualStudio.Loops;
 
 namespace LiveCoding.Extension.Views
 {
@@ -26,14 +26,14 @@ namespace LiveCoding.Extension.Views
 	/// </summary>
 	internal partial class ForLoopView : UserControl
 	{
-		public ForLoopView( ForLoopTag data )
+		public ForLoopView( LoopTag data )
 		{
 			InitializeComponent();
 
 			DataContext = data;
 		}
 
-		public void SetDataContext( ForLoopTag tag )
+		public void SetDataContext( LoopTag tag )
 		{
 			DataContext = tag;
 			_dataGrid.ItemsSource = null;

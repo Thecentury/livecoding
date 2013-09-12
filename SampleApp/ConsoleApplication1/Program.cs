@@ -90,6 +90,7 @@ namespace ConsoleApplication1
             int[] array = new[] { 1, 2, 3, 4 };
             foreach (var item in array)
             {
+                var q = item;
                 Console.WriteLine(item);
             }
         }
