@@ -10,6 +10,11 @@ namespace LiveCoding.Extension.Views
 	/// </summary>
 	public partial class ObjectView : UserControl
 	{
+		public ObjectView()
+		{
+			InitializeComponent();
+		}
+
 		public ObjectView( object o )
 		{
 			InitializeComponent();

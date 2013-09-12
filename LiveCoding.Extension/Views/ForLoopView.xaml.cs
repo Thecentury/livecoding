@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using LiveCoding.Core;
+using LiveCoding.Extension.VisualStudio;
 using LiveCoding.Extension.VisualStudio.ForLoops;
 
 namespace LiveCoding.Extension.Views
@@ -49,11 +50,16 @@ namespace LiveCoding.Extension.Views
 
 		private void OnNextIteration( ForLoopIteration iteration, ObservableCollection<ValueChangeViewModel> dataSource )
 		{
-			_dataGrid.Columns.Add( new DataGridTextColumn
+			_dataGrid.Columns.Add( new DataGridTemplateColumn
 			{
-				Binding = new Binding( "p" + iteration.IterationNumber ),
-				Header = iteration.IterationNumber
+				CellTemplateSelector = new ValueTemplateSelector( iteration.IterationNumber ),
+				Header = iteration.IterationNumber,
 			} );
+			//_dataGrid.Columns.Add( new DataGridTextColumn
+			//{
+			//	Binding = new Binding( "p" + iteration.IterationNumber ),
+			//	Header = iteration.IterationNumber
+			//} );
 
 			iteration.EventsDuringIteration.ObserveOnDispatcher().Subscribe( e => OnValueAdded( e, iteration, dataSource ) );
 		}

@@ -54,26 +54,15 @@ namespace LiveCoding.Extension.VisualStudio.VariableValues
 		protected override FrameworkElement CreateAdornment( VariableValueTag data, SnapshotSpan span )
 		{
 			ValueChange change = data.Change;
-			object capturedValue = change.CapturedValue;
 
 			Thickness margin = new Thickness( 20, 0, 0, 0 );
 
-			if ( TypeHelper.IsExpandable( capturedValue ) )
-			{
-				return new ObjectView( capturedValue ) { Margin = margin, ToolTip = change.TimestampUtc };
-			}
-			else
-			{
-				return new TextBox
-				{
-					IsReadOnly = true,
-					Text = change.GetValueString(),
-					BorderBrush = null,
-					BorderThickness = new Thickness(),
-					Margin = margin,
-					Background = Brushes.Transparent
-				};
-			}
+			FrameworkElement adornment = ValueViewFactory.CreateView( change );
+
+			adornment.Margin = margin;
+			adornment.ToolTip = change.TimestampUtc.ToLocalTime();
+
+			return adornment;
 		}
 
 		protected override bool UpdateAdornment( FrameworkElement adornment, VariableValueTag data, SnapshotSpan snapshotSpan )
