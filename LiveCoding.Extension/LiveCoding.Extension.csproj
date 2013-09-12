@@ -210,6 +210,8 @@
     <Compile Include="SyntaxTokenListExtensions.cs" />
     <Compile Include="ValuesTrackingRewriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VisualStudio\ValueTemplateSelector.cs" />
+    <Compile Include="VisualStudio\ValueViewFactory.cs" />
     <Compile Include="VisualStudio\VariableValueGlyphFactory.cs" />
     <Compile Include="VisualStudio\VariableValues\LiveCodingTagger.cs" />
     <Compile Include="VisualStudio\VariableValues\VariableValueTag.cs" />

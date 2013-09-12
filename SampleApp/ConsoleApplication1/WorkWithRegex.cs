@@ -22,6 +22,14 @@ namespace ConsoleApplication1
 
             int needle = count / 2 - 1;
         }
+
+        public void SomeLoop()
+        {
+            for (int i = 0; i < 1; i++        )
+            {
+                Regex r = new Regex(@"\d");
+            }
+        }
     }
 
     class WorkWithRegex
@@ -29,6 +37,8 @@ namespace ConsoleApplication1
         public void Method()
         {
             object o = null;
+
+            string s = "123";
 
             Regex r = new Regex(@"(?<g>\d+)\s+");
 

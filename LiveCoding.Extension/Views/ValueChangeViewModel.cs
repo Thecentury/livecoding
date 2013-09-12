@@ -19,6 +19,14 @@ namespace LiveCoding.Extension.Views
 			OnPropertyChanged( "p" + columnNumber );
 		}
 
+		[CanBeNull]
+		public ValueChange GetChangeByIndex( int index )
+		{
+			ValueChange change;
+			_changes.TryGetValue( index, out change );
+			return change;
+		}
+
 		private PropertyChangedEventHandler _propertyChangedEventHandler;
 		event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
 		{
