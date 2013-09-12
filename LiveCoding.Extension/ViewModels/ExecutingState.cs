@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using EnvDTE;
 using LiveCoding.Core;
+using LiveCoding.Extension.Rewriting;
 using LiveCoding.Extension.Views;
 using LiveCoding.Extension.VisualStudio;
 using LiveCoding.Extension.VisualStudio.ForLoops;

@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Reflection;
 using LiveCoding.Core;
+using LiveCoding.Extension.Rewriting;
 using NUnit.Framework;
 using Roslyn.Compilers.CSharp;
 using Roslyn.Scripting.CSharp;
@@ -60,7 +61,8 @@ namespace LiveCoding.Extension.Tests
 			engine.AddReference( typeof( VariablesTracker ).Assembly );
 
 			var session = engine.CreateSession();
-			session.Execute( rewritten.ToString() );
+			string code = rewritten.ToString();
+			session.Execute( code );
 
 			session.Execute( "Program.Method();" );
 		}

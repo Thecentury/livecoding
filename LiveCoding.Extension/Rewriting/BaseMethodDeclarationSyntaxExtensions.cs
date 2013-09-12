@@ -1,6 +1,6 @@
 ﻿using Roslyn.Compilers.CSharp;
 
-namespace LiveCoding.Extension
+namespace LiveCoding.Extension.Rewriting
 {
 	public static class BaseMethodDeclarationSyntaxExtensions
 	{

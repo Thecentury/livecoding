@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Roslyn.Compilers.CSharp;
 
-namespace LiveCoding.Extension
+namespace LiveCoding.Extension.Rewriting
 {
 	public sealed class ValuesTrackingRewriter : SyntaxRewriter
 	{
@@ -18,40 +18,83 @@ namespace LiveCoding.Extension
 			return String.Format( QuotedValueStringFormat, value );
 		}
 
+		public override SyntaxNode VisitWhileStatement( WhileStatementSyntax node )
+		{
+			WhileStatementSyntax whileStatement = (WhileStatementSyntax)base.VisitWhileStatement( node );
+
+			return RewriteLoop( node, new WhileLoopAdapter( whileStatement ) );
+		}
+
+		public override SyntaxNode VisitDoStatement( DoStatementSyntax node )
+		{
+			DoStatementSyntax doStatement = (DoStatementSyntax) base.VisitDoStatement( node );
+
+			return RewriteLoop( node, new DoWhileLoopAdapter( doStatement ) );
+		}
+
+		public override SyntaxNode VisitForEachStatement( ForEachStatementSyntax node )
+		{
+			ForEachStatementSyntax forEachStatement = (ForEachStatementSyntax) base.VisitForEachStatement( node );
+
+			return RewriteLoop( node, new ForeachLoopAdapter( forEachStatement ) );
+		}
+
 		public override SyntaxNode VisitForStatement( ForStatementSyntax node )
 		{
-			var loopSpan = node.SyntaxTree.GetLineSpan( node.Span, usePreprocessorDirectives: true );
 			ForStatementSyntax rewrittenFor = (ForStatementSyntax)base.VisitForStatement( node );
 
+			ILoopAdapter loop = new ForLoopAdapter( rewrittenFor );
+
+			return RewriteLoop( node, loop );
+		}
+
+		private static SyntaxNode RewriteLoop( SyntaxNode node, ILoopAdapter loop )
+		{
 			Guid loopIdHolderId = Guid.NewGuid();
 			SyntaxToken loopIdentifier = Syntax.Identifier( String.Format( "__loop_id_{0}", loopIdHolderId.ToString( "N" ) ) );
 
 			List<StatementSyntax> loopBodyStatements = new List<StatementSyntax>();
 
+			SyntaxToken? iteratorName = loop.GetIteratorName();
+			SyntaxNodeOrToken[] registerIterationArguments;
+
+			if ( iteratorName != null )
+			{
+				registerIterationArguments = new SyntaxNodeOrToken[]
+				{
+					Syntax.Argument( Syntax.IdentifierName( loopIdentifier ) ),
+					Syntax.Token( SyntaxKind.CommaToken ),
+					Syntax.Argument( Syntax.IdentifierName( iteratorName.Value ) )
+				};
+			}
+			else
+			{
+				registerIterationArguments = new SyntaxNodeOrToken[] { Syntax.Argument( Syntax.IdentifierName( loopIdentifier ) ) };
+			}
+
 			loopBodyStatements.Add( Syntax.ExpressionStatement(
 				Syntax.InvocationExpression(
 					Syntax.MemberAccessExpression(
-					SyntaxKind.MemberAccessExpression,
-					Syntax.IdentifierName( VariablesTracker ),
-					Syntax.IdentifierName( RegisterLoopIterationMethod ) ) )
+						SyntaxKind.MemberAccessExpression,
+						Syntax.IdentifierName( VariablesTracker ),
+						Syntax.IdentifierName( RegisterLoopIterationMethod ) ) )
 					.WithArgumentList(
 						Syntax.ArgumentList(
-							Syntax.SeparatedList<ArgumentSyntax>(
-								Syntax.Argument( Syntax.IdentifierName( loopIdentifier ) ),
-								Syntax.Token( SyntaxKind.CommaToken ),
-								Syntax.Argument( Syntax.IdentifierName( rewrittenFor.Declaration.Variables[0].Identifier ) ) ) ) ) ) );
+							Syntax.SeparatedList<ArgumentSyntax>( registerIterationArguments ) ) ) ) );
 
-			BlockSyntax previousLoopBodyBlock = rewrittenFor.Statement as BlockSyntax;
+			BlockSyntax previousLoopBodyBlock = loop.GetStatement() as BlockSyntax;
 			if ( previousLoopBodyBlock != null )
 			{
 				loopBodyStatements.AddRange( previousLoopBodyBlock.Statements );
 			}
 			else
 			{
-				loopBodyStatements.Add( rewrittenFor.Statement );
+				loopBodyStatements.Add( loop.GetStatement() );
 			}
 
-			rewrittenFor = rewrittenFor.WithStatement( Syntax.Block( loopBodyStatements ) );
+			var loopWithNewStatement = loop.WithStatement( Syntax.Block( loopBodyStatements ) );
+
+			var loopSpan = node.SyntaxTree.GetLineSpan( node.Span, usePreprocessorDirectives: true );
 
 			var block = Syntax.Block(
 				Syntax.LocalDeclarationStatement(
@@ -73,19 +116,20 @@ namespace LiveCoding.Extension
 														VariablesTracker ),
 													Syntax.IdentifierName(
 														StartForLoopMethod ) ) )
-											.WithArgumentList(
-												Syntax.ArgumentList(
-													Syntax.SeparatedList(
-														Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression,
-														Syntax.Literal( loopSpan.StartLinePosition.Line ) ) ) ) ) ) ) ) ) ) ),
-														rewrittenFor,
-					Syntax.ExpressionStatement(
-						Syntax.InvocationExpression(
+												.WithArgumentList(
+													Syntax.ArgumentList(
+														Syntax.SeparatedList(
+															Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression,
+																Syntax.Literal( loopSpan.StartLinePosition.Line ) ) ) ) ) ) ) ) ) ) ),
+				loopWithNewStatement,
+				Syntax.ExpressionStatement(
+					Syntax.InvocationExpression(
 						Syntax.MemberAccessExpression(
 							SyntaxKind.MemberAccessExpression,
 							Syntax.IdentifierName( VariablesTracker ),
 							Syntax.IdentifierName( EndForLoopMethod ) ) )
-							.WithArgumentList( Syntax.ArgumentList( Syntax.SeparatedList( Syntax.Argument( Syntax.IdentifierName( loopIdentifier ) ) ) ) ) ) );
+						.WithArgumentList(
+							Syntax.ArgumentList( Syntax.SeparatedList( Syntax.Argument( Syntax.IdentifierName( loopIdentifier ) ) ) ) ) ) );
 
 			return block;
 		}
@@ -104,7 +148,7 @@ namespace LiveCoding.Extension
 		{
 			yield return localDeclaration;
 
-			var identifier = localDeclaration.Declaration.Variables[0].Identifier;
+			var identifier = localDeclaration.Declaration.Variables[ 0 ].Identifier;
 
 			string identifierName = Quote( identifier.ValueText );
 
@@ -113,7 +157,7 @@ namespace LiveCoding.Extension
 			var separatedList = Syntax.SeparatedList<ArgumentSyntax>(
 				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression, Syntax.Literal( identifierName, identifierName ) ) ),
 				 Syntax.Token( SyntaxKind.CommaToken ),
-				Syntax.Argument( Syntax.IdentifierName( localDeclaration.Declaration.Variables[0].Identifier ) ),
+				Syntax.Argument( Syntax.IdentifierName( localDeclaration.Declaration.Variables[ 0 ].Identifier ) ),
 				Syntax.Token( SyntaxKind.CommaToken ),
 				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( lineSpan.StartLinePosition.Line ) ) )
 				);

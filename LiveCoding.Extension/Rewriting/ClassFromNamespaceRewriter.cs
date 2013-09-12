@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Roslyn.Compilers.CSharp;
 
-namespace LiveCoding.Extension
+namespace LiveCoding.Extension.Rewriting
 {
 	public sealed class ClassFromNamespaceRewriter : SyntaxRewriter
 	{

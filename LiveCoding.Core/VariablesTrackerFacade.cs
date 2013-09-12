@@ -36,7 +36,7 @@ namespace LiveCoding.Core
 			return evt.LoopId;
 		}
 
-		public static void RegisterLoopIteration( Guid loopId, object iteratorValue )
+		public static void RegisterLoopIteration( Guid loopId, object iteratorValue = null )
 		{
 			var evt = new ForLoopIterationEvent( loopId, iteratorValue );
 
