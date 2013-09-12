@@ -24,9 +24,9 @@ namespace ConsoleApplication1
             int min = 0;
             int max = count;
 
-            while (min < max)
+            while (min <= max)
             {
-                int mid = (max - min) / 2;
+                int mid = (max + min) / 2;
                 int value = array[mid];
                 if (value == needle)
                 {
@@ -34,11 +34,11 @@ namespace ConsoleApplication1
                 }
                 else if (value < needle)
                 {
-                    min = mid;
+                    min = mid + 1;
                 }
                 else
                 {
-                    max = mid;
+                    max = mid - 1;
                 }
             }
         }
