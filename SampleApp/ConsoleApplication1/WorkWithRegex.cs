@@ -21,11 +21,31 @@ namespace ConsoleApplication1
             }
 
             int needle = count / 2 - 1;
+            int min = 0;
+            int max = count;
+
+            while (min < max)
+            {
+                int mid = (max - min) / 2;
+                int value = array[mid];
+                if (value == needle)
+                {
+                    break;
+                }
+                else if (value < needle)
+                {
+                    min = mid;
+                }
+                else
+                {
+                    max = mid;
+                }
+            }
         }
 
         public void SomeLoop()
         {
-            for (int i = 0; i < 1; i++        )
+            for (int i = 0; i < 1; i++)
             {
                 Regex r = new Regex(@"\d");
             }

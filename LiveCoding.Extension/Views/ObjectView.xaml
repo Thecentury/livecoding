@@ -3,8 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:objectVisualizing="clr-namespace:LiveCoding.Extension.ViewModels.ObjectVisualizing"
-             xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:views="clr-namespace:LiveCoding.Extension.Views"
              Panel.ZIndex="{Binding IsExpanded,
                                     Converter={x:Static views:BooleanToZIndexConverter.Default}}"
@@ -12,76 +10,64 @@
              d:DataContext="{d:DesignInstance views:ObjectViewViewModel}"
              d:DesignHeight="300"
              d:DesignWidth="300"
-             mc:Ignorable="d"
-             >
-    <!--
-        <UserControl.Effect>
-        <DropShadowEffect BlurRadius="1"
-        Direction="315"
-        Opacity="0.4"
-        ShadowDepth="2"
-        Color="DeepSkyBlue" />
-        </UserControl.Effect>
-    -->
+             mc:Ignorable="d">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
-    <Canvas>
-        <TreeView Name="tvObjectGraph"
-                  Canvas.Top="-16"
-                  FocusVisualStyle="{x:Null}"
-                  FontSize="13"
-                  ItemsSource="{Binding Root.FirstGeneration}">
-            <TreeView.ItemContainerStyle>
-                <Style TargetType="{x:Type TreeViewItem}" d:DataContext="{d:DesignInstance objectVisualizing:ObjectViewModel}">
-                    <Style.Resources>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#AAADD8E6" />
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
-                    </Style.Resources>
+    <TreeView d:DataContext="{d:DesignInstance views:ObjectViewViewModel}"
+              FocusVisualStyle="{x:Null}"
+              FontSize="13"
+              Margin="0"
+              ItemsSource="{Binding Root.FirstGeneration}">
+        <TreeView.ItemContainerStyle>
+            <Style TargetType="{x:Type TreeViewItem}">
+                <Style.Resources>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#AAADD8E6" />
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+                </Style.Resources>
 
-                    <Setter Property="BorderBrush" Value="{x:Null}" />
-                    <Setter Property="BorderThickness" Value="0" />
-                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                    <Setter Property="FontWeight" Value="Normal"/>
-                </Style>
-            </TreeView.ItemContainerStyle>
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate AlternationCount="2" ItemsSource="{Binding Children}">
-                    <StackPanel Orientation="Horizontal">
-                        <StackPanel Orientation="Horizontal" Visibility="{Binding IsRoot, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <TextBlock Padding="2,0" Text="{Binding Name}" />
-                            <Line Width="2"
-                                  Margin="2,0"
-                                  VerticalAlignment="Stretch"
-                                  Stretch="Fill"
-                                  Stroke="LightGray"
-                                  Y1="0"
-                                  Y2="1" />
-                        </StackPanel>
-                        <TextBlock Padding="2,0" Text="{Binding Value}" />
-                        <!--
-                            <ContentControl Content="{Binding RawValue}" Grid.Column="2">
-                            <ContentControl.ContentTemplateSelector>
-                            <views:RawValueTemplateSelector/>
-                            </ContentControl.ContentTemplateSelector>
-                            <ContentControl.Resources>
-                            <DataTemplate DataType="Color" x:Key="{x:Type Color}">
-                            <Rectangle Width="15">
-                            <Rectangle.Fill>
-                            <SolidColorBrush Color="{Binding}"/>
-                            </Rectangle.Fill>
-                            </Rectangle>
-                            </DataTemplate>
-                            
-                            <DataTemplate DataType="system:Object" x:Key="{x:Type system:Object}">
-                            </DataTemplate>
-                            </ContentControl.Resources>
-                            </ContentControl>
-                        -->
+                <Setter Property="BorderBrush" Value="{x:Null}" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                <Setter Property="FontWeight" Value="Normal" />
+            </Style>
+        </TreeView.ItemContainerStyle>
+        <TreeView.ItemTemplate>
+            <HierarchicalDataTemplate AlternationCount="2" ItemsSource="{Binding Children}">
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" Visibility="{Binding IsRoot, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TextBlock Padding="2,0" Text="{Binding Name}" />
+                        <Line Width="2"
+                              Margin="2,0"
+                              VerticalAlignment="Stretch"
+                              Stretch="Fill"
+                              Stroke="LightGray"
+                              Y1="0"
+                              Y2="1" />
                     </StackPanel>
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
-        </TreeView>
-    </Canvas>
+                    <TextBlock Padding="2,0" Text="{Binding Value}" />
+                    <!--
+                        <ContentControl Content="{Binding RawValue}" Grid.Column="2">
+                        <ContentControl.ContentTemplateSelector>
+                        <views:RawValueTemplateSelector/>
+                        </ContentControl.ContentTemplateSelector>
+                        <ContentControl.Resources>
+                        <DataTemplate DataType="Color" x:Key="{x:Type Color}">
+                        <Rectangle Width="15">
+                        <Rectangle.Fill>
+                        <SolidColorBrush Color="{Binding}"/>
+                        </Rectangle.Fill>
+                        </Rectangle>
+                        </DataTemplate>
+                        
+                        <DataTemplate DataType="system:Object" x:Key="{x:Type system:Object}">
+                        </DataTemplate>
+                        </ContentControl.Resources>
+                        </ContentControl>
+                    -->
+                </StackPanel>
+            </HierarchicalDataTemplate>
+        </TreeView.ItemTemplate>
+    </TreeView>
 </UserControl>
