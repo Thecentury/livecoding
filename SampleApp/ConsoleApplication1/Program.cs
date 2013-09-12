@@ -79,6 +79,14 @@ namespace ConsoleApplication1
             }
         }
 
+        public static void EndlessLoop()
+        {
+            while (true)
+            {
+                Thread.Sleep(500);
+            }
+        }
+
         public static void ForeachLoop()
         {
             int j = 1;

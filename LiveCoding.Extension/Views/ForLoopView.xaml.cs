@@ -55,11 +55,6 @@ namespace LiveCoding.Extension.Views
 				CellTemplateSelector = new ValueTemplateSelector( iteration.IterationNumber ),
 				Header = iteration.IterationNumber,
 			} );
-			//_dataGrid.Columns.Add( new DataGridTextColumn
-			//{
-			//	Binding = new Binding( "p" + iteration.IterationNumber ),
-			//	Header = iteration.IterationNumber
-			//} );
 
 			iteration.EventsDuringIteration.ObserveOnDispatcher().Subscribe( e => OnValueAdded( e, iteration, dataSource ) );
 		}

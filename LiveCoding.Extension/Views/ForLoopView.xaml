@@ -21,6 +21,7 @@
                   CanUserSortColumns="False"
                   IsReadOnly="True"
                   EnableColumnVirtualization="True"
+                  VirtualizingStackPanel.IsVirtualizing="True"
                   SelectionMode="Single"
                   SelectionUnit="Cell"
                   GridLinesVisibility="None"
