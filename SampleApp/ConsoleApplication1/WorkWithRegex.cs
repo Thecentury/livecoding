@@ -7,11 +7,21 @@ using System.Threading.Tasks;
 
 namespace ConsoleApplication1
 {
+    class Loops
+    {
+        public void ForLoopWithOneLineBody()
+        {
+            int j = 0;
+            for (int i = 0; i < 10; i++)
+                j += i;
+        }
+    }
+
     class BinarySearch
     {
         public void PerformBinarySearch()
         {
-            const int count = 100; 
+            const int count = 100;
 
             int[] array = new int[count];
             for (int i = 0; i < count; i++)
@@ -27,7 +37,7 @@ namespace ConsoleApplication1
             while (min <= max)
             {
                 int mid = (max + min) / 2;
-                int value = array[mid]; 
+                int value = array[mid];
                 if (value == needle)
                 {
                     break;
