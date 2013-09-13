@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Roslyn.Compilers.CSharp;
 
 namespace LiveCoding.Extension.Rewriting
@@ -27,25 +28,36 @@ namespace LiveCoding.Extension.Rewriting
 
 		public override SyntaxNode VisitDoStatement( DoStatementSyntax node )
 		{
-			DoStatementSyntax doStatement = (DoStatementSyntax) base.VisitDoStatement( node );
+			DoStatementSyntax doStatement = (DoStatementSyntax)base.VisitDoStatement( node );
 
 			return RewriteLoop( node, new DoWhileLoopAdapter( doStatement ) );
 		}
 
 		public override SyntaxNode VisitForEachStatement( ForEachStatementSyntax node )
 		{
-			ForEachStatementSyntax forEachStatement = (ForEachStatementSyntax) base.VisitForEachStatement( node );
+			ForEachStatementSyntax forEachStatement = (ForEachStatementSyntax)base.VisitForEachStatement( node );
 
 			return RewriteLoop( node, new ForeachLoopAdapter( forEachStatement ) );
+		}
+
+		public override SyntaxNode VisitExpressionStatement( ExpressionStatementSyntax node )
+		{
+			var rewrittenLines = VisitStatement( base.VisitExpressionStatement( node ) ).ToList();
+			if ( rewrittenLines.Count == 1 )
+			{
+				return rewrittenLines[ 0 ];
+			}
+			else
+			{
+				return Syntax.Block( rewrittenLines );
+			}
 		}
 
 		public override SyntaxNode VisitForStatement( ForStatementSyntax node )
 		{
 			ForStatementSyntax rewrittenFor = (ForStatementSyntax)base.VisitForStatement( node );
 
-			ILoopAdapter loop = new ForLoopAdapter( rewrittenFor );
-
-			return RewriteLoop( node, loop );
+			return RewriteLoop( node, new ForLoopAdapter( rewrittenFor ) );
 		}
 
 		private static SyntaxNode RewriteLoop( SyntaxNode node, ILoopAdapter loop )
@@ -280,7 +292,6 @@ namespace LiveCoding.Extension.Rewriting
 			var track = CreateVariableTrackingExpression( arguments );
 			yield return track;
 		}
-
 
 		public override SyntaxNode VisitBlock( BlockSyntax node )
 		{
