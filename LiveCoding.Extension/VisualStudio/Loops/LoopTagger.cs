@@ -6,7 +6,6 @@ using LiveCoding.Extension.Views;
 using LiveCoding.Extension.VisualStudio.VariableValues;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Formatting;
 using Roslyn.Compilers.CSharp;
 
 namespace LiveCoding.Extension.VisualStudio.Loops
@@ -41,10 +40,12 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 
 		protected override bool UpdateAdornment( ForLoopView adornment, LoopTag data, SnapshotSpan snapshotSpan )
 		{
-			//adornment.SetDataContext( data );
+			adornment.SetDataContext( data );
 
 			return true;
 		}
+
+		private readonly Dictionary<int, List<LoopInfo>> _loopsCache = new Dictionary<int, List<LoopInfo>>(); 
 
 		protected override IEnumerable<Tuple<SnapshotSpan, PositionAffinity?, LoopTag>> GetAdornmentData( NormalizedSnapshotSpanCollection spans )
 		{
@@ -66,7 +67,46 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 
 			var firstSpan = spans[ 0 ];
 
-			var textSnapshot = firstSpan.Snapshot;
+			var loopInfos = GetLoops( firstSpan.Snapshot );
+
+			var tempLoops = new List<LoopInfo>( loopInfos.Count );
+			tempLoops.AddRange( loopInfos );
+
+			foreach ( var span in spans )
+			{
+				foreach ( var loopInfo in tempLoops )
+				{
+					if ( span.IntersectsWith( loopInfo.LoopSpan ) )
+					{
+						int tabSize = View.FormattedLineSource.TabSize;
+						double leftMargin = View.FormattedLineSource.ColumnWidth * (
+							GetExpandedCharactersLength( loopInfo.LongestLoopLine, tabSize ) -
+							GetExpandedCharactersLength( loopInfo.StartLine, tabSize ) );
+
+						yield return Tuple.Create( new SnapshotSpan( loopInfo.StartLine.End, 0 ), new PositionAffinity?( PositionAffinity.Predecessor ), new LoopTag
+						{
+							LoopStartLineNumber = loopInfo.StartLine.LineNumber,
+							LineHeight = View.LineHeight,
+							RowsCount = loopInfo.LinesHeight,
+							LeftMargin = leftMargin
+						} );
+
+						tempLoops.Remove( loopInfo );
+						break;
+					}
+				}
+			}
+		}
+
+		private List<LoopInfo> GetLoops( ITextSnapshot textSnapshot )
+		{
+			List<LoopInfo> result;
+			int versionNumber = textSnapshot.Version.VersionNumber;
+			if ( _loopsCache.TryGetValue( versionNumber, out result ) )
+			{
+				return result;
+			}
+
 			string fullText = textSnapshot.GetText();
 			var syntaxTree = SyntaxTree.ParseText( fullText );
 
@@ -122,25 +162,27 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 				}
 			}
 
-			foreach ( var span in spans )
-			{
-				foreach ( var loopInfo in loopInfos )
-				{
-					if ( span.IntersectsWith( loopInfo.LoopSpan ) )
-					{
-						double leftMargin = View.FormattedLineSource.ColumnWidth * ( loopInfo.LongestLoopLine.Length - loopInfo.StartLine.Length + 1 );
+			_loopsCache[versionNumber] = loopInfos;
 
-						yield return Tuple.Create( new SnapshotSpan( loopInfo.StartLine.End, 0 ), new PositionAffinity?( PositionAffinity.Predecessor ), new LoopTag
-						{
-							LoopStartLineNumber = loopInfo.StartLine.LineNumber,
-							LineHeight = View.LineHeight,
-							RowsCount = loopInfo.LinesHeight,
-							LeftMargin = leftMargin
-						} );
-						break;
-					}
-				}
+			List<int> previousVersions = _loopsCache.Keys.Where( k=> k< versionNumber ).ToList();
+
+			foreach ( int previousVersion in previousVersions )
+			{
+				_loopsCache.Remove( previousVersion );
 			}
+
+			return loopInfos;
+		}
+
+		private static int GetExpandedCharactersLength( ITextSnapshotLine line, int tabSize )
+		{
+			return GetExpandedCharactersLength( line.GetText(), tabSize );
+		}
+
+		private static int GetExpandedCharactersLength( string str, int tabSize )
+		{
+			int tabsCount = str.Count( c => c == '\t' );
+			return tabsCount * tabSize + str.Length - tabsCount;
 		}
 
 		public void BeginLoopWatch( ForLoopInfo loop, SnapshotSpan span )
