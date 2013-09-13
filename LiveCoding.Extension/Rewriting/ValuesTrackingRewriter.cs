@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Documents;
+using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 
 namespace LiveCoding.Extension.Rewriting
@@ -12,11 +14,62 @@ namespace LiveCoding.Extension.Rewriting
 		private const string StartForLoopMethod = "StartForLoop";
 		private const string EndForLoopMethod = "EndForLoop";
 		private const string RegisterLoopIterationMethod = "RegisterLoopIteration";
+		private const string RegisterIf = "RegisterIf";
 		private const string QuotedValueStringFormat = "\"{0}\"";
 
 		private static string Quote( string value )
 		{
 			return String.Format( QuotedValueStringFormat, value );
+		}
+
+		public override SyntaxNode VisitIfStatement( IfStatementSyntax node )
+		{
+			IfStatementSyntax rewrittenIf = (IfStatementSyntax)base.VisitIfStatement( node );
+
+			string conditionIdentifierName = "__live_coding_condition_" + Guid.NewGuid().ToString( "N" );
+
+			var ifSpan = node.SyntaxTree.GetLineSpan( node.Statement.Span, true );
+
+			List<SyntaxNodeOrToken> ifRegistrationArguments = new List<SyntaxNodeOrToken>();
+			ifRegistrationArguments.Add( Syntax.Argument( Syntax.IdentifierName( conditionIdentifierName ) ) );
+			ifRegistrationArguments.Add( Syntax.Token( SyntaxKind.CommaToken ) );
+			ifRegistrationArguments.Add( Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( ifSpan.StartLinePosition.Line ) ) ) );
+			ifRegistrationArguments.Add( Syntax.Token( SyntaxKind.CommaToken ) );
+			ifRegistrationArguments.Add( Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( ifSpan.EndLinePosition.Line ) ) ) );
+
+			if ( node.Else != null )
+			{
+				var elseSpan = node.SyntaxTree.GetLineSpan( node.Else.Span, true );
+
+				ifRegistrationArguments.Add( Syntax.Token( SyntaxKind.CommaToken ) );
+				ifRegistrationArguments.Add( Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( elseSpan.StartLinePosition.Line ) ) ) );
+				ifRegistrationArguments.Add( Syntax.Token( SyntaxKind.CommaToken ) );
+				ifRegistrationArguments.Add( Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( elseSpan.EndLinePosition.Line ) ) ) );
+			}
+
+			var result = Syntax.Block( Syntax.List<StatementSyntax>(
+				Syntax.LocalDeclarationStatement(
+				Syntax.VariableDeclaration(
+						Syntax.PredefinedType( Syntax.Token( SyntaxKind.BoolKeyword ) ) )
+					.WithVariables(
+						Syntax.SeparatedList(
+						Syntax.VariableDeclarator(
+							Syntax.Identifier( conditionIdentifierName ) )
+						.WithInitializer( Syntax.EqualsValueClause( rewrittenIf.Condition ) )
+				) ) ),
+				Syntax.ExpressionStatement(
+				Syntax.InvocationExpression(
+					Syntax.MemberAccessExpression(
+						SyntaxKind.MemberAccessExpression,
+						Syntax.IdentifierName( VariablesTracker ),
+						Syntax.IdentifierName( RegisterIf ) ) )
+					.WithArgumentList(
+						Syntax.ArgumentList(
+							Syntax.SeparatedList<ArgumentSyntax>( ifRegistrationArguments ) ) ) ),
+				rewrittenIf.WithCondition( Syntax.IdentifierName( conditionIdentifierName ) )
+			) );
+
+			return result;
 		}
 
 		public override SyntaxNode VisitWhileStatement( WhileStatementSyntax node )
