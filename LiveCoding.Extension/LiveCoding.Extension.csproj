@@ -162,7 +162,11 @@
     <Compile Include="ViewModels\ObjectVisualizing\ObjectViewModelHierarchy.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\TypeHelper.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\TypePrettyPrinter.cs" />
+    <Compile Include="Views\BooleanToBrushConverter.cs" />
     <Compile Include="Views\BooleanToZIndexConverter.cs" />
+    <Compile Include="Views\ConditionView.xaml.cs">
+      <DependentUpon>ConditionView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ForLoopView.xaml.cs">
       <DependentUpon>ForLoopView.xaml</DependentUpon>
     </Compile>
@@ -176,6 +180,9 @@
     <Compile Include="Views\RawValueTemplateSelector.cs" />
     <Compile Include="Views\ValueChangeViewModel.cs" />
     <Compile Include="VisualStudio\EventExtensions.cs" />
+    <Compile Include="VisualStudio\If\BooleanConditionTag.cs" />
+    <Compile Include="VisualStudio\If\BooleanConditionTagger.cs" />
+    <Compile Include="VisualStudio\If\BooleanConditionTaggerProvider.cs" />
     <Compile Include="VisualStudio\Loops\LoopTag.cs" />
     <Compile Include="VisualStudio\Loops\LoopTagger.cs" />
     <Compile Include="VisualStudio\Loops\LoopTaggerProvider.cs" />
@@ -217,6 +224,7 @@
     <Compile Include="Rewriting\SyntaxTokenListExtensions.cs" />
     <Compile Include="Rewriting\ValuesTrackingRewriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VisualStudio\SyntaxNodeOrTokenCollectionExtensions.cs" />
     <Compile Include="VisualStudio\ValueTemplateSelector.cs" />
     <Compile Include="VisualStudio\ValueViewFactory.cs" />
     <Compile Include="VisualStudio\VariableValueGlyphFactory.cs" />
@@ -257,6 +265,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\ConditionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ExecuteMethodControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

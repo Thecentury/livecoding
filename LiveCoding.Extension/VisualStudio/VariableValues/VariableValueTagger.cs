@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 using LiveCoding.Core;
-using LiveCoding.Extension.ViewModels.ObjectVisualizing;
 using LiveCoding.Extension.Views;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -29,16 +26,6 @@ namespace LiveCoding.Extension.VisualStudio.VariableValues
 		}
 
 		private List<ValueChange> _changes;
-
-		public void SetVariableValues( IEnumerable<ValueChange> changes, List<SnapshotSpan> spans )
-		{
-			_changes = new List<ValueChange>( changes );
-
-			foreach ( var snapshotSpan in spans )
-			{
-				RaiseTagsChanged( snapshotSpan );
-			}
-		}
 
 		public void AddVariableChange( ValueChange change, SnapshotSpan span )
 		{

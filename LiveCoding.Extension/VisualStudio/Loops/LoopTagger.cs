@@ -196,7 +196,7 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 
 		public void Clear()
 		{
-			throw new NotImplementedException();
+			// todo brinchuk 
 		}
 	}
 }
