@@ -11,7 +11,7 @@ namespace ConsoleApplication1
     {
         public void PerformBinarySearch()
         {
-            const int count = 10000; 
+            const int count = 100; 
 
             int[] array = new int[count];
             for (int i = 0; i < count; i++)
@@ -24,10 +24,10 @@ namespace ConsoleApplication1
             int min = 0;
             int max = count;
 
-            while (min <= max                  )
+            while (min <= max)
             {
                 int mid = (max + min) / 2;
-                int value = array[mid];
+                int value = array[mid]; 
                 if (value == needle)
                 {
                     break;

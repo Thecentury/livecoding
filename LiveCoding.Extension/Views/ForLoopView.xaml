@@ -4,6 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:loops="clr-namespace:LiveCoding.Extension.VisualStudio.Loops"
+             xmlns:views="clr-namespace:LiveCoding.Extension.Views"
              d:DataContext="{d:DesignInstance loops:LoopTag}"
              d:DesignHeight="300"
              d:DesignWidth="300"
@@ -32,6 +33,7 @@
                   RowHeaderWidth="0"
                   BorderBrush="{x:Null}"
                   BorderThickness="0"
+                  Canvas.Left="{Binding LeftMargin}"
                   Background="Transparent" 
                   RowBackground="Transparent">
             <DataGrid.ColumnHeaderStyle>

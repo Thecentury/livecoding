@@ -14,5 +14,7 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 		{
 			get { return LineHeight * RowsCount; }
 		}
+
+		public double LeftMargin { get; set; }
 	}
 }
