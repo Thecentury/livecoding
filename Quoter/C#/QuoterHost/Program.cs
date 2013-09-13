@@ -11,10 +11,12 @@ namespace QuoterHost
 using System;
 
 class C1 {
-	class Inner { }
-}
+	void Method() {
+		bool c = 1==2;
+		if(c){
 
-class C2 {
+			}
+}
 }
 ";
             var sourceNode = SyntaxTree.ParseText(sourceText).GetRoot();

@@ -16,13 +16,9 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 		{
 			public ITextSnapshotLine StartLine { get; set; }
 
-			public ITextSnapshotLine EndLine { get; set; }
-
 			public SnapshotSpan LoopSpan { get; set; }
 
 			public int LinesHeight { get; set; }
-
-			public int MaxLineLength { get; set; }
 
 			public ITextSnapshotLine LongestLoopLine { get; set; }
 		}
@@ -151,12 +147,10 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 					loopInfos.Add( new LoopInfo
 					{
 						StartLine = loopStartLine,
-						EndLine = loopEndLine,
 						LoopSpan = new SnapshotSpan(
 							new SnapshotPoint( textSnapshot, firstTokenSpan.Start ),
 							new SnapshotPoint( textSnapshot, lastTokenSpan.End ) ),
 						LinesHeight = loopEndLine.LineNumber - loopStartLine.LineNumber + 1,
-						MaxLineLength = maxLength,
 						LongestLoopLine = longestLine
 					} );
 				}

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Reflection;
 using LiveCoding.Core;
 using LiveCoding.Extension.Rewriting;
@@ -38,13 +39,27 @@ namespace LiveCoding.Extension.Tests
 
 		private const string OneLineLoop = @"
 class C {
-void M(){
-int j = 0;
-for (int i = 0; i < 10; i++)
-	j = i;
-}
-}
-";
+	void M() {
+		int j = 0;
+		for (int i = 0; i < 10; i++)
+			j = i;
+	}
+}";
+
+		private const string OneIf = @"
+class C {
+	void M() {
+		if( System.Console.ReadLine() == null ) {
+			System.Console.WriteLine(""if"");
+		} 
+		else if ( 1 == 2 ) {
+		}
+		else if ( 2 == 3 ) {
+		}
+		else {
+		}
+	}
+}";
 
 		[Test]
 		public void GetScriptAssemblyName()
@@ -59,6 +74,7 @@ for (int i = 0; i < 10; i++)
 
 		[TestCase( SomeLoop )]
 		[TestCase( OneLineLoop )]
+		[TestCase( OneIf )]
 		public void Rewrite( string code )
 		{
 			ValuesTrackingRewriter rewriter = new ValuesTrackingRewriter();
@@ -72,6 +88,9 @@ for (int i = 0; i < 10; i++)
 
 			var session = engine.CreateSession();
 			string rewrittenCode = rewritten.ToString();
+
+			Console.WriteLine( rewrittenCode );
+
 			session.Execute( rewrittenCode );
 		}
 	}
