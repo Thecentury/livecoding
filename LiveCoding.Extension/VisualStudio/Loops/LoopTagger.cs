@@ -6,6 +6,7 @@ using LiveCoding.Extension.Views;
 using LiveCoding.Extension.VisualStudio.VariableValues;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Formatting;
 using Roslyn.Compilers.CSharp;
 
 namespace LiveCoding.Extension.VisualStudio.Loops
@@ -21,6 +22,10 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 			public SnapshotSpan LoopSpan { get; set; }
 
 			public int LinesHeight { get; set; }
+
+			public int MaxLineLength { get; set; }
+
+			public ITextSnapshotLine LongestLoopLine { get; set; }
 		}
 
 		public LoopTagger( IWpfTextView view )
@@ -68,7 +73,7 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 			// todo brinchuk compilation errors handling
 
 			var root = syntaxTree.GetRoot();
-			
+
 			var loops = new List<StatementSyntax>();
 
 			loops.AddRange( root.DescendantNodes().OfType<ForStatementSyntax>() );
@@ -81,21 +86,38 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 			foreach ( var loop in loops )
 			{
 				var firstTokenSpan = loop.GetFirstToken().GetLocation().SourceSpan;
-				var startLine = textSnapshot.GetLineFromPosition( firstTokenSpan.Start );
+				var loopStartLine = textSnapshot.GetLineFromPosition( firstTokenSpan.Start );
 
 				var lastTokenSpan = loop.GetLastToken().GetLocation().SourceSpan;
-				var endLine = textSnapshot.GetLineFromPosition( lastTokenSpan.End );
+				var loopEndLine = textSnapshot.GetLineFromPosition( lastTokenSpan.End );
 
 				if ( firstTokenSpan.Start < lastTokenSpan.End )
 				{
+					int loopStartLineNumber = loopStartLine.LineNumber;
+					int loopEndLineNumber = loopEndLine.LineNumber;
+
+					ITextSnapshotLine longestLine = loopStartLine;
+					int maxLength = loopStartLine.Length;
+					for ( int i = loopStartLineNumber; i <= loopEndLineNumber; i++ )
+					{
+						var line = textSnapshot.GetLineFromLineNumber( i );
+						if ( line.Length > maxLength )
+						{
+							maxLength = line.Length;
+							longestLine = line;
+						}
+					}
+
 					loopInfos.Add( new LoopInfo
 					{
-						StartLine = startLine,
-						EndLine = endLine,
-						LoopSpan =
-							new SnapshotSpan( new SnapshotPoint( textSnapshot, firstTokenSpan.Start ),
-								new SnapshotPoint( textSnapshot, lastTokenSpan.End ) ),
-						LinesHeight = endLine.LineNumber - startLine.LineNumber + 1
+						StartLine = loopStartLine,
+						EndLine = loopEndLine,
+						LoopSpan = new SnapshotSpan(
+							new SnapshotPoint( textSnapshot, firstTokenSpan.Start ),
+							new SnapshotPoint( textSnapshot, lastTokenSpan.End ) ),
+						LinesHeight = loopEndLine.LineNumber - loopStartLine.LineNumber + 1,
+						MaxLineLength = maxLength,
+						LongestLoopLine = longestLine
 					} );
 				}
 			}
@@ -106,12 +128,16 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 				{
 					if ( span.IntersectsWith( loopInfo.LoopSpan ) )
 					{
+						double leftMargin = View.FormattedLineSource.ColumnWidth * ( loopInfo.LongestLoopLine.Length - loopInfo.StartLine.Length + 1 );
+
 						yield return Tuple.Create( new SnapshotSpan( loopInfo.StartLine.End, 0 ), new PositionAffinity?( PositionAffinity.Predecessor ), new LoopTag
 						{
 							LoopStartLineNumber = loopInfo.StartLine.LineNumber,
 							LineHeight = View.LineHeight,
-							RowsCount = loopInfo.LinesHeight
+							RowsCount = loopInfo.LinesHeight,
+							LeftMargin = leftMargin
 						} );
+						break;
 					}
 				}
 			}
