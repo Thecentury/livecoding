@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Documents;
-using Roslyn.Compilers;
+using LiveCoding.Extension.VisualStudio;
 using Roslyn.Compilers.CSharp;
 
 namespace LiveCoding.Extension.Rewriting
@@ -31,20 +30,26 @@ namespace LiveCoding.Extension.Rewriting
 			var ifSpan = node.SyntaxTree.GetLineSpan( node.Statement.Span, true );
 
 			List<SyntaxNodeOrToken> ifRegistrationArguments = new List<SyntaxNodeOrToken>();
-			ifRegistrationArguments.Add( Syntax.Argument( Syntax.IdentifierName( conditionIdentifierName ) ) );
-			ifRegistrationArguments.Add( Syntax.Token( SyntaxKind.CommaToken ) );
-			ifRegistrationArguments.Add( Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( ifSpan.StartLinePosition.Line ) ) ) );
-			ifRegistrationArguments.Add( Syntax.Token( SyntaxKind.CommaToken ) );
-			ifRegistrationArguments.Add( Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( ifSpan.EndLinePosition.Line ) ) ) );
+			ifRegistrationArguments.AddIdentifier( conditionIdentifierName );
+			ifRegistrationArguments.AddComma();
+			ifRegistrationArguments.AddLiteral( ifSpan.StartLinePosition.Line );
+			ifRegistrationArguments.AddComma();
+			ifRegistrationArguments.AddLiteral( ifSpan.EndLinePosition.Line );
+			ifRegistrationArguments.AddComma();
+
+			var conditionSpan = node.Condition.Span;
+			ifRegistrationArguments.AddLiteral( conditionSpan.Start );
+			ifRegistrationArguments.AddComma();
+			ifRegistrationArguments.AddLiteral( conditionSpan.End );
 
 			if ( node.Else != null )
 			{
 				var elseSpan = node.SyntaxTree.GetLineSpan( node.Else.Span, true );
 
-				ifRegistrationArguments.Add( Syntax.Token( SyntaxKind.CommaToken ) );
-				ifRegistrationArguments.Add( Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( elseSpan.StartLinePosition.Line ) ) ) );
-				ifRegistrationArguments.Add( Syntax.Token( SyntaxKind.CommaToken ) );
-				ifRegistrationArguments.Add( Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( elseSpan.EndLinePosition.Line ) ) ) );
+				ifRegistrationArguments.AddComma();
+				ifRegistrationArguments.AddLiteral( elseSpan.StartLinePosition.Line );
+				ifRegistrationArguments.AddComma();
+				ifRegistrationArguments.AddLiteral( elseSpan.EndLinePosition.Line );
 			}
 
 			var result = Syntax.Block( Syntax.List<StatementSyntax>(

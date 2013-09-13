@@ -3,6 +3,7 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using LiveCoding.Extension.VisualStudio;
+using LiveCoding.Extension.VisualStudio.If;
 using LiveCoding.Extension.VisualStudio.Loops;
 using LiveCoding.Extension.VisualStudio.VariableValues;
 using Microsoft.VisualStudio.Text.Editor;
@@ -46,11 +47,16 @@ namespace LiveCoding.Extension.ViewModels
 
 		private void Clear()
 		{
-			var variableValueTagger = _view.TextBuffer.Properties.GetProperty<VariableValueTagger>( typeof( VariableValueTagger ) );
+			var properties = _view.TextBuffer.Properties;
+
+			var variableValueTagger = properties.GetProperty<VariableValueTagger>( typeof( VariableValueTagger ) );
 			variableValueTagger.ClearVariableChanges();
 
-			var forLoopTagger = _view.TextBuffer.Properties.GetProperty<LoopTagger>(typeof (LoopTagger));
-			//forLoopTagger.Clear();
+			var booleanConditionTagger = properties.GetProperty<BooleanConditionTagger>( typeof(BooleanConditionTagger) );
+			booleanConditionTagger.Clear();
+
+			var forLoopTagger = properties.GetProperty<LoopTagger>( typeof( LoopTagger ) );
+			forLoopTagger.Clear();
 		}
 
 		public MethodExecutionState State

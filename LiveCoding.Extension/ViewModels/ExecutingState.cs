@@ -13,6 +13,7 @@ using LiveCoding.Core;
 using LiveCoding.Extension.Rewriting;
 using LiveCoding.Extension.Views;
 using LiveCoding.Extension.VisualStudio;
+using LiveCoding.Extension.VisualStudio.If;
 using LiveCoding.Extension.VisualStudio.Loops;
 using LiveCoding.Extension.VisualStudio.VariableValues;
 using Roslyn.Compilers;
@@ -127,7 +128,7 @@ namespace LiveCoding.Extension.ViewModels
 				references.Add( typeof( VariablesTracker ).Assembly.Location );
 
 				_codeCompiler.SetupScriptEngine( namespaces, references );
-				
+
 				_codeCompiler.SetLiveEventListener( new EventProxyListener() );
 
 				//var compilation = Compilation.Create( "1.dll",
@@ -168,6 +169,20 @@ namespace LiveCoding.Extension.ViewModels
 							tagger.AddVariableChange( change, span );
 						}, DispatcherPriority.Normal );
 					} ) );
+
+				var ifTagger = view.TextBuffer.Properties.GetProperty<BooleanConditionTagger>( typeof( BooleanConditionTagger ) );
+
+				var ifsSubscription = VariablesTracker.EventsObservable.OfType<IfEvaluationEvent>().Subscribe( e =>
+				{
+					token.ThrowIfCancellationRequested();
+
+					dispatcher.BeginInvoke( () =>
+					{
+						var valueLine = view.TextSnapshot.GetLineFromLineNumber( e.StartIfLine );
+						var span = view.GetTextElementSpan( valueLine.Start );
+						ifTagger.AddVariableChange( e, span );
+					}, DispatcherPriority.Normal );
+				} );
 
 				LoopTagger loopTagger = view.TextBuffer.Properties.GetProperty<LoopTagger>( typeof( LoopTagger ) );
 				var forLoopSubscription = VariablesTracker.ForLoops.Subscribe( loop =>
@@ -267,6 +282,7 @@ namespace LiveCoding.Extension.ViewModels
 						_context.Stopwatch.Stop();
 					}
 					subscription.Dispose();
+					ifsSubscription.Dispose();
 					forLoopSubscription.Dispose();
 				}
 			}

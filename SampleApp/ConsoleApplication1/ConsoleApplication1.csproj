@@ -55,6 +55,7 @@
     <Compile Include="ClassWithConstructorWithParameters.cs" />
     <Compile Include="ClassWithoutConstructorDeclaration.cs" />
     <Compile Include="ClassWithParameterlessConstructor.cs" />
+    <Compile Include="Ifs.cs" />
     <Compile Include="ISomeInterface.cs" />
     <Compile Include="Loops.cs" />
     <Compile Include="Program.cs" />
