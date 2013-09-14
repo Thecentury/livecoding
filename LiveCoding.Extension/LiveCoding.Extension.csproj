@@ -143,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyResolver.cs" />
+    <Compile Include="Extensions\FreezableExtensions.cs" />
     <Compile Include="Rewriting\BaseMethodDeclarationSyntaxExtensions.cs" />
     <Compile Include="Rewriting\DoWhileLoopAdapter.cs" />
     <Compile Include="EnumerableExtensions.cs" />
@@ -180,9 +181,8 @@
     <Compile Include="Views\RawValueTemplateSelector.cs" />
     <Compile Include="Views\ValueChangeViewModel.cs" />
     <Compile Include="VisualStudio\EventExtensions.cs" />
-    <Compile Include="VisualStudio\If\BooleanConditionTag.cs" />
-    <Compile Include="VisualStudio\If\BooleanConditionTagger.cs" />
-    <Compile Include="VisualStudio\If\BooleanConditionTaggerProvider.cs" />
+    <Compile Include="VisualStudio\If\BooleanAdornmentFactory.cs" />
+    <Compile Include="VisualStudio\If\BooleanAdorment.cs" />
     <Compile Include="VisualStudio\Loops\LoopTag.cs" />
     <Compile Include="VisualStudio\Loops\LoopTagger.cs" />
     <Compile Include="VisualStudio\Loops\LoopTaggerProvider.cs" />

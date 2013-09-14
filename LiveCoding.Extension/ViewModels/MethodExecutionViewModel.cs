@@ -52,7 +52,7 @@ namespace LiveCoding.Extension.ViewModels
 			var variableValueTagger = properties.GetProperty<VariableValueTagger>( typeof( VariableValueTagger ) );
 			variableValueTagger.ClearVariableChanges();
 
-			var booleanConditionTagger = properties.GetProperty<BooleanConditionTagger>( typeof(BooleanConditionTagger) );
+			var booleanConditionTagger = properties.GetProperty<BooleanAdorment>( typeof(BooleanAdorment) );
 			booleanConditionTagger.Clear();
 
 			var forLoopTagger = properties.GetProperty<LoopTagger>( typeof( LoopTagger ) );
