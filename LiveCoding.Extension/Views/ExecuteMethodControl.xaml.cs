@@ -1,5 +1,4 @@
 ﻿using System.Windows.Controls;
-using System.Windows.Input;
 using LiveCoding.Extension.ViewModels;
 
 namespace LiveCoding.Extension.Views
@@ -14,13 +13,18 @@ namespace LiveCoding.Extension.Views
 			InitializeComponent();
 		}
 
-		private void OnMouseLeftButtonDown( object sender, MouseButtonEventArgs e )
+		public new MethodExecutionViewModel DataContext
 		{
-			MethodExecutionViewModel viewModel = (MethodExecutionViewModel)DataContext;
-
-			viewModel.ExecuteCommand.Execute( null );
-
-			e.Handled = true;
+			get { return (MethodExecutionViewModel)base.DataContext; }
+			set
+			{
+				var previousDataContext = DataContext;
+				if ( previousDataContext != null )
+				{
+					previousDataContext.Dispose();
+				}
+				base.DataContext = value;
+			}
 		}
 	}
 }

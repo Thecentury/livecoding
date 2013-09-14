@@ -29,7 +29,16 @@ namespace LiveCoding.Extension.VisualStudio.If
 			_textView = textView;
 			_textView.LayoutChanged += OnTextViewLayoutChanged;
 			_textView.TextBuffer.Changed += OnTextBufferChanged;
+			_textView.Closed += OnTextViewClosed;
 			_layer = textView.GetAdornmentLayer( BooleanAdornmentFactory.AdornmentLayerName );
+		}
+
+		private void OnTextViewClosed( object sender, EventArgs e )
+		{
+			if ( _events != null )
+			{
+				_events.Clear();
+			}
 		}
 
 		private void OnTextBufferChanged( object sender, TextContentChangedEventArgs e )

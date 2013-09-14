@@ -144,6 +144,7 @@
   <ItemGroup>
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="Extensions\FreezableExtensions.cs" />
+    <Compile Include="Extensions\ProjectExtensions.cs" />
     <Compile Include="Rewriting\BaseMethodDeclarationSyntaxExtensions.cs" />
     <Compile Include="Rewriting\DoWhileLoopAdapter.cs" />
     <Compile Include="EnumerableExtensions.cs" />

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -10,7 +12,7 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace LiveCoding.Extension.ViewModels
 {
-	public sealed class MethodExecutionViewModel : ViewModelBase, IMethodExecutingStateOwner
+	public sealed class MethodExecutionViewModel : ViewModelBase, IMethodExecutingStateOwner, IDisposable
 	{
 		private readonly MethodExecutionData _data;
 		private readonly IWpfTextView _view;
@@ -52,7 +54,7 @@ namespace LiveCoding.Extension.ViewModels
 			var variableValueTagger = properties.GetProperty<VariableValueTagger>( typeof( VariableValueTagger ) );
 			variableValueTagger.ClearVariableChanges();
 
-			var booleanConditionTagger = properties.GetProperty<BooleanAdorment>( typeof(BooleanAdorment) );
+			var booleanConditionTagger = properties.GetProperty<BooleanAdorment>( typeof( BooleanAdorment ) );
 			booleanConditionTagger.Clear();
 
 			var forLoopTagger = properties.GetProperty<LoopTagger>( typeof( LoopTagger ) );
@@ -110,6 +112,22 @@ namespace LiveCoding.Extension.ViewModels
 
 				_currentState.Enter();
 			}
+		}
+
+		private readonly Dictionary<string, object> _cache = new Dictionary<string, object>();
+		public Dictionary<string, object> Cache
+		{
+			get { return _cache; }
+		}
+
+		public void Dispose()
+		{
+			foreach ( var value in _cache.Values.OfType<IDisposable>() )
+			{
+				value.Dispose();
+			}
+
+			_cache.Clear();
 		}
 	}
 }
