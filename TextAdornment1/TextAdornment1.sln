@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextAdornment1", "TextAdornment1\TextAdornment1.csproj", "{B13DAEB7-F57E-41A4-AA60-A3A30168D668}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextAdornment1", "TextAdornment1\TextAdornment1.csproj", "{782ED66D-CA54-4DCB-9C72-6967560B5542}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +9,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B13DAEB7-F57E-41A4-AA60-A3A30168D668}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B13DAEB7-F57E-41A4-AA60-A3A30168D668}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B13DAEB7-F57E-41A4-AA60-A3A30168D668}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B13DAEB7-F57E-41A4-AA60-A3A30168D668}.Release|Any CPU.Build.0 = Release|Any CPU
+		{782ED66D-CA54-4DCB-9C72-6967560B5542}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{782ED66D-CA54-4DCB-9C72-6967560B5542}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{782ED66D-CA54-4DCB-9C72-6967560B5542}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{782ED66D-CA54-4DCB-9C72-6967560B5542}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

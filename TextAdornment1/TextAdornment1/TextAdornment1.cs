@@ -61,7 +61,7 @@ namespace TextAdornment1
 			//Loop through each character, and place a box around any a 
 			for ( int i = start; ( i < end ); ++i )
 			{
-				if ( _view.TextSnapshot[ i ] == 'a' )
+				if ( _view.TextSnapshot[i] == 'a' )
 				{
 					SnapshotSpan span = new SnapshotSpan( _view.TextSnapshot, Span.FromBounds( i, i + 1 ) );
 					Geometry g = textViewLines.GetMarkerGeometry( span );
