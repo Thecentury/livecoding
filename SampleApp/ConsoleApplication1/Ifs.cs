@@ -14,7 +14,7 @@ namespace ConsoleApplication1
 
             Random rnd = new Random();
             if (rnd.NextDouble() > 0.5)
-            {
+            { 
             }
 
             if (false)
