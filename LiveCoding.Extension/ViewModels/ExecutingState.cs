@@ -170,7 +170,7 @@ namespace LiveCoding.Extension.ViewModels
 						}, DispatcherPriority.Normal );
 					} ) );
 
-				var ifTagger = view.TextBuffer.Properties.GetProperty<BooleanConditionTagger>( typeof( BooleanConditionTagger ) );
+				var ifTagger = view.TextBuffer.Properties.GetProperty<BooleanAdorment>( typeof( BooleanAdorment ) );
 
 				var ifsSubscription = VariablesTracker.EventsObservable.OfType<IfEvaluationEvent>().Subscribe( e =>
 				{

@@ -11,7 +11,13 @@ namespace ConsoleApplication1
         public void If1()
         {
             int i = 0;
-            if  (true) 
+
+            Random rnd = new Random();
+            if (rnd.NextDouble() > 0.5)
+            {
+            }
+
+            if (false)
             {
             }
         }
