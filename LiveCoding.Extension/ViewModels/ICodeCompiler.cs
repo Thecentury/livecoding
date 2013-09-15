@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using LiveCoding.Core;
 
 namespace LiveCoding.Extension.ViewModels
 {
 	internal interface ICodeCompiler : IDisposable
 	{
-		void SetupScriptEngine( List<string> namespaces, List<string> references );
+		void SetupScriptEngine( [NotNull] List<string> namespaces, [NotNull] List<string> references );
 
-		void Compile( string code );
+		void Compile( [NotNull] string code );
 
 		void SetLiveEventListener( ILiveEventListener listener );
 	}

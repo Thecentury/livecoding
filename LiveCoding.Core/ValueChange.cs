@@ -5,7 +5,7 @@ namespace LiveCoding.Core
 {
 	[Serializable]
 	[DebuggerDisplay( "Change {VariableName} = {OriginalValue} @ {LineNumber} on {TimestampUtc}" )]
-	public sealed class ValueChange : LiveEvent
+	public sealed class ValueChange : LiveEvent, IPositionAware
 	{
 		public string VariableName { get; set; }
 
@@ -22,6 +22,11 @@ namespace LiveCoding.Core
 		public override string ToString()
 		{
 			return String.Format( "{0}", CapturedValue );
+		}
+
+		public int GetOriginalLineNumber()
+		{
+			return OriginalLineNumber;
 		}
 	}
 }

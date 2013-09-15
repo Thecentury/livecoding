@@ -1,40 +1,27 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using GalaSoft.MvvmLight;
 using LiveCoding.Core;
 using LiveCoding.Extension.Annotations;
 
 namespace LiveCoding.Extension.Views
 {
-	internal sealed class ValueChangeViewModel : INotifyPropertyChanged
+	internal sealed class ValueChangeViewModel : ViewModelBase
 	{
-		private readonly Dictionary<int, ValueChange> _changes = new Dictionary<int, ValueChange>();
+		private readonly Dictionary<int, LiveEvent> _changes = new Dictionary<int, LiveEvent>();
 
-		public void AddChange( int columnNumber, ValueChange change )
+		public void AddChange( int columnNumber, LiveEvent change )
 		{
 			_changes.Add( columnNumber, change );
 
-			OnPropertyChanged( "p" + columnNumber );
+			RaisePropertyChanged( "p" + columnNumber );
 		}
 
 		[CanBeNull]
-		public ValueChange GetChangeByIndex( int index )
+		public LiveEvent GetChangeByIndex( int index )
 		{
-			ValueChange change;
+			LiveEvent change;
 			_changes.TryGetValue( index, out change );
 			return change;
-		}
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		[NotifyPropertyChangedInvocator]
-		private void OnPropertyChanged( [CallerMemberName] string propertyName = null )
-		{
-			var handler = PropertyChanged;
-			if ( handler != null )
-			{
-				handler( this, new PropertyChangedEventArgs( propertyName ) );
-			}
 		}
 	}
 }

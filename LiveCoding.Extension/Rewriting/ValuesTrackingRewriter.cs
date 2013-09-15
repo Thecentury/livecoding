@@ -27,7 +27,7 @@ namespace LiveCoding.Extension.Rewriting
 
 			string conditionIdentifierName = "__live_coding_condition_" + Guid.NewGuid().ToString( "N" );
 
-			var ifSpan = node.SyntaxTree.GetLineSpan( node.Statement.Span, true );
+			var ifSpan = node.SyntaxTree.GetLineSpan( node.Span, true );
 
 			List<SyntaxNodeOrToken> ifRegistrationArguments = new List<SyntaxNodeOrToken>();
 			ifRegistrationArguments.AddIdentifier( conditionIdentifierName );
@@ -103,7 +103,7 @@ namespace LiveCoding.Extension.Rewriting
 			var rewrittenLines = VisitStatement( base.VisitExpressionStatement( node ) ).ToList();
 			if ( rewrittenLines.Count == 1 )
 			{
-				return rewrittenLines[ 0 ];
+				return rewrittenLines[0];
 			}
 			else
 			{
@@ -190,7 +190,7 @@ namespace LiveCoding.Extension.Rewriting
 													Syntax.ArgumentList(
 														Syntax.SeparatedList(
 															Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression,
-																Syntax.Literal( loopSpan.StartLinePosition.Line ) ) ) ) ) ) ) ) ) ) ),
+																Syntax.Literal( loopSpan.StartLinePosition.Line + 1 ) ) ) ) ) ) ) ) ) ) ),
 				loopWithNewStatement,
 				Syntax.ExpressionStatement(
 					Syntax.InvocationExpression(
@@ -218,7 +218,7 @@ namespace LiveCoding.Extension.Rewriting
 		{
 			yield return localDeclaration;
 
-			var identifier = localDeclaration.Declaration.Variables[ 0 ].Identifier;
+			var identifier = localDeclaration.Declaration.Variables[0].Identifier;
 
 			string identifierName = Quote( identifier.ValueText );
 
@@ -227,7 +227,7 @@ namespace LiveCoding.Extension.Rewriting
 			var separatedList = Syntax.SeparatedList<ArgumentSyntax>(
 				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression, Syntax.Literal( identifierName, identifierName ) ) ),
 				 Syntax.Token( SyntaxKind.CommaToken ),
-				Syntax.Argument( Syntax.IdentifierName( localDeclaration.Declaration.Variables[ 0 ].Identifier ) ),
+				Syntax.Argument( Syntax.IdentifierName( localDeclaration.Declaration.Variables[0].Identifier ) ),
 				Syntax.Token( SyntaxKind.CommaToken ),
 				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( lineSpan.StartLinePosition.Line ) ) )
 				);

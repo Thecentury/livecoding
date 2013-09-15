@@ -3,7 +3,7 @@
 namespace LiveCoding.Core
 {
 	[Serializable]
-	public sealed class IfEvaluationEvent : LiveEvent
+	public sealed class IfEvaluationEvent : LiveEvent, IPositionAware
 	{
 		public bool ConditionValue { get; set; }
 
@@ -18,5 +18,10 @@ namespace LiveCoding.Core
 		public int? StartElseLine { get; set; }
 
 		public int?	EndElseLine { get; set; }
+		
+		public int GetOriginalLineNumber()
+		{
+			return StartIfLine;
+		}
 	}
 }

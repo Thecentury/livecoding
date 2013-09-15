@@ -6,14 +6,7 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 	{
 		public int LoopStartLineNumber { get; set; }
 
-		public int RowsCount { get; set; }
-
 		public double LineHeight { get; set; }
-
-		public double LoopHeight
-		{
-			get { return LineHeight * RowsCount; }
-		}
 
 		public double LeftMargin { get; set; }
 	}
