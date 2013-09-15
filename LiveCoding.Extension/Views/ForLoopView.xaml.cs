@@ -42,7 +42,7 @@ namespace LiveCoding.Extension.Views
 			_dataGrid.Columns.Add( new DataGridTemplateColumn
 			{
 				CellTemplateSelector = new ValueTemplateSelector( iteration.IterationNumber ),
-				Header = iteration.IterationNumber,
+				Header = iteration.IteratorValue ?? iteration.IterationNumber,
 			} );
 
 			iteration.EventsDuringIteration.ObserveOnDispatcher().Subscribe( e => OnValueAdded( e, iteration, dataSource ) );
