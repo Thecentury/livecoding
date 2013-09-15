@@ -57,6 +57,7 @@
     <Compile Include="EventProxyListener.cs" />
     <Compile Include="IfEvaluationEvent.cs" />
     <Compile Include="ILiveEventListener.cs" />
+    <Compile Include="ILoopEvent.cs" />
     <Compile Include="Internal\EnumerableExtensions.cs" />
     <Compile Include="ForLoopFinishedEvent.cs" />
     <Compile Include="Internal\ForLoopFinishWatcher.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="ForLoopIterationEvent.cs" />
     <Compile Include="ForLoopStartedEvent.cs" />
     <Compile Include="Internal\ForLoopStartWatcher.cs" />
+    <Compile Include="IPositionAware.cs" />
     <Compile Include="LiveEvent.cs" />
     <Compile Include="LiveEventAddedEventArgs.cs" />
     <Compile Include="Internal\LiveEventWatcher.cs" />

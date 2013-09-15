@@ -75,6 +75,9 @@
     <Reference Include="Microsoft.VisualStudio.Text.Logic, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.Text.UI, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.Text.UI.Wpf, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="NLog">
+      <HintPath>..\packages\NLog.2.0.1.2\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="Roslyn.Compilers, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -184,6 +187,7 @@
     <Compile Include="VisualStudio\EventExtensions.cs" />
     <Compile Include="VisualStudio\If\BooleanAdornmentFactory.cs" />
     <Compile Include="VisualStudio\If\BooleanAdorment.cs" />
+    <Compile Include="VisualStudio\If\LiveCodingBrushes.cs" />
     <Compile Include="VisualStudio\Loops\LoopTag.cs" />
     <Compile Include="VisualStudio\Loops\LoopTagger.cs" />
     <Compile Include="VisualStudio\Loops\LoopTaggerProvider.cs" />

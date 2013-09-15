@@ -41,7 +41,7 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 			return true;
 		}
 
-		private readonly Dictionary<int, List<LoopInfo>> _loopsCache = new Dictionary<int, List<LoopInfo>>(); 
+		private readonly Dictionary<int, List<LoopInfo>> _loopsCache = new Dictionary<int, List<LoopInfo>>();
 
 		protected override IEnumerable<Tuple<SnapshotSpan, PositionAffinity?, LoopTag>> GetAdornmentData( NormalizedSnapshotSpanCollection spans )
 		{
@@ -61,7 +61,7 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 				yield break;
 			}
 
-			var firstSpan = spans[ 0 ];
+			var firstSpan = spans[0];
 
 			var loopInfos = GetLoops( firstSpan.Snapshot );
 
@@ -81,9 +81,8 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 
 						yield return Tuple.Create( new SnapshotSpan( loopInfo.StartLine.End, 0 ), new PositionAffinity?( PositionAffinity.Predecessor ), new LoopTag
 						{
-							LoopStartLineNumber = loopInfo.StartLine.LineNumber,
+							LoopStartLineNumber = loopInfo.StartLine.LineNumber + 1,
 							LineHeight = View.LineHeight,
-							RowsCount = loopInfo.LinesHeight,
 							LeftMargin = leftMargin
 						} );
 
@@ -158,7 +157,7 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 
 			_loopsCache[versionNumber] = loopInfos;
 
-			List<int> previousVersions = _loopsCache.Keys.Where( k=> k< versionNumber ).ToList();
+			List<int> previousVersions = _loopsCache.Keys.Where( k => k < versionNumber ).ToList();
 
 			foreach ( int previousVersion in previousVersions )
 			{

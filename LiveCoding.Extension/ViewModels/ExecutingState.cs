@@ -211,7 +211,7 @@ namespace LiveCoding.Extension.ViewModels
 
 				dispatcher.BeginInvoke( () =>
 				{
-					var loopLine = view.TextSnapshot.GetLineFromLineNumber( loop.LoopStartLineNumber );
+					var loopLine = view.TextSnapshot.GetLineFromLineNumber( loop.LoopStartLineNumber - 1 );
 					var span = view.GetTextElementSpan( loopLine.End );
 
 					loopTagger.BeginLoopWatch( loop, span );

@@ -2,7 +2,7 @@
 
 namespace LiveCoding.Core.Internal
 {
-	internal sealed class LoopValueChangeWatcher : SpecificLiveEventWatcher<ValueChange>
+	internal sealed class LoopValueChangeWatcher : LiveEventWatcher
 	{
 		private readonly Stack<LiveEventWatcher> _watchers;
 		private readonly ForLoopIteration _iteration;
@@ -13,9 +13,16 @@ namespace LiveCoding.Core.Internal
 			_iteration = iteration;
 		}
 
-		protected override void AcceptCore( ValueChange evt )
+		public override bool Accept( LiveEvent evt )
 		{
+			if ( evt is ILoopEvent )
+			{
+				return false;
+			}
+
 			_iteration.EventsInternal.OnNext( evt );
+
+			return true;
 		}
 	}
 }

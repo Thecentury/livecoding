@@ -3,9 +3,11 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using LiveCoding.Core;
 using LiveCoding.Extension.ViewModels.ObjectVisualizing;
 using LiveCoding.Extension.Views;
+using LiveCoding.Extension.VisualStudio.If;
 
 namespace LiveCoding.Extension.VisualStudio
 {
@@ -31,35 +33,52 @@ namespace LiveCoding.Extension.VisualStudio
 				return CreateEmptyTemplate();
 			}
 
-			var change = viewModel.GetChangeByIndex( _columnIndex );
-			if ( change == null )
+			var liveEvent = viewModel.GetChangeByIndex( _columnIndex );
+			if ( liveEvent == null )
 			{
 				return CreateEmptyTemplate();
 			}
 
-			if ( TypeHelper.IsExpandable( change.CapturedValue ) )
+			var valueChange = liveEvent as ValueChange;
+			var conditionValue = liveEvent as IfEvaluationEvent;
+			if ( valueChange != null )
 			{
-				var objectView = new FrameworkElementFactory( typeof( ObjectView ) );
-				objectView.SetBinding( FrameworkElement.DataContextProperty, new Binding( "." )
+				if ( TypeHelper.IsExpandable( valueChange.CapturedValue ) )
 				{
-					Source = new ObjectViewViewModel
+					var objectView = new FrameworkElementFactory( typeof( ObjectView ) );
+					objectView.SetBinding( FrameworkElement.DataContextProperty, new Binding( "." )
 					{
-						Root = new ObjectViewModelHierarchy( change.CapturedValue )
-					}
-				} );
+						Source = new ObjectViewViewModel
+						{
+							Root = new ObjectViewModelHierarchy( valueChange.CapturedValue )
+						}
+					} );
 
-				return new DataTemplate { VisualTree = objectView };
+					return new DataTemplate { VisualTree = objectView };
+				}
+				else
+				{
+					var textBox = new FrameworkElementFactory( typeof( TextBox ) );
+					textBox.SetValue( TextBoxBase.IsReadOnlyProperty, true );
+					textBox.SetValue( TextBox.TextProperty, valueChange.GetValueString() );
+					textBox.SetValue( Control.BorderBrushProperty, null );
+					textBox.SetValue( Control.BorderThicknessProperty, new Thickness() );
+					textBox.SetValue( Control.BackgroundProperty, Brushes.Transparent );
+
+					return new DataTemplate { VisualTree = textBox };
+				}
+			}
+			else if ( conditionValue != null )
+			{
+				var template = new FrameworkElementFactory( typeof( Rectangle ) );
+				
+				template.SetValue( Shape.FillProperty, LiveCodingBrushes.GetBrush( conditionValue.ConditionValue ) );
+
+				return new DataTemplate { VisualTree = template };
 			}
 			else
 			{
-				var textBox = new FrameworkElementFactory( typeof( TextBox ) );
-				textBox.SetValue( TextBoxBase.IsReadOnlyProperty, true );
-				textBox.SetValue( TextBox.TextProperty, change.GetValueString() );
-				textBox.SetValue( Control.BorderBrushProperty, null );
-				textBox.SetValue( Control.BorderThicknessProperty, new Thickness() );
-				textBox.SetValue( Control.BackgroundProperty, Brushes.Transparent );
-
-				return new DataTemplate { VisualTree = textBox };
+				return CreateEmptyTemplate();
 			}
 		}
 	}

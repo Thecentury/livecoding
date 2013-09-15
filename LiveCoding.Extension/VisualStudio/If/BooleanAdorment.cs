@@ -16,9 +16,6 @@ namespace LiveCoding.Extension.VisualStudio.If
 	{
 		private readonly IWpfTextView _textView;
 
-		private readonly Brush _trueBrush = new SolidColorBrush( Color.FromArgb( 0xFF, 0xAB, 0xEA, 0xC6 ) ).AsFrozen();
-
-		private readonly Brush _falseBrush = new SolidColorBrush( Color.FromArgb( 0xFF, 0xFF, 0x85, 0x70 ) ).AsFrozen();
 
 		public BooleanAdorment( [NotNull] IWpfTextView textView )
 		{
@@ -104,7 +101,7 @@ namespace LiveCoding.Extension.VisualStudio.If
 				return;
 			}
 
-			Brush brush = evt.ConditionValue ? _trueBrush : _falseBrush;
+			Brush brush = LiveCodingBrushes.GetBrush( evt.ConditionValue );
 
 			GeometryDrawing drawing = new GeometryDrawing( brush, null, markerGeometry ).AsFrozen();
 

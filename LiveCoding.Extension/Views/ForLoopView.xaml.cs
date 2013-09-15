@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Net;
 using System.Reactive.Linq;
 using System.Windows.Controls;
 using LiveCoding.Core;
@@ -49,19 +50,19 @@ namespace LiveCoding.Extension.Views
 
 		private static void OnValueAdded( LiveEvent liveEvent, ForLoopIteration iteration, IList<ValueChangeViewModel> dataSource )
 		{
-			ValueChange valueChange = liveEvent as ValueChange;
-			if ( valueChange == null )
+			IPositionAware positionAwareEvent = liveEvent as IPositionAware;
+			if ( positionAwareEvent == null )
 			{
 				return;
 			}
 
 			int loopStartLineNumber = iteration.Loop.LoopStartLineNumber;
-			int lineIndexInLoop = valueChange.OriginalLineNumber - loopStartLineNumber - 1;
+			int lineIndexInLoop = positionAwareEvent.GetOriginalLineNumber() - loopStartLineNumber;
 
 			ValueChangeViewModel viewModel;
 			if ( dataSource.Count > lineIndexInLoop )
 			{
-				viewModel = dataSource[ lineIndexInLoop ];
+				viewModel = dataSource[lineIndexInLoop];
 			}
 			else
 			{
@@ -73,7 +74,7 @@ namespace LiveCoding.Extension.Views
 				dataSource.Add( viewModel );
 			}
 
-			viewModel.AddChange( iteration.IterationNumber, valueChange );
+			viewModel.AddChange( iteration.IterationNumber, liveEvent );
 		}
 	}
 }

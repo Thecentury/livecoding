@@ -3,7 +3,7 @@
 namespace LiveCoding.Core
 {
 	[Serializable]
-	public sealed class ForLoopIterationEvent : LiveEvent
+	public sealed class ForLoopIterationEvent : LiveEvent, ILoopEvent
 	{
 		private readonly Guid _loopId;
 		private readonly object _iteratorValue;
