@@ -4,13 +4,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:loops="clr-namespace:LiveCoding.Extension.VisualStudio.Loops"
-             xmlns:views="clr-namespace:LiveCoding.Extension.Views"
              d:DataContext="{d:DesignInstance loops:LoopTag}"
              d:DesignHeight="300"
              d:DesignWidth="300"
              x:ClassModifier="internal"
              mc:Ignorable="d">
     <Canvas>
+        <Canvas.Resources>
+            <SolidColorBrush Color="#2FADD8E6" x:Key="SeparatorBrush"></SolidColorBrush>
+        </Canvas.Resources>
         <DataGrid Name="_dataGrid"
                   Canvas.Top="-12"
                   AutoGenerateColumns="False"
@@ -25,7 +27,8 @@
                   VirtualizingStackPanel.IsVirtualizing="True"
                   SelectionMode="Single"
                   SelectionUnit="Cell"
-                  GridLinesVisibility="None"
+                  GridLinesVisibility="Vertical"
+                  VerticalGridLinesBrush="{StaticResource SeparatorBrush}"
                   RowDetailsVisibilityMode="Collapsed"
                   RowHeight="{Binding LineHeight}"
                   MaxWidth="500"
@@ -44,7 +47,8 @@
                     <Setter Property="Margin" Value="0"/>
                     <Setter Property="Padding" Value="0,-16,0,0"/>
                     <Setter Property="VerticalContentAlignment" Value="Top"/>
-                    <Setter Property="SeparatorVisibility" Value="Collapsed"/>
+                    <Setter Property="SeparatorVisibility" Value="Visible"/>
+                    <Setter Property="SeparatorBrush" Value="{StaticResource SeparatorBrush}"/>
                 </Style>
             </DataGrid.ColumnHeaderStyle>
             <DataGrid.CellStyle>
