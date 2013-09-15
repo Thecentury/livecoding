@@ -36,9 +36,16 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 
 		protected override bool UpdateAdornment( ForLoopView adornment, LoopTag data, SnapshotSpan snapshotSpan )
 		{
-			adornment.SetDataContext( data );
+			if ( data.SnapshotSpan.Snapshot.Version.VersionNumber != snapshotSpan.Snapshot.Version.VersionNumber )
+			{
+				adornment.SetDataContext( data );
+			}
 
 			return true;
+		}
+
+		protected override void OnTextBufferChanged( TextContentChangedEventArgs e )
+		{
 		}
 
 		private readonly Dictionary<int, List<LoopInfo>> _loopsCache = new Dictionary<int, List<LoopInfo>>();
@@ -83,7 +90,8 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 						{
 							LoopStartLineNumber = loopInfo.StartLine.LineNumber + 1,
 							LineHeight = View.LineHeight,
-							LeftMargin = leftMargin
+							LeftMargin = leftMargin,
+							SnapshotSpan = span
 						} );
 
 						tempLoops.Remove( loopInfo );
@@ -195,7 +203,11 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 
 		public void Clear()
 		{
-			// todo brinchuk 
+			_loopsCache.Clear();
+			AdornmentCache.Clear();
+
+			var snapshot = View.TextBuffer.CurrentSnapshot;
+			RaiseTagsChanged( new SnapshotSpan( snapshot, 0, snapshot.Length ) );
 		}
 	}
 }

@@ -8,6 +8,7 @@ using LiveCoding.Extension.VisualStudio;
 using LiveCoding.Extension.VisualStudio.If;
 using LiveCoding.Extension.VisualStudio.Loops;
 using LiveCoding.Extension.VisualStudio.VariableValues;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace LiveCoding.Extension.ViewModels

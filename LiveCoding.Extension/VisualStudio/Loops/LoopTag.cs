@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.Text.Tagging;
+﻿using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Tagging;
 
 namespace LiveCoding.Extension.VisualStudio.Loops
 {
@@ -9,5 +10,7 @@ namespace LiveCoding.Extension.VisualStudio.Loops
 		public double LineHeight { get; set; }
 
 		public double LeftMargin { get; set; }
+		
+		public SnapshotSpan SnapshotSpan { get; set; }
 	}
 }
