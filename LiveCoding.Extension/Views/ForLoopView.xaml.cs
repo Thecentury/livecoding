@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Net;
 using System.Reactive.Linq;
 using System.Windows.Controls;
 using LiveCoding.Core;
@@ -37,7 +36,7 @@ namespace LiveCoding.Extension.Views
 			loop.Iterations.ObserveOnDispatcher().Subscribe( i => OnNextIteration( i, dataSource ) );
 		}
 
-		private void OnNextIteration( ForLoopIteration iteration, ObservableCollection<ValueChangeViewModel> dataSource )
+		private void OnNextIteration( ForLoopIteration iteration, IList<ValueChangeViewModel> dataSource )
 		{
 			_dataGrid.Columns.Add( new DataGridTemplateColumn
 			{

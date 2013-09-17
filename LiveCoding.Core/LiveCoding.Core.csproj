@@ -67,6 +67,7 @@
     <Compile Include="ForLoopIterationEvent.cs" />
     <Compile Include="ForLoopStartedEvent.cs" />
     <Compile Include="Internal\ForLoopStartWatcher.cs" />
+    <Compile Include="InvocationEvent.cs" />
     <Compile Include="IPositionAware.cs" />
     <Compile Include="LiveEvent.cs" />
     <Compile Include="LiveEventAddedEventArgs.cs" />
