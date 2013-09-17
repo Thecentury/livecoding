@@ -13,10 +13,6 @@ namespace LiveCoding.Core
 
 		public object CapturedValue { get; set; }
 
-		public int LineNumber { get; set; }
-
-		public string FilePath { get; set; }
-
 		public int OriginalLineNumber { get; set; }
 
 		public override string ToString()

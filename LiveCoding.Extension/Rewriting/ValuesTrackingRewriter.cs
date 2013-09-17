@@ -14,6 +14,7 @@ namespace LiveCoding.Extension.Rewriting
 		private const string EndForLoopMethod = "EndForLoop";
 		private const string RegisterLoopIterationMethod = "RegisterLoopIteration";
 		private const string RegisterIf = "RegisterIf";
+		private const string RegisterInvocation = "RegisterInvocation";
 		private const string QuotedValueStringFormat = "\"{0}\"";
 
 		private static string Quote( string value )
@@ -98,19 +99,6 @@ namespace LiveCoding.Extension.Rewriting
 			return RewriteLoop( node, new ForeachLoopAdapter( forEachStatement ) );
 		}
 
-		public override SyntaxNode VisitExpressionStatement( ExpressionStatementSyntax node )
-		{
-			var rewrittenLines = VisitStatement( base.VisitExpressionStatement( node ) ).ToList();
-			if ( rewrittenLines.Count == 1 )
-			{
-				return rewrittenLines[0];
-			}
-			else
-			{
-				return Syntax.Block( rewrittenLines );
-			}
-		}
-
 		public override SyntaxNode VisitForStatement( ForStatementSyntax node )
 		{
 			ForStatementSyntax rewrittenFor = (ForStatementSyntax)base.VisitForStatement( node );
@@ -175,22 +163,21 @@ namespace LiveCoding.Extension.Rewriting
 								Syntax.TriviaList() ) ) )
 						.WithVariables(
 							Syntax.SeparatedList(
-								Syntax.VariableDeclarator(
-									loopIdentifier )
-									.WithInitializer(
-										Syntax.EqualsValueClause(
-											Syntax.InvocationExpression(
-												Syntax.MemberAccessExpression(
-													SyntaxKind.MemberAccessExpression,
-													Syntax.IdentifierName(
-														VariablesTracker ),
-													Syntax.IdentifierName(
-														StartForLoopMethod ) ) )
-												.WithArgumentList(
-													Syntax.ArgumentList(
-														Syntax.SeparatedList(
-															Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression,
-																Syntax.Literal( loopSpan.StartLinePosition.Line + 1 ) ) ) ) ) ) ) ) ) ) ),
+								Syntax.VariableDeclarator( loopIdentifier )
+								.WithInitializer(
+									Syntax.EqualsValueClause(
+										Syntax.InvocationExpression(
+											Syntax.MemberAccessExpression(
+												SyntaxKind.MemberAccessExpression,
+												Syntax.IdentifierName(
+													VariablesTracker ),
+												Syntax.IdentifierName(
+													StartForLoopMethod ) ) )
+											.WithArgumentList(
+												Syntax.ArgumentList(
+													Syntax.SeparatedList(
+														Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression,
+															Syntax.Literal( loopSpan.StartLinePosition.Line + 1 ) ) ) ) ) ) ) ) ) ) ),
 				loopWithNewStatement,
 				Syntax.ExpressionStatement(
 					Syntax.InvocationExpression(
@@ -202,6 +189,19 @@ namespace LiveCoding.Extension.Rewriting
 							Syntax.ArgumentList( Syntax.SeparatedList( Syntax.Argument( Syntax.IdentifierName( loopIdentifier ) ) ) ) ) ) );
 
 			return block;
+		}
+
+		public override SyntaxNode VisitExpressionStatement( ExpressionStatementSyntax node )
+		{
+			var rewrittenLines = VisitStatement( base.VisitExpressionStatement( node ) ).ToList();
+			if ( rewrittenLines.Count == 1 )
+			{
+				return rewrittenLines[0];
+			}
+			else
+			{
+				return Syntax.Block( rewrittenLines );
+			}
 		}
 
 		private IEnumerable<StatementSyntax> VisitStatement( dynamic statement )
@@ -226,7 +226,7 @@ namespace LiveCoding.Extension.Rewriting
 
 			var separatedList = Syntax.SeparatedList<ArgumentSyntax>(
 				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression, Syntax.Literal( identifierName, identifierName ) ) ),
-				 Syntax.Token( SyntaxKind.CommaToken ),
+				Syntax.Token( SyntaxKind.CommaToken ),
 				Syntax.Argument( Syntax.IdentifierName( localDeclaration.Declaration.Variables[0].Identifier ) ),
 				Syntax.Token( SyntaxKind.CommaToken ),
 				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( lineSpan.StartLinePosition.Line ) ) )
@@ -260,8 +260,7 @@ namespace LiveCoding.Extension.Rewriting
 			var lineSpan = postfixExpression.SyntaxTree.GetLineSpan( postfixExpression.Span, usePreprocessorDirectives: true );
 			string quotedOperand = Quote( postfixExpression.Operand.ToString() );
 			var arguments = Syntax.SeparatedList<ArgumentSyntax>(
-				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression,
-					Syntax.Literal( quotedOperand, quotedOperand ) ) ),
+				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression, Syntax.Literal( quotedOperand, quotedOperand ) ) ),
 				Syntax.Token( SyntaxKind.CommaToken ),
 				Syntax.Argument( Syntax.IdentifierName( postfixExpression.Operand.ToString() ) ),
 				Syntax.Token( SyntaxKind.CommaToken ),
@@ -279,8 +278,7 @@ namespace LiveCoding.Extension.Rewriting
 			var lineSpan = prefixExpression.SyntaxTree.GetLineSpan( prefixExpression.Span, usePreprocessorDirectives: true );
 			string quotedOperand = Quote( prefixExpression.Operand.ToString() );
 			var arguments = Syntax.SeparatedList<ArgumentSyntax>(
-				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression,
-					Syntax.Literal( quotedOperand, quotedOperand ) ) ),
+				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression, Syntax.Literal( quotedOperand, quotedOperand ) ) ),
 				Syntax.Token( SyntaxKind.CommaToken ),
 				Syntax.Argument( Syntax.IdentifierName( prefixExpression.Operand.ToString() ) ),
 				Syntax.Token( SyntaxKind.CommaToken ),
@@ -339,8 +337,7 @@ namespace LiveCoding.Extension.Rewriting
 
 			var lineSpan = binaryExpression.SyntaxTree.GetLineSpan( binaryExpression.Span, usePreprocessorDirectives: true );
 			var arguments = Syntax.SeparatedList<ArgumentSyntax>(
-				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression,
-					Syntax.Literal( assignmentLeftSideName, assignmentLeftSideName ) ) ),
+				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression, Syntax.Literal( assignmentLeftSideName, assignmentLeftSideName ) ) ),
 				Syntax.Token( SyntaxKind.CommaToken ),
 				Syntax.Argument( Syntax.IdentifierName( tempVariableName ) ),
 				Syntax.Token( SyntaxKind.CommaToken ),
@@ -349,6 +346,56 @@ namespace LiveCoding.Extension.Rewriting
 
 			var track = CreateVariableTrackingExpression( arguments );
 			yield return track;
+		}
+
+		public override SyntaxNode VisitInvocationExpression( InvocationExpressionSyntax node )
+		{
+			InvocationExpressionSyntax rewritten = (InvocationExpressionSyntax)base.VisitInvocationExpression( node );
+
+			List<StatementSyntax> statements = new List<StatementSyntax>();
+
+			List<string> argNames = new List<string>( rewritten.ArgumentList.Arguments.Count );
+			foreach ( ArgumentSyntax argument in rewritten.ArgumentList.Arguments )
+			{
+				string argName = String.Format( "__live_coding_arg_{0}", Guid.NewGuid().ToString( "N" ) );
+				argNames.Add( argName );
+				var arg = Syntax.LocalDeclarationStatement(
+					Syntax.VariableDeclaration(
+						Syntax.IdentifierName(
+							Syntax.Identifier(
+								@"var",
+								Syntax.TriviaList() ) ) )
+						.WithVariables(
+							Syntax.SeparatedList(
+								Syntax.VariableDeclarator( argName )
+									.WithInitializer(
+										Syntax.EqualsValueClause( argument.Expression ) ) ) ) );
+				statements.Add( arg );
+			}
+
+			List<SyntaxNodeOrToken> registerInvocationArgs = new List<SyntaxNodeOrToken>( rewritten.ArgumentList.Arguments.Count * 2 );
+			foreach ( string argName in argNames )
+			{
+				registerInvocationArgs.AddIdentifier( argName );
+				registerInvocationArgs.AddComma();
+			}
+			if ( registerInvocationArgs.Count > 0 )
+			{
+				registerInvocationArgs.RemoveAt( registerInvocationArgs.Count - 1 );
+			}
+
+			statements.Add( Syntax.ExpressionStatement(
+				Syntax.InvocationExpression(
+					Syntax.MemberAccessExpression(
+						SyntaxKind.MemberAccessExpression,
+						Syntax.IdentifierName( VariablesTracker ),
+						Syntax.IdentifierName( RegisterInvocation ) ) )
+					.WithArgumentList(
+						Syntax.ArgumentList( Syntax.SeparatedList<ArgumentSyntax>( registerInvocationArgs ) ) ) ) );
+
+			statements.Add(rewritten);
+
+			return Syntax.Block( statements );
 		}
 
 		public override SyntaxNode VisitBlock( BlockSyntax node )

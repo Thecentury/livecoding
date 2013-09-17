@@ -11,6 +11,22 @@ namespace ConsoleApplication1
                 j += i;
         }
 
+        public void ForWithIf()
+        {
+            int j = 0;
+            for (int i = 0; i < 10; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    j += i;
+                }
+                else
+                {
+                    j *= i;
+                }
+            }
+        }
+
         public void ForeachLoop()
         {
             foreach (var item in Enumerable.Range(3, 5))
