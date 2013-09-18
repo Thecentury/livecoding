@@ -37,6 +37,20 @@ namespace LiveCoding.Extension.Tests
     }
 ";
 
+		private const string Invocation1 = @"
+class C{
+void M(){
+	System.Console.WriteLine(""{0} {1}"", 1+1, true == false);
+}
+}
+";
+		private const string InvocationWithReturnValue = @"
+class C{
+void M(){
+	string path = System.IO.Path.Combine(""1""+""2"", ""3""+""4"");
+}
+}";
+
 		private const string OneLineLoop = @"
 class C {
 	void M() {
@@ -75,6 +89,8 @@ class C {
 		[TestCase( SomeLoop )]
 		[TestCase( OneLineLoop )]
 		[TestCase( OneIf )]
+		[TestCase( Invocation1 )]
+		[TestCase( InvocationWithReturnValue )]
 		public void Rewrite( string code )
 		{
 			ValuesTrackingRewriter rewriter = new ValuesTrackingRewriter();

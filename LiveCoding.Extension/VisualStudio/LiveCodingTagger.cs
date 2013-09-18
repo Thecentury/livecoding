@@ -3,7 +3,7 @@ using LiveCoding.Extension.Support;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace LiveCoding.Extension.VisualStudio.VariableValues
+namespace LiveCoding.Extension.VisualStudio
 {
 	internal abstract class LiveCodingTagger<TTag, TVisual> : IntraTextAdornmentTagger<TTag, TVisual>
 		where TVisual : UIElement
