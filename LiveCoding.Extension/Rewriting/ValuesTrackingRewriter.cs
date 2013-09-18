@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using LiveCoding.Extension.VisualStudio;
+using NLog.Targets;
 using Roslyn.Compilers.CSharp;
 
 namespace LiveCoding.Extension.Rewriting
@@ -196,7 +197,7 @@ namespace LiveCoding.Extension.Rewriting
 			var rewrittenLines = VisitStatement( base.VisitExpressionStatement( node ) ).ToList();
 			if ( rewrittenLines.Count == 1 )
 			{
-				return rewrittenLines[0];
+				return rewrittenLines[ 0 ];
 			}
 			else
 			{
@@ -214,11 +215,67 @@ namespace LiveCoding.Extension.Rewriting
 			yield return statement;
 		}
 
+		private static IEnumerable<StatementSyntax> RewriteExpressionStatement( InvocationExpressionSyntax invocation )
+		{
+			List<string> argNames = new List<string>( invocation.ArgumentList.Arguments.Count );
+			foreach ( ArgumentSyntax argument in invocation.ArgumentList.Arguments )
+			{
+				string argName = String.Format( "__live_coding_arg_{0}", Guid.NewGuid().ToString( "N" ) );
+				argNames.Add( argName );
+				var arg = Syntax.LocalDeclarationStatement(
+					Syntax.VariableDeclaration(
+						Syntax.IdentifierName(
+							Syntax.Identifier(
+								@"var",
+								Syntax.TriviaList() ) ) )
+						.WithVariables(
+							Syntax.SeparatedList(
+								Syntax.VariableDeclarator( argName )
+									.WithInitializer(
+										Syntax.EqualsValueClause( argument.Expression ) ) ) ) );
+				yield return arg;
+			}
+
+			var lineSpan = invocation.SyntaxTree.GetLineSpan( invocation.Span, true );
+			List<SyntaxNodeOrToken> registerInvocationArgs = new List<SyntaxNodeOrToken>( invocation.ArgumentList.Arguments.Count * 2 + 6 );
+
+			registerInvocationArgs.AddLiteral( lineSpan.StartLinePosition.Line );
+			registerInvocationArgs.AddComma();
+			registerInvocationArgs.AddLiteral( invocation.Span.Start );
+			registerInvocationArgs.AddComma();
+			registerInvocationArgs.AddLiteral( invocation.Span.End );
+			registerInvocationArgs.AddComma();
+
+			foreach ( string argName in argNames )
+			{
+				registerInvocationArgs.AddIdentifier( argName );
+				registerInvocationArgs.AddComma();
+			}
+			if ( registerInvocationArgs.Count > 0 )
+			{
+				registerInvocationArgs.RemoveAt( registerInvocationArgs.Count - 1 );
+			}
+
+			SyntaxNodeOrToken[] targetInvocationArgs = new SyntaxNodeOrToken[ invocation.ArgumentList.Arguments.Count * 2 - 1 ];
+			registerInvocationArgs.CopyTo( 6, targetInvocationArgs, 0, targetInvocationArgs.Length );
+
+			yield return Syntax.ExpressionStatement(
+				Syntax.InvocationExpression(
+					Syntax.MemberAccessExpression(
+						SyntaxKind.MemberAccessExpression,
+						Syntax.IdentifierName( VariablesTracker ),
+						Syntax.IdentifierName( RegisterInvocation ) ) )
+					.WithArgumentList(
+						Syntax.ArgumentList( Syntax.SeparatedList<ArgumentSyntax>( registerInvocationArgs ) ) ) );
+
+			yield return Syntax.ExpressionStatement( invocation.WithArgumentList( Syntax.ArgumentList( Syntax.SeparatedList<ArgumentSyntax>( targetInvocationArgs ) ) ) );
+		}
+
 		private static IEnumerable<StatementSyntax> VisitStatement( LocalDeclarationStatementSyntax localDeclaration )
 		{
 			yield return localDeclaration;
 
-			var identifier = localDeclaration.Declaration.Variables[0].Identifier;
+			var identifier = localDeclaration.Declaration.Variables[ 0 ].Identifier;
 
 			string identifierName = Quote( identifier.ValueText );
 
@@ -227,7 +284,7 @@ namespace LiveCoding.Extension.Rewriting
 			var separatedList = Syntax.SeparatedList<ArgumentSyntax>(
 				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression, Syntax.Literal( identifierName, identifierName ) ) ),
 				Syntax.Token( SyntaxKind.CommaToken ),
-				Syntax.Argument( Syntax.IdentifierName( localDeclaration.Declaration.Variables[0].Identifier ) ),
+				Syntax.Argument( Syntax.IdentifierName( localDeclaration.Declaration.Variables[ 0 ].Identifier ) ),
 				Syntax.Token( SyntaxKind.CommaToken ),
 				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( lineSpan.StartLinePosition.Line ) ) )
 				);
@@ -348,55 +405,55 @@ namespace LiveCoding.Extension.Rewriting
 			yield return track;
 		}
 
-		public override SyntaxNode VisitInvocationExpression( InvocationExpressionSyntax node )
-		{
-			InvocationExpressionSyntax rewritten = (InvocationExpressionSyntax)base.VisitInvocationExpression( node );
+		//public override SyntaxNode VisitInvocationExpression( InvocationExpressionSyntax node )
+		//{
+		//	InvocationExpressionSyntax rewritten = (InvocationExpressionSyntax)base.VisitInvocationExpression( node );
 
-			List<StatementSyntax> statements = new List<StatementSyntax>();
+		//	List<StatementSyntax> statements = new List<StatementSyntax>();
 
-			List<string> argNames = new List<string>( rewritten.ArgumentList.Arguments.Count );
-			foreach ( ArgumentSyntax argument in rewritten.ArgumentList.Arguments )
-			{
-				string argName = String.Format( "__live_coding_arg_{0}", Guid.NewGuid().ToString( "N" ) );
-				argNames.Add( argName );
-				var arg = Syntax.LocalDeclarationStatement(
-					Syntax.VariableDeclaration(
-						Syntax.IdentifierName(
-							Syntax.Identifier(
-								@"var",
-								Syntax.TriviaList() ) ) )
-						.WithVariables(
-							Syntax.SeparatedList(
-								Syntax.VariableDeclarator( argName )
-									.WithInitializer(
-										Syntax.EqualsValueClause( argument.Expression ) ) ) ) );
-				statements.Add( arg );
-			}
+		//	List<string> argNames = new List<string>( rewritten.ArgumentList.Arguments.Count );
+		//	foreach ( ArgumentSyntax argument in rewritten.ArgumentList.Arguments )
+		//	{
+		//		string argName = String.Format( "__live_coding_arg_{0}", Guid.NewGuid().ToString( "N" ) );
+		//		argNames.Add( argName );
+		//		var arg = Syntax.LocalDeclarationStatement(
+		//			Syntax.VariableDeclaration(
+		//				Syntax.IdentifierName(
+		//					Syntax.Identifier(
+		//						@"var",
+		//						Syntax.TriviaList() ) ) )
+		//				.WithVariables(
+		//					Syntax.SeparatedList(
+		//						Syntax.VariableDeclarator( argName )
+		//							.WithInitializer(
+		//								Syntax.EqualsValueClause( argument.Expression ) ) ) ) );
+		//		statements.Add( arg );
+		//	}
 
-			List<SyntaxNodeOrToken> registerInvocationArgs = new List<SyntaxNodeOrToken>( rewritten.ArgumentList.Arguments.Count * 2 );
-			foreach ( string argName in argNames )
-			{
-				registerInvocationArgs.AddIdentifier( argName );
-				registerInvocationArgs.AddComma();
-			}
-			if ( registerInvocationArgs.Count > 0 )
-			{
-				registerInvocationArgs.RemoveAt( registerInvocationArgs.Count - 1 );
-			}
+		//	List<SyntaxNodeOrToken> registerInvocationArgs = new List<SyntaxNodeOrToken>( rewritten.ArgumentList.Arguments.Count * 2 );
+		//	foreach ( string argName in argNames )
+		//	{
+		//		registerInvocationArgs.AddIdentifier( argName );
+		//		registerInvocationArgs.AddComma();
+		//	}
+		//	if ( registerInvocationArgs.Count > 0 )
+		//	{
+		//		registerInvocationArgs.RemoveAt( registerInvocationArgs.Count - 1 );
+		//	}
 
-			statements.Add( Syntax.ExpressionStatement(
-				Syntax.InvocationExpression(
-					Syntax.MemberAccessExpression(
-						SyntaxKind.MemberAccessExpression,
-						Syntax.IdentifierName( VariablesTracker ),
-						Syntax.IdentifierName( RegisterInvocation ) ) )
-					.WithArgumentList(
-						Syntax.ArgumentList( Syntax.SeparatedList<ArgumentSyntax>( registerInvocationArgs ) ) ) ) );
+		//	statements.Add( Syntax.ExpressionStatement(
+		//		Syntax.InvocationExpression(
+		//			Syntax.MemberAccessExpression(
+		//				SyntaxKind.MemberAccessExpression,
+		//				Syntax.IdentifierName( VariablesTracker ),
+		//				Syntax.IdentifierName( RegisterInvocation ) ) )
+		//			.WithArgumentList(
+		//				Syntax.ArgumentList( Syntax.SeparatedList<ArgumentSyntax>( registerInvocationArgs ) ) ) ) );
 
-			statements.Add(rewritten);
+		//	statements.Add(rewritten);
 
-			return Syntax.Block( statements );
-		}
+		//	return Syntax.Block( statements );
+		//}
 
 		public override SyntaxNode VisitBlock( BlockSyntax node )
 		{

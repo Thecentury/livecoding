@@ -188,6 +188,9 @@
     <Compile Include="VisualStudio\If\BooleanAdornmentFactory.cs" />
     <Compile Include="VisualStudio\If\BooleanAdorment.cs" />
     <Compile Include="VisualStudio\If\LiveCodingBrushes.cs" />
+    <Compile Include="VisualStudio\Invocations\InvocationTag.cs" />
+    <Compile Include="VisualStudio\Invocations\InvocationTagger.cs" />
+    <Compile Include="VisualStudio\Invocations\InvocationTaggerProvider.cs" />
     <Compile Include="VisualStudio\Loops\LoopTag.cs" />
     <Compile Include="VisualStudio\Loops\LoopTagger.cs" />
     <Compile Include="VisualStudio\Loops\LoopTaggerProvider.cs" />
@@ -233,7 +236,7 @@
     <Compile Include="VisualStudio\ValueTemplateSelector.cs" />
     <Compile Include="VisualStudio\ValueViewFactory.cs" />
     <Compile Include="VisualStudio\VariableValueGlyphFactory.cs" />
-    <Compile Include="VisualStudio\VariableValues\LiveCodingTagger.cs" />
+    <Compile Include="VisualStudio\LiveCodingTagger.cs" />
     <Compile Include="VisualStudio\VariableValues\VariableValueTag.cs" />
     <Compile Include="VisualStudio\VariableValues\VariableValueTagger.cs" />
     <Compile Include="VisualStudio\VariableValues\VariableValueTaggerProvider.cs" />

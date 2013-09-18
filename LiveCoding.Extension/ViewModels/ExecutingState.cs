@@ -15,6 +15,7 @@ using LiveCoding.Extension.Rewriting;
 using LiveCoding.Extension.Views;
 using LiveCoding.Extension.VisualStudio;
 using LiveCoding.Extension.VisualStudio.If;
+using LiveCoding.Extension.VisualStudio.Invocations;
 using LiveCoding.Extension.VisualStudio.Loops;
 using LiveCoding.Extension.VisualStudio.VariableValues;
 using Roslyn.Compilers;
@@ -82,7 +83,7 @@ namespace LiveCoding.Extension.ViewModels
 
 		private void SetCompilationData( ICodeCompiler codeCompiler, CompilationUnitSyntax compilationUnitSyntax )
 		{
-			Owner.Cache[CompilationDataKey] = Tuple.Create( codeCompiler, compilationUnitSyntax );
+			Owner.Cache[ CompilationDataKey ] = Tuple.Create( codeCompiler, compilationUnitSyntax );
 		}
 
 		private void RewriteAndExecute( CancellationToken token )
@@ -218,6 +219,19 @@ namespace LiveCoding.Extension.ViewModels
 				}, DispatcherPriority.Normal );
 			} );
 
+			var invocationTagger = view.TextBuffer.Properties.GetProperty<InvocationTagger>( typeof( InvocationTagger ) );
+			var invocationsSubscription = VariablesTracker.EventsObservable.OfType<InvocationEvent>().Subscribe( e =>
+			{
+				token.ThrowIfCancellationRequested();
+
+				dispatcher.BeginInvoke( () =>
+				{
+					var valueLine = view.TextSnapshot.GetLineFromLineNumber( e.LineNumber );
+					var span = view.GetTextElementSpan( valueLine.Start );
+					invocationTagger.AddInvocation( e, span );
+				}, DispatcherPriority.Normal );
+			} );
+
 			try
 			{
 				if ( Owner.Data.Call == null )
@@ -304,6 +318,7 @@ namespace LiveCoding.Extension.ViewModels
 				subscription.Dispose();
 				ifsSubscription.Dispose();
 				forLoopSubscription.Dispose();
+				invocationsSubscription.Dispose();
 			}
 		}
 
