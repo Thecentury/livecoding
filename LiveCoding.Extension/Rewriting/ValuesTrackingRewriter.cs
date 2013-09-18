@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LiveCoding.Extension.VisualStudio;
 using NLog.Targets;
+using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 
 namespace LiveCoding.Extension.Rewriting
@@ -405,55 +406,12 @@ namespace LiveCoding.Extension.Rewriting
 			yield return track;
 		}
 
-		//public override SyntaxNode VisitInvocationExpression( InvocationExpressionSyntax node )
-		//{
-		//	InvocationExpressionSyntax rewritten = (InvocationExpressionSyntax)base.VisitInvocationExpression( node );
+		public override SyntaxNode VisitLocalDeclarationStatement( LocalDeclarationStatementSyntax node )
+		{
+			LocalDeclarationStatementSyntax rewritten = (LocalDeclarationStatementSyntax) base.VisitLocalDeclarationStatement( node );
 
-		//	List<StatementSyntax> statements = new List<StatementSyntax>();
-
-		//	List<string> argNames = new List<string>( rewritten.ArgumentList.Arguments.Count );
-		//	foreach ( ArgumentSyntax argument in rewritten.ArgumentList.Arguments )
-		//	{
-		//		string argName = String.Format( "__live_coding_arg_{0}", Guid.NewGuid().ToString( "N" ) );
-		//		argNames.Add( argName );
-		//		var arg = Syntax.LocalDeclarationStatement(
-		//			Syntax.VariableDeclaration(
-		//				Syntax.IdentifierName(
-		//					Syntax.Identifier(
-		//						@"var",
-		//						Syntax.TriviaList() ) ) )
-		//				.WithVariables(
-		//					Syntax.SeparatedList(
-		//						Syntax.VariableDeclarator( argName )
-		//							.WithInitializer(
-		//								Syntax.EqualsValueClause( argument.Expression ) ) ) ) );
-		//		statements.Add( arg );
-		//	}
-
-		//	List<SyntaxNodeOrToken> registerInvocationArgs = new List<SyntaxNodeOrToken>( rewritten.ArgumentList.Arguments.Count * 2 );
-		//	foreach ( string argName in argNames )
-		//	{
-		//		registerInvocationArgs.AddIdentifier( argName );
-		//		registerInvocationArgs.AddComma();
-		//	}
-		//	if ( registerInvocationArgs.Count > 0 )
-		//	{
-		//		registerInvocationArgs.RemoveAt( registerInvocationArgs.Count - 1 );
-		//	}
-
-		//	statements.Add( Syntax.ExpressionStatement(
-		//		Syntax.InvocationExpression(
-		//			Syntax.MemberAccessExpression(
-		//				SyntaxKind.MemberAccessExpression,
-		//				Syntax.IdentifierName( VariablesTracker ),
-		//				Syntax.IdentifierName( RegisterInvocation ) ) )
-		//			.WithArgumentList(
-		//				Syntax.ArgumentList( Syntax.SeparatedList<ArgumentSyntax>( registerInvocationArgs ) ) ) ) );
-
-		//	statements.Add(rewritten);
-
-		//	return Syntax.Block( statements );
-		//}
+			return rewritten;
+		}
 
 		public override SyntaxNode VisitBlock( BlockSyntax node )
 		{
