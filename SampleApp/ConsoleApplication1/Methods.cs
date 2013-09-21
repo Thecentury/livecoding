@@ -14,7 +14,7 @@ namespace ConsoleApplication1
 
             Console.WriteLine("{0} {1}", Proxy.Pass(1 + 1), Proxy.Pass(true == false));
 
-            int i = Proxy.Pass(1 + 2); Proxy.Pass(1 + 1);
+            int i = Proxy.Pass(1 + 2); Proxy.Pass(1 + 1); 
             Proxy.Pass(2 + "3");
 
             ClassWithProperty<int>.P = Proxy.Pass(1 + 2);

@@ -18,7 +18,10 @@ using LiveCoding.Extension.VisualStudio.If;
 using LiveCoding.Extension.VisualStudio.Invocations;
 using LiveCoding.Extension.VisualStudio.Loops;
 using LiveCoding.Extension.VisualStudio.VariableValues;
-using Roslyn.Compilers;
+using NLog;
+using NLog.Config;
+using NLog.Layouts;
+using NLog.Targets;
 using Roslyn.Compilers.CSharp;
 using VSLangProj;
 
@@ -26,6 +29,24 @@ namespace LiveCoding.Extension.ViewModels
 {
 	public sealed class ExecutingState : MethodExecutionStateBase
 	{
+		static ExecutingState()
+		{
+			Target t = new LogentriesTarget
+			{
+				Token = "18bd643b-3620-41b3-aff1-4a4d40079e59",
+				Debug = true,
+				HttpPut = true,
+				Ssl = false,
+				Name = "logentries",
+				Layout = new SimpleLayout( "${date:format=ddd MMM dd} ${time:format=HH:mm:ss} ${date:format=zzz yyyy} [${machinename}] [${threadid}] ${logger} ${LEVEL} ${message} ${exception:format=tostring}" )
+			};
+
+			LogManager.Configuration = new LoggingConfiguration();
+
+			LogManager.Configuration.AddTarget( "logentries", t );
+			LogManager.Configuration.LoggingRules.Add( new LoggingRule( "*", LogLevel.Trace, t ) );
+		}
+
 		private const string CompilationDataKey = "CompilationData";
 
 		private sealed class MethodExecutionContext
@@ -83,11 +104,13 @@ namespace LiveCoding.Extension.ViewModels
 
 		private void SetCompilationData( ICodeCompiler codeCompiler, CompilationUnitSyntax compilationUnitSyntax )
 		{
-			Owner.Cache[ CompilationDataKey ] = Tuple.Create( codeCompiler, compilationUnitSyntax );
+			Owner.Cache[CompilationDataKey] = Tuple.Create( codeCompiler, compilationUnitSyntax );
 		}
 
 		private void RewriteAndExecute( CancellationToken token )
 		{
+			var logger = LogManager.GetCurrentClassLogger();
+
 			string filePath = Owner.View.GetFilePath();
 
 			var project = ProjectHelper.GetContainingProject( filePath );
@@ -109,7 +132,13 @@ namespace LiveCoding.Extension.ViewModels
 			{
 				Solution solution = project.CodeModel.DTE.Solution;
 
-				solution.SolutionBuild.BuildProject( solution.SolutionBuild.ActiveConfiguration.Name, project.UniqueName, true );
+				string configurationName = solution.SolutionBuild.ActiveConfiguration.Name;
+
+				logger.Info( "Going to build '{0}', configuration: '{1}'", configurationName, project.UniqueName );
+
+				solution.SolutionBuild.BuildProject( configurationName, project.UniqueName, true );
+
+				logger.Info( "Project was built" );
 				// todo brinchuk failed compilation handling
 			}
 
@@ -129,6 +158,8 @@ namespace LiveCoding.Extension.ViewModels
 					.Accept( rewriter )
 					.Accept( new ClassFromNamespaceRewriter() )
 					.NormalizeWhitespace();
+
+				logger.Debug( "Rewritten code:{0}{1}", Environment.NewLine, rewritten.ToString() );
 
 				List<string> namespaces = new List<string>();
 				foreach ( var usingDirectiveSyntax in compilationUnit.Usings )
@@ -152,7 +183,12 @@ namespace LiveCoding.Extension.ViewModels
 				{
 					references.Add( projectOutputFullPath );
 				}
-				references.Add( typeof( VariablesTracker ).Assembly.Location );
+
+				string liveCodingCoreAssembly = typeof( VariablesTracker ).Assembly.Location;
+				if ( !references.Contains( liveCodingCoreAssembly ) )
+				{
+					references.Add( liveCodingCoreAssembly );
+				}
 
 				_codeCompiler.SetupScriptEngine( namespaces, references );
 
