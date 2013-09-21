@@ -19,9 +19,6 @@ using LiveCoding.Extension.VisualStudio.Invocations;
 using LiveCoding.Extension.VisualStudio.Loops;
 using LiveCoding.Extension.VisualStudio.VariableValues;
 using NLog;
-using NLog.Config;
-using NLog.Layouts;
-using NLog.Targets;
 using Roslyn.Compilers.CSharp;
 using VSLangProj;
 
@@ -31,20 +28,7 @@ namespace LiveCoding.Extension.ViewModels
 	{
 		static ExecutingState()
 		{
-			Target t = new LogentriesTarget
-			{
-				Token = "18bd643b-3620-41b3-aff1-4a4d40079e59",
-				Debug = true,
-				HttpPut = true,
-				Ssl = false,
-				Name = "logentries",
-				Layout = new SimpleLayout( "${date:format=ddd MMM dd} ${time:format=HH:mm:ss} ${date:format=zzz yyyy} [${machinename}] [${threadid}] ${logger} ${LEVEL} ${message} ${exception:format=tostring}" )
-			};
-
-			LogManager.Configuration = new LoggingConfiguration();
-
-			LogManager.Configuration.AddTarget( "logentries", t );
-			LogManager.Configuration.LoggingRules.Add( new LoggingRule( "*", LogLevel.Trace, t ) );
+			NlogBootstrapper.Initialize();
 		}
 
 		private const string CompilationDataKey = "CompilationData";
