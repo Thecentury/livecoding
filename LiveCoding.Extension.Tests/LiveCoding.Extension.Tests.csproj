@@ -32,13 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="le_nlog">
-      <HintPath>..\packages\le_nlog.2.2.0\lib\Net40\le_nlog.dll</HintPath>
-    </Reference>
-    <Reference Include="NLog, Version=2.0.1.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NLog.2.0.1.2\lib\net45\NLog.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -81,6 +74,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ext\NLog\NLog.netfx45.csproj">
+      <Project>{a0bff0db-ed9a-4639-ae86-8e709a1efc66}</Project>
+      <Name>NLog.netfx45</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\le_nlog\le_nlog.csproj">
+      <Project>{866bec9e-ac5f-4e54-a795-14f405eb77a3}</Project>
+      <Name>le_nlog</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LiveCoding.Core\LiveCoding.Core.csproj">
       <Project>{715375EC-2D4B-41C9-A7DE-FFF97B10A9E9}</Project>
       <Name>LiveCoding.Core</Name>
