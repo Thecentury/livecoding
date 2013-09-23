@@ -238,7 +238,6 @@ namespace LiveCoding.Extension.Rewriting
 			var lineSpan = invocation.SyntaxTree.GetLineSpan( invocation.Span, true );
 			List<SyntaxNodeOrToken> registerInvocationArgs = new List<SyntaxNodeOrToken>( invocation.ArgumentList.Arguments.Count * 2 + 6 );
 
-			int argumentsToSkip = 6;
 			registerInvocationArgs.AddLiteral( lineSpan.StartLinePosition.Line );
 			registerInvocationArgs.AddComma();
 			registerInvocationArgs.AddLiteral( invocation.Span.Start );
@@ -252,14 +251,14 @@ namespace LiveCoding.Extension.Rewriting
 				registerInvocationArgs.AddComma();
 			}
 
-			if ( registerInvocationArgs.Count > 0 )
-			{
-				registerInvocationArgs.RemoveAt( registerInvocationArgs.Count - 1 );
-				argumentsToSkip = 5;
-			}
+			registerInvocationArgs.RemoveAt( registerInvocationArgs.Count - 1 );
+
 
 			SyntaxNodeOrToken[] targetInvocationArgs = new SyntaxNodeOrToken[invocation.ArgumentList.Arguments.Count * 2 - 1];
-			registerInvocationArgs.CopyTo( argumentsToSkip, targetInvocationArgs, 0, targetInvocationArgs.Length );
+			if ( targetInvocationArgs.Length > 0 )
+			{
+				registerInvocationArgs.CopyTo( 6, targetInvocationArgs, 0, targetInvocationArgs.Length );
+			}
 
 			yield return Syntax.ExpressionStatement(
 				Syntax.InvocationExpression(
