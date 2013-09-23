@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using LiveCoding.Extension.VisualStudio;
-using NLog.Targets;
-using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 
 namespace LiveCoding.Extension.Rewriting
@@ -198,7 +196,7 @@ namespace LiveCoding.Extension.Rewriting
 			var rewrittenLines = VisitStatement( base.VisitExpressionStatement( node ) ).ToList();
 			if ( rewrittenLines.Count == 1 )
 			{
-				return rewrittenLines[ 0 ];
+				return rewrittenLines[0];
 			}
 			else
 			{
@@ -240,6 +238,7 @@ namespace LiveCoding.Extension.Rewriting
 			var lineSpan = invocation.SyntaxTree.GetLineSpan( invocation.Span, true );
 			List<SyntaxNodeOrToken> registerInvocationArgs = new List<SyntaxNodeOrToken>( invocation.ArgumentList.Arguments.Count * 2 + 6 );
 
+			int argumentsToSkip = 6;
 			registerInvocationArgs.AddLiteral( lineSpan.StartLinePosition.Line );
 			registerInvocationArgs.AddComma();
 			registerInvocationArgs.AddLiteral( invocation.Span.Start );
@@ -252,13 +251,15 @@ namespace LiveCoding.Extension.Rewriting
 				registerInvocationArgs.AddIdentifier( argName );
 				registerInvocationArgs.AddComma();
 			}
+
 			if ( registerInvocationArgs.Count > 0 )
 			{
 				registerInvocationArgs.RemoveAt( registerInvocationArgs.Count - 1 );
+				argumentsToSkip = 5;
 			}
 
-			SyntaxNodeOrToken[] targetInvocationArgs = new SyntaxNodeOrToken[ invocation.ArgumentList.Arguments.Count * 2 - 1 ];
-			registerInvocationArgs.CopyTo( 6, targetInvocationArgs, 0, targetInvocationArgs.Length );
+			SyntaxNodeOrToken[] targetInvocationArgs = new SyntaxNodeOrToken[invocation.ArgumentList.Arguments.Count * 2 - 1];
+			registerInvocationArgs.CopyTo( argumentsToSkip, targetInvocationArgs, 0, targetInvocationArgs.Length );
 
 			yield return Syntax.ExpressionStatement(
 				Syntax.InvocationExpression(
@@ -276,7 +277,7 @@ namespace LiveCoding.Extension.Rewriting
 		{
 			yield return localDeclaration;
 
-			var identifier = localDeclaration.Declaration.Variables[ 0 ].Identifier;
+			var identifier = localDeclaration.Declaration.Variables[0].Identifier;
 
 			string identifierName = Quote( identifier.ValueText );
 
@@ -285,7 +286,7 @@ namespace LiveCoding.Extension.Rewriting
 			var separatedList = Syntax.SeparatedList<ArgumentSyntax>(
 				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression, Syntax.Literal( identifierName, identifierName ) ) ),
 				Syntax.Token( SyntaxKind.CommaToken ),
-				Syntax.Argument( Syntax.IdentifierName( localDeclaration.Declaration.Variables[ 0 ].Identifier ) ),
+				Syntax.Argument( Syntax.IdentifierName( localDeclaration.Declaration.Variables[0].Identifier ) ),
 				Syntax.Token( SyntaxKind.CommaToken ),
 				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( lineSpan.StartLinePosition.Line ) ) )
 				);
@@ -408,7 +409,7 @@ namespace LiveCoding.Extension.Rewriting
 
 		public override SyntaxNode VisitLocalDeclarationStatement( LocalDeclarationStatementSyntax node )
 		{
-			LocalDeclarationStatementSyntax rewritten = (LocalDeclarationStatementSyntax) base.VisitLocalDeclarationStatement( node );
+			LocalDeclarationStatementSyntax rewritten = (LocalDeclarationStatementSyntax)base.VisitLocalDeclarationStatement( node );
 
 			return rewritten;
 		}

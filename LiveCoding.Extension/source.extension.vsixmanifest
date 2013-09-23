@@ -4,7 +4,7 @@
     <Identity Id="LiveCoding..424AA355-C808-4D1C-8848-3E24A67172F8" Version="0.1.0" Language="en-US" Publisher="Mikhail Brinchuk" />
     <DisplayName>LiveCoding</DisplayName>
     <Description xml:space="preserve">Live coding extension, inspired by ideas of Bret Victor.</Description>
-    <Icon>leaf.png</Icon>
+    <Icon>icon.png</Icon>
     <PreviewImage>icon-large.jpg</PreviewImage>
     <Tags>live coding</Tags>
   </Metadata>
