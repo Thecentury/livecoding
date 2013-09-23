@@ -76,7 +76,7 @@ namespace LiveCoding.Extension.VisualStudio
 					continue;
 				}
 
-				if ( fullSpanLineText.Contains( "abstract" ) )
+				if ( fullSpanLineText.Contains( "abstract" ) || fullSpanLineText.Contains( ";" ) )
 				{
 					continue;
 				}

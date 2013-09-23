@@ -56,7 +56,7 @@ namespace LiveCoding.Extension.ViewModels
 
 		private void OnFailed( Task task )
 		{
-			_logger.Warn( "Execution failed", task.Exception );
+			_logger.WarnException( "Execution failed", task.Exception );
 
 			Owner.GotoState( new FailedState( task.Exception ) );
 		}
