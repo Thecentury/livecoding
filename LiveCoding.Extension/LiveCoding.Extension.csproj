@@ -156,6 +156,7 @@
     <Compile Include="AssemblyResolver.cs" />
     <Compile Include="Extensions\FreezableExtensions.cs" />
     <Compile Include="Extensions\ProjectExtensions.cs" />
+    <Compile Include="Extensions\StringEnumerableExtensions.cs" />
     <Compile Include="NlogBootstrapper.cs" />
     <Compile Include="Rewriting\BaseMethodDeclarationSyntaxExtensions.cs" />
     <Compile Include="Rewriting\DoWhileLoopAdapter.cs" />
@@ -170,12 +171,18 @@
     <Compile Include="ViewModels\AppDomainExtensions.cs" />
     <Compile Include="ViewModels\CannotExecuteException.cs" />
     <Compile Include="ViewModels\CodeCompiler.cs" />
+    <Compile Include="ViewModels\CodeCompilerExtensions.cs" />
     <Compile Include="ViewModels\ICodeCompiler.cs" />
+    <Compile Include="ViewModels\IMethodExecutor.cs" />
+    <Compile Include="ViewModels\InstanceMethodExecutor.cs" />
     <Compile Include="ViewModels\ListenerSetter.cs" />
+    <Compile Include="ViewModels\LoggingCodeCompiler.cs" />
+    <Compile Include="ViewModels\MethodExecutorBase.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\ObjectViewModel.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\ObjectViewModelHierarchy.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\TypeHelper.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\TypePrettyPrinter.cs" />
+    <Compile Include="ViewModels\StaticMethodExecutor.cs" />
     <Compile Include="Views\BooleanToBrushConverter.cs" />
     <Compile Include="Views\BooleanToZIndexConverter.cs" />
     <Compile Include="Views\ConditionView.xaml.cs">

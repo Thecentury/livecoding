@@ -5,6 +5,11 @@ namespace LiveCoding.Extension.ViewModels
 {
 	public abstract class MethodExecutionStateBase : ISupportInitialize
 	{
+		static MethodExecutionStateBase()
+		{
+			NlogBootstrapper.Initialize();
+		}
+
 		private MethodExecutionViewModel _owner;
 
 		public MethodExecutionViewModel Owner

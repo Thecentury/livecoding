@@ -26,10 +26,7 @@ namespace LiveCoding.Extension.ViewModels
 {
 	public sealed class ExecutingState : MethodExecutionStateBase
 	{
-		static ExecutingState()
-		{
-			NlogBootstrapper.Initialize();
-		}
+		private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
 		private const string CompilationDataKey = "CompilationData";
 
@@ -59,6 +56,8 @@ namespace LiveCoding.Extension.ViewModels
 
 		private void OnFailed( Task task )
 		{
+			_logger.Warn( "Execution failed", task.Exception );
+
 			Owner.GotoState( new FailedState( task.Exception ) );
 		}
 
@@ -93,8 +92,6 @@ namespace LiveCoding.Extension.ViewModels
 
 		private void RewriteAndExecute( CancellationToken token )
 		{
-			var logger = LogManager.GetCurrentClassLogger();
-
 			string filePath = Owner.View.GetFilePath();
 
 			var project = ProjectHelper.GetContainingProject( filePath );
@@ -118,17 +115,17 @@ namespace LiveCoding.Extension.ViewModels
 
 				string configurationName = solution.SolutionBuild.ActiveConfiguration.Name;
 
-				logger.Info( "Going to build '{0}', configuration: '{1}'", configurationName, project.UniqueName );
+				_logger.Info( "Going to build '{0}', configuration: '{1}'", configurationName, project.UniqueName );
 
 				solution.SolutionBuild.BuildProject( configurationName, project.UniqueName, true );
 
-				logger.Info( "Project was built" );
+				_logger.Info( "Project was built" );
 				// todo brinchuk failed compilation handling
 			}
 
 			if ( _codeCompiler == null || compilationUnit == null )
 			{
-				_codeCompiler = new AppDomainCodeCompiler();
+				_codeCompiler = new LoggingCodeCompiler( new AppDomainCodeCompiler() );
 
 				var syntaxTree = SyntaxTree.ParseFile( filePath, cancellationToken: token );
 
@@ -143,7 +140,7 @@ namespace LiveCoding.Extension.ViewModels
 					.Accept( new ClassFromNamespaceRewriter() )
 					.NormalizeWhitespace();
 
-				logger.Debug( "Rewritten code:{0}{1}", Environment.NewLine, rewritten.ToString() );
+				_logger.Debug( "Rewritten code:{0}{1}", Environment.NewLine, rewritten.ToString() );
 
 				List<string> namespaces = new List<string>();
 				foreach ( var usingDirectiveSyntax in compilationUnit.Usings )
@@ -266,62 +263,26 @@ namespace LiveCoding.Extension.ViewModels
 
 					var methodDeclaration = methodTree.GetRoot( token ).ChildNodes().OfType<MethodDeclarationSyntax>().First();
 
-					string methodName = methodDeclaration.Identifier.ValueText;
-
 					var classDeclaration =
 						compilationUnit.DescendantNodes()
 							.OfType<ClassDeclarationSyntax>()
 							.Where( cd => cd.Span.Contains( methodStartPosition ) )
 							.First();
 
-					string className = classDeclaration.Identifier.ValueText;
-					string fullClassName = ClassFromNamespaceRewriter.LiveCodingWrapperClassName + "." + className;
-
-					string parameterValues = methodDeclaration.ParameterList.GetDefaultParametersValuesString();
-
 					_context.Stopwatch = Stopwatch.StartNew();
+
+					IMethodExecutor methodExecutor;
 
 					if ( methodDeclaration.IsStatic() )
 					{
-						bool isStaticCtor = methodName == className;
-						if ( isStaticCtor )
-						{
-							throw new CannotExecuteException( "Cannot execute static ctor" );
-						}
-
-						_codeCompiler.Compile( String.Format( "{0}.{1}( {2} );", fullClassName, methodName, parameterValues ) );
+						methodExecutor = new StaticMethodExecutor( methodDeclaration, classDeclaration );
 					}
 					else
 					{
-						string instanceVariableName = "__liveCodingInstance_" + Guid.NewGuid().ToString( "N" );
-
-						bool hasParameterlessConstructor = classDeclaration.ChildNodes()
-							.OfType<ConstructorDeclarationSyntax>()
-							.Where( c => c.ParameterList.Parameters.Count == 0 )
-							.Any();
-
-						bool doesnotHaveConstructorDeclarationAtAll =
-							!classDeclaration.ChildNodes().OfType<ConstructorDeclarationSyntax>().Any();
-
-						if ( hasParameterlessConstructor || doesnotHaveConstructorDeclarationAtAll )
-						{
-							_codeCompiler.Compile( String.Format( "var {0} = new {1}();", instanceVariableName, fullClassName ) );
-						}
-						else
-						{
-							var firstConstructor = classDeclaration.ChildNodes().OfType<ConstructorDeclarationSyntax>().First();
-
-							string constructorParameters = firstConstructor.ParameterList.GetDefaultParametersValuesString();
-							_codeCompiler.Compile(
-								String.Format( "var {0} = new {1}( {2} );", instanceVariableName, fullClassName, constructorParameters ) );
-						}
-
-						bool ctorInvocation = className == methodName;
-						if ( !ctorInvocation )
-						{
-							_codeCompiler.Compile( String.Format( "{0}.{1}( {2} )", instanceVariableName, methodName, parameterValues ) );
-						}
+						methodExecutor = new InstanceMethodExecutor( methodDeclaration, classDeclaration );
 					}
+
+					methodExecutor.Execute( _codeCompiler );
 				}
 				else
 				{
