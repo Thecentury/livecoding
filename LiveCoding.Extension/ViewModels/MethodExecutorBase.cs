@@ -1,4 +1,5 @@
-﻿using LiveCoding.Extension.Rewriting;
+﻿using System;
+using LiveCoding.Extension.Rewriting;
 using Roslyn.Compilers.CSharp;
 
 namespace LiveCoding.Extension.ViewModels
@@ -45,5 +46,10 @@ namespace LiveCoding.Extension.ViewModels
 		}
 
 		public abstract void Execute( ICodeCompiler compiler );
+
+		protected static string GenerateVariableName()
+		{
+			return "__liveCodingInstance_" + Guid.NewGuid().ToString( "N" );
+		}
 	}
 }

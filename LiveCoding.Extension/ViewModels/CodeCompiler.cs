@@ -31,9 +31,9 @@ namespace LiveCoding.Extension.ViewModels
 			_session = _scriptEngine.CreateSession();
 		}
 
-		public void Compile( string code )
+		public object Compile( string code )
 		{
-			_session.Execute( code );
+			return _session.Execute( code );
 		}
 
 		public void SetLiveEventListener( ILiveEventListener listener )

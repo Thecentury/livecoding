@@ -26,13 +26,13 @@ namespace LiveCoding.Extension.VisualStudio
 		{
 			return new ExecuteMethodControl
 			{
-				DataContext = new MethodExecutionViewModel( new MethodExecutionData( span ), _view )
+				DataContext = new MethodExecutionViewModel( new MethodExecutionData( span, MethodExecutionKind.CommonMethod ), _view )
 			};
 		}
 
 		protected override bool UpdateAdornment( ExecuteMethodControl adornment, MethodTag data, SnapshotSpan snapshotSpan )
 		{
-			adornment.DataContext = new MethodExecutionViewModel( new MethodExecutionData( snapshotSpan ), _view );
+			adornment.DataContext = new MethodExecutionViewModel( new MethodExecutionData( snapshotSpan, MethodExecutionKind.CommonMethod ), _view );
 			return true;
 		}
 

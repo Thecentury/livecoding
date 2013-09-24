@@ -22,7 +22,7 @@ namespace LiveCoding.Extension.VisualStudio.NunitTestCase
 		{
 			return new ExecuteMethodControl
 			{
-				DataContext = new MethodExecutionViewModel( new MethodExecutionData( span ), View )
+				DataContext = new MethodExecutionViewModel( new MethodExecutionData( span, MethodExecutionKind.TestCase ) { Call = data.Arguments }, View )
 			};
 		}
 
@@ -45,7 +45,7 @@ namespace LiveCoding.Extension.VisualStudio.NunitTestCase
 				string arguments = match.Groups["arguments"].Value;
 				SnapshotSpan snapshotSpan = new SnapshotSpan( span.Start, 0 );
 
-				yield return Tuple.Create( snapshotSpan, (PositionAffinity?)PositionAffinity.Predecessor, new NunitTestCaseTag() );
+				yield return Tuple.Create( snapshotSpan, (PositionAffinity?)PositionAffinity.Predecessor, new NunitTestCaseTag { Arguments = arguments } );
 			}
 		}
 	}

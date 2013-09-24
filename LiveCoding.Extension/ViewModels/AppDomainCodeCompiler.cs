@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Remoting;
@@ -65,7 +64,7 @@ namespace LiveCoding.Extension.ViewModels
 			_compiler.SetupScriptEngine( namespaces, references );
 		}
 
-		public void Compile( string code )
+		public object Compile( string code )
 		{
 			if ( code == null )
 			{
@@ -74,7 +73,7 @@ namespace LiveCoding.Extension.ViewModels
 
 			try
 			{
-				_compiler.Compile( code );
+				return _compiler.Compile( code );
 			}
 			catch ( RemotingException exc )
 			{
@@ -82,7 +81,7 @@ namespace LiveCoding.Extension.ViewModels
 				logger.WarnException( string.Format( "Compile( '{0}' ) failed", code ), exc );
 				CreateDomainAndCompiler( _namespaces, _references );
 
-				_compiler.Compile( code );
+				return _compiler.Compile( code );
 			}
 		}
 
