@@ -15,6 +15,7 @@ using System.Linq;
 using System.Windows;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Projection;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace LiveCoding.Extension.Support
@@ -34,7 +35,9 @@ namespace LiveCoding.Extension.Support
 		where TAdornment : UIElement
 	{
 		protected readonly IWpfTextView View;
+		
 		private Dictionary<SnapshotSpan, TAdornment> _adornmentCache = new Dictionary<SnapshotSpan, TAdornment>();
+		
 		protected ITextSnapshot Snapshot { get; private set; }
 
 		protected IDictionary<SnapshotSpan, TAdornment> AdornmentCache
@@ -62,7 +65,7 @@ namespace LiveCoding.Extension.Support
 
 		/// <param name="spans">Spans to provide adornment data for. These spans do not necessarily correspond to text lines.</param>
 		/// <remarks>
-		/// If adornments need to be updated, call <see cref="RaiseTagsChanged"/> or <see cref="InavlidateSpans"/>.
+		/// If adornments need to be updated, call <see cref="RaiseTagsChanged"/> or <see cref="InvalidateSpans"/>.
 		/// This will, indirectly, cause <see cref="GetAdornmentData"/> to be called.
 		/// </remarks>
 		/// <returns>
@@ -151,11 +154,26 @@ namespace LiveCoding.Extension.Support
 				this.AdornmentCache.Remove( span );
 		}
 
+		protected virtual bool AcceptsCurrentSnapshot()
+		{
+			// When snapshot is IProjectionSnapshot, span.TransalteTo throws an exception.
+			// this happens in Razor's .cshtml files.
+			if ( Snapshot is IProjectionSnapshot )
+			{
+				return false;
+			}
+			return true;
+		}
 
 		// Produces tags on the snapshot that the tag consumer asked for.
 		public virtual IEnumerable<ITagSpan<IntraTextAdornmentTag>> GetTags( NormalizedSnapshotSpanCollection spans )
 		{
 			if ( spans == null || spans.Count == 0 )
+			{
+				yield break;
+			}
+			// todo brinchuk I am not sure this is the best solution
+			if ( !AcceptsCurrentSnapshot() )
 			{
 				yield break;
 			}

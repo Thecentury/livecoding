@@ -1,5 +1,4 @@
-﻿using System;
-using LiveCoding.Extension.Rewriting;
+﻿using LiveCoding.Extension.Rewriting;
 using Roslyn.Compilers.CSharp;
 
 namespace LiveCoding.Extension.ViewModels
@@ -43,11 +42,6 @@ namespace LiveCoding.Extension.ViewModels
 		protected string DefaultMethodParameterValues
 		{
 			get { return _method.ParameterList.GetDefaultParametersValuesString(); }
-		}
-
-		protected string DefaultCtorParameterValues
-		{
-			get { throw new NotImplementedException(); }
 		}
 
 		public abstract void Execute( ICodeCompiler compiler );

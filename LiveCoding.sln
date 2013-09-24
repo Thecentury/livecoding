@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{1CDD1D
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveCoding.Extension", "LiveCoding.Extension\LiveCoding.Extension.csproj", "{ED5488C3-C251-4B94-8E33-0573D0CB6865}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveCoding", "LiveCoding.Extension\LiveCoding.csproj", "{ED5488C3-C251-4B94-8E33-0573D0CB6865}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveCoding.Core.Tests", "LiveCoding.Core.Tests\LiveCoding.Core.Tests.csproj", "{F37662CE-4205-4020-8B06-5476062A66F3}"
 EndProject
