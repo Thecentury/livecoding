@@ -86,9 +86,9 @@
       <Project>{715375EC-2D4B-41C9-A7DE-FFF97B10A9E9}</Project>
       <Name>LiveCoding.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LiveCoding.Extension\LiveCoding.Extension.csproj">
+    <ProjectReference Include="..\LiveCoding.Extension\LiveCoding.csproj">
       <Project>{ED5488C3-C251-4B94-8E33-0573D0CB6865}</Project>
-      <Name>LiveCoding.Extension</Name>
+      <Name>LiveCoding</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Security;
 using System.Security.Permissions;
 using System.Security.Policy;
-using JetBrains.Annotations;
 using LiveCoding.Core;
 using NLog;
 
@@ -19,8 +19,11 @@ namespace LiveCoding.Extension.ViewModels
 		private List<string> _namespaces;
 		private List<string> _references;
 
+		private readonly Logger _logger = LogManager.GetCurrentClassLogger();
+
 		public void Dispose()
 		{
+			_logger.Debug( "Unloading domain '{0}'", _domain.FriendlyName );
 			_compiler = null;
 			AppDomain.Unload( _domain );
 		}
@@ -51,7 +54,11 @@ namespace LiveCoding.Extension.ViewModels
 				LoaderOptimization = LoaderOptimization.MultiDomain
 			};
 
-			_domain = AppDomain.CreateDomain( "LiveCodingCompilation_" + Guid.NewGuid().ToString( "N" ),
+			string appDomainName = "LiveCodingCompilation_" + Guid.NewGuid().ToString( "N" );
+
+			_logger.Debug( "Going to create new app domain '{0}'", appDomainName );
+	
+			_domain = AppDomain.CreateDomain( appDomainName, 
 				AppDomain.CurrentDomain.Evidence, appDomainSetup, new PermissionSet( PermissionState.Unrestricted ), new StrongName[0] );
 
 			_compiler = _domain.CreateInstanceAndUnwrap<CodeCompiler>();
