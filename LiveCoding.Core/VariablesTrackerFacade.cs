@@ -21,7 +21,7 @@ namespace LiveCoding.Core
 			AddEvent( valueChange );
 		}
 
-		public static Guid StartForLoop( int lineNumber )
+		public static Guid StartLoop( int lineNumber )
 		{
 			var evt = new ForLoopStartedEvent
 			{

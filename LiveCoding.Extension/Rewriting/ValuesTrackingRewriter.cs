@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using LiveCoding.Extension.VisualStudio;
 using Roslyn.Compilers.CSharp;
 
@@ -8,10 +9,21 @@ namespace LiveCoding.Extension.Rewriting
 {
 	public sealed class ValuesTrackingRewriter : SyntaxRewriter
 	{
+		private readonly SyntaxTree _syntaxTree;
+
+		public ValuesTrackingRewriter( [NotNull] SyntaxTree syntaxTree )
+		{
+			if ( syntaxTree == null )
+			{
+				throw new ArgumentNullException( "syntaxTree" );
+			}
+			_syntaxTree = syntaxTree;
+		}
+
 		private const string VariablesTracker = "global::LiveCoding.Core.VariablesTrackerFacade";
 		private const string AddValueMethod = "AddValue";
-		private const string StartForLoopMethod = "StartForLoop";
-		private const string EndForLoopMethod = "EndForLoop";
+		private const string StartLoopMethod = "StartLoop";
+		private const string EndLoopMethod = "EndForLoop";
 		private const string RegisterLoopIterationMethod = "RegisterLoopIteration";
 		private const string RegisterIf = "RegisterIf";
 		private const string RegisterInvocation = "RegisterInvocation";
@@ -28,7 +40,7 @@ namespace LiveCoding.Extension.Rewriting
 
 			string conditionIdentifierName = "__live_coding_condition_" + Guid.NewGuid().ToString( "N" );
 
-			var ifSpan = node.SyntaxTree.GetLineSpan( node.Span, true );
+			var ifSpan = _syntaxTree.GetLineSpan( node.Span, true );
 
 			List<SyntaxNodeOrToken> ifRegistrationArguments = new List<SyntaxNodeOrToken>();
 			ifRegistrationArguments.AddIdentifier( conditionIdentifierName );
@@ -45,7 +57,7 @@ namespace LiveCoding.Extension.Rewriting
 
 			if ( node.Else != null )
 			{
-				var elseSpan = node.SyntaxTree.GetLineSpan( node.Else.Span, true );
+				var elseSpan = _syntaxTree.GetLineSpan( node.Else.Span, true );
 
 				ifRegistrationArguments.AddComma();
 				ifRegistrationArguments.AddLiteral( elseSpan.StartLinePosition.Line );
@@ -106,7 +118,7 @@ namespace LiveCoding.Extension.Rewriting
 			return RewriteLoop( node, new ForLoopAdapter( rewrittenFor ) );
 		}
 
-		private static SyntaxNode RewriteLoop( SyntaxNode node, ILoopAdapter loop )
+		private SyntaxNode RewriteLoop( SyntaxNode node, ILoopAdapter loop )
 		{
 			Guid loopIdHolderId = Guid.NewGuid();
 			SyntaxToken loopIdentifier = Syntax.Identifier( String.Format( "__loop_id_{0}", loopIdHolderId.ToString( "N" ) ) );
@@ -152,7 +164,7 @@ namespace LiveCoding.Extension.Rewriting
 
 			var loopWithNewStatement = loop.WithStatement( Syntax.Block( loopBodyStatements ) );
 
-			var loopSpan = node.SyntaxTree.GetLineSpan( node.Span, usePreprocessorDirectives: true );
+			var loopSpan = _syntaxTree.GetLineSpan( node.Span, true );
 
 			var block = Syntax.Block(
 				Syntax.LocalDeclarationStatement(
@@ -172,7 +184,7 @@ namespace LiveCoding.Extension.Rewriting
 												Syntax.IdentifierName(
 													VariablesTracker ),
 												Syntax.IdentifierName(
-													StartForLoopMethod ) ) )
+													StartLoopMethod ) ) )
 											.WithArgumentList(
 												Syntax.ArgumentList(
 													Syntax.SeparatedList(
@@ -184,7 +196,7 @@ namespace LiveCoding.Extension.Rewriting
 						Syntax.MemberAccessExpression(
 							SyntaxKind.MemberAccessExpression,
 							Syntax.IdentifierName( VariablesTracker ),
-							Syntax.IdentifierName( EndForLoopMethod ) ) )
+							Syntax.IdentifierName( EndLoopMethod ) ) )
 						.WithArgumentList(
 							Syntax.ArgumentList( Syntax.SeparatedList( Syntax.Argument( Syntax.IdentifierName( loopIdentifier ) ) ) ) ) ) );
 
@@ -193,10 +205,10 @@ namespace LiveCoding.Extension.Rewriting
 
 		public override SyntaxNode VisitExpressionStatement( ExpressionStatementSyntax node )
 		{
-			var rewrittenLines = VisitStatement( base.VisitExpressionStatement( node ), node ).ToList();
+			var rewrittenLines = VisitStatement( base.VisitExpressionStatement( node ) ).ToList();
 			if ( rewrittenLines.Count == 1 )
 			{
-				return rewrittenLines[ 0 ];
+				return rewrittenLines[0];
 			}
 			else
 			{
@@ -204,17 +216,17 @@ namespace LiveCoding.Extension.Rewriting
 			}
 		}
 
-		private IEnumerable<StatementSyntax> VisitStatement( dynamic statement, StatementSyntax originalStatement )
+		private IEnumerable<StatementSyntax> VisitStatement( dynamic statement )
 		{
-			return VisitStatement( statement, originalStatement );
+			return VisitStatement( statement );
 		}
 
-		private static IEnumerable<StatementSyntax> VisitStatement( StatementSyntax statement, StatementSyntax originalStatement )
+		private static IEnumerable<StatementSyntax> VisitStatement( StatementSyntax statement )
 		{
 			yield return statement;
 		}
 
-		private static IEnumerable<StatementSyntax> RewriteExpressionStatement( InvocationExpressionSyntax invocation )
+		private IEnumerable<StatementSyntax> RewriteExpressionStatement( InvocationExpressionSyntax invocation )
 		{
 			List<string> argNames = new List<string>( invocation.ArgumentList.Arguments.Count );
 			foreach ( ArgumentSyntax argument in invocation.ArgumentList.Arguments )
@@ -235,7 +247,7 @@ namespace LiveCoding.Extension.Rewriting
 				yield return arg;
 			}
 
-			var lineSpan = invocation.SyntaxTree.GetLineSpan( invocation.Span, true );
+			var lineSpan = _syntaxTree.GetLineSpan( invocation.Span, true );
 			List<SyntaxNodeOrToken> registerInvocationArgs = new List<SyntaxNodeOrToken>( invocation.ArgumentList.Arguments.Count * 2 + 6 );
 
 			registerInvocationArgs.AddLiteral( lineSpan.StartLinePosition.Line );
@@ -258,7 +270,7 @@ namespace LiveCoding.Extension.Rewriting
 			{
 				invocationArgsCount = 0;
 			}
-			SyntaxNodeOrToken[] targetInvocationArgs = new SyntaxNodeOrToken[ invocationArgsCount ];
+			SyntaxNodeOrToken[] targetInvocationArgs = new SyntaxNodeOrToken[invocationArgsCount];
 			if ( targetInvocationArgs.Length > 0 )
 			{
 				registerInvocationArgs.CopyTo( 6, targetInvocationArgs, 0, targetInvocationArgs.Length );
@@ -276,20 +288,20 @@ namespace LiveCoding.Extension.Rewriting
 			yield return Syntax.ExpressionStatement( invocation.WithArgumentList( Syntax.ArgumentList( Syntax.SeparatedList<ArgumentSyntax>( targetInvocationArgs ) ) ) );
 		}
 
-		private static IEnumerable<StatementSyntax> VisitStatement( LocalDeclarationStatementSyntax localDeclaration, StatementSyntax originalStatement )
+		private IEnumerable<StatementSyntax> VisitStatement( LocalDeclarationStatementSyntax localDeclaration )
 		{
 			yield return localDeclaration;
 
-			var identifier = localDeclaration.Declaration.Variables[ 0 ].Identifier;
+			var identifier = localDeclaration.Declaration.Variables[0].Identifier;
 
 			string identifierName = Quote( identifier.ValueText );
 
-			var lineSpan = originalStatement.SyntaxTree.GetLineSpan( localDeclaration.Span, usePreprocessorDirectives: true );
+			var lineSpan = _syntaxTree.GetLineSpan( localDeclaration.Span, usePreprocessorDirectives: true );
 
 			var separatedList = Syntax.SeparatedList<ArgumentSyntax>(
 				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression, Syntax.Literal( identifierName, identifierName ) ) ),
 				Syntax.Token( SyntaxKind.CommaToken ),
-				Syntax.Argument( Syntax.IdentifierName( localDeclaration.Declaration.Variables[ 0 ].Identifier ) ),
+				Syntax.Argument( Syntax.IdentifierName( localDeclaration.Declaration.Variables[0].Identifier ) ),
 				Syntax.Token( SyntaxKind.CommaToken ),
 				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.NumericLiteralExpression, Syntax.Literal( lineSpan.StartLinePosition.Line ) ) )
 				);
@@ -299,27 +311,27 @@ namespace LiveCoding.Extension.Rewriting
 			yield return track;
 		}
 
-		private static IEnumerable<StatementSyntax> VisitStatement( ExpressionStatementSyntax expression, StatementSyntax originalStatement )
+		private IEnumerable<StatementSyntax> VisitStatement( ExpressionStatementSyntax expression )
 		{
-			var rewritten = RewriteExpressionStatement( (dynamic)expression.Expression, originalStatement );
+			var rewritten = RewriteExpressionStatement( (dynamic)expression.Expression );
 			return rewritten;
 		}
 
-		private IEnumerable<StatementSyntax> RewriteExpressionStatement( dynamic expression, StatementSyntax originalStatement )
+		private IEnumerable<StatementSyntax> RewriteExpressionStatement( dynamic expression )
 		{
 			return RewriteExpressionStatement( expression );
 		}
 
-		private static IEnumerable<StatementSyntax> RewriteExpressionStatement( ExpressionSyntax expression, StatementSyntax originalStatement )
+		private IEnumerable<StatementSyntax> RewriteExpressionStatement( ExpressionSyntax expression )
 		{
 			yield return (StatementSyntax)expression.Parent;
 		}
 
-		private static IEnumerable<StatementSyntax> RewriteExpressionStatement( PostfixUnaryExpressionSyntax postfixExpression, StatementSyntax originalStatement )
+		private IEnumerable<StatementSyntax> RewriteExpressionStatement( PostfixUnaryExpressionSyntax postfixExpression )
 		{
 			yield return (StatementSyntax)postfixExpression.Parent;
 
-			var lineSpan = postfixExpression.SyntaxTree.GetLineSpan( postfixExpression.Span, usePreprocessorDirectives: true );
+			var lineSpan = _syntaxTree.GetLineSpan( postfixExpression.Span, usePreprocessorDirectives: true );
 			string quotedOperand = Quote( postfixExpression.Operand.ToString() );
 			var arguments = Syntax.SeparatedList<ArgumentSyntax>(
 				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression, Syntax.Literal( quotedOperand, quotedOperand ) ) ),
@@ -333,11 +345,11 @@ namespace LiveCoding.Extension.Rewriting
 			yield return track;
 		}
 
-		private static IEnumerable<StatementSyntax> RewriteExpressionStatement( PrefixUnaryExpressionSyntax prefixExpression, StatementSyntax originalStatement )
+		private IEnumerable<StatementSyntax> RewriteExpressionStatement( PrefixUnaryExpressionSyntax prefixExpression )
 		{
 			yield return (StatementSyntax)prefixExpression.Parent;
 
-			var lineSpan = prefixExpression.SyntaxTree.GetLineSpan( prefixExpression.Span, usePreprocessorDirectives: true );
+			var lineSpan = _syntaxTree.GetLineSpan( prefixExpression.Span, usePreprocessorDirectives: true );
 			string quotedOperand = Quote( prefixExpression.Operand.ToString() );
 			var arguments = Syntax.SeparatedList<ArgumentSyntax>(
 				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression, Syntax.Literal( quotedOperand, quotedOperand ) ) ),
@@ -351,7 +363,7 @@ namespace LiveCoding.Extension.Rewriting
 			yield return track;
 		}
 
-		private static IEnumerable<StatementSyntax> RewriteExpressionStatement( BinaryExpressionSyntax binaryExpression, StatementSyntax originalStatement )
+		private IEnumerable<StatementSyntax> RewriteExpressionStatement( BinaryExpressionSyntax binaryExpression )
 		{
 			if ( !ChangesValue( binaryExpression.Kind ) )
 			{
@@ -397,7 +409,7 @@ namespace LiveCoding.Extension.Rewriting
 
 			string assignmentLeftSideName = Quote( binaryExpression.Left.ToString() );
 
-			var lineSpan = binaryExpression.SyntaxTree.GetLineSpan( binaryExpression.Span, usePreprocessorDirectives: true );
+			var lineSpan = _syntaxTree.GetLineSpan( binaryExpression.Span, usePreprocessorDirectives: true );
 			var arguments = Syntax.SeparatedList<ArgumentSyntax>(
 				Syntax.Argument( Syntax.LiteralExpression( SyntaxKind.StringLiteralExpression, Syntax.Literal( assignmentLeftSideName, assignmentLeftSideName ) ) ),
 				Syntax.Token( SyntaxKind.CommaToken ),
@@ -425,7 +437,7 @@ namespace LiveCoding.Extension.Rewriting
 			{
 				StatementSyntax visited = (StatementSyntax)Visit( statement );
 
-				statements.AddRange( VisitStatement( (dynamic)visited, statement ) );
+				statements.AddRange( VisitStatement( (dynamic)visited ) );
 			}
 
 			var result = Syntax.Block( statements );

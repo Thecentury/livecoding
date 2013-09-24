@@ -9,3 +9,4 @@ packages/*
 */obj/*
 *.sln.ide/*
 *.csproj.DotSettings
+*/AutoTest.Net/*
