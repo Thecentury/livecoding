@@ -129,7 +129,7 @@ namespace LiveCoding.Extension.ViewModels
 
 				var syntaxTree = SyntaxTree.ParseFile( filePath, cancellationToken: token );
 
-				ValuesTrackingRewriter rewriter = new ValuesTrackingRewriter();
+				ValuesTrackingRewriter rewriter = new ValuesTrackingRewriter(syntaxTree);
 
 				compilationUnit = syntaxTree.GetRoot( token );
 

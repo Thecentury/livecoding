@@ -93,9 +93,9 @@ class C {
 		[TestCase( InvocationWithReturnValue )]
 		public void Rewrite( string code )
 		{
-			ValuesTrackingRewriter rewriter = new ValuesTrackingRewriter();
-
 			var tree = SyntaxTree.ParseText( code );
+
+			ValuesTrackingRewriter rewriter = new ValuesTrackingRewriter( tree );
 
 			var rewritten = tree.GetRoot().Accept( rewriter ).NormalizeWhitespace();
 
