@@ -183,6 +183,7 @@
     <Compile Include="ViewModels\ObjectVisualizing\TypeHelper.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\TypePrettyPrinter.cs" />
     <Compile Include="ViewModels\StaticMethodExecutor.cs" />
+    <Compile Include="ViewModels\TestCaseExecutor.cs" />
     <Compile Include="Views\BooleanToBrushConverter.cs" />
     <Compile Include="Views\BooleanToZIndexConverter.cs" />
     <Compile Include="Views\ConditionView.xaml.cs">
@@ -229,6 +230,7 @@
     <Compile Include="Views\MethodExecutionTemplateConverter.cs" />
     <Compile Include="ViewModels\MethodExecutionViewModel.cs" />
     <Compile Include="VisualStudio\MethodExecutionData.cs" />
+    <Compile Include="VisualStudio\MethodExecutionKind.cs" />
     <Compile Include="VisualStudio\Method\MethodTag.cs" />
     <Compile Include="VisualStudio\Method\MethodTagger.cs" />
     <Compile Include="VisualStudio\Method\VisualStudioLanguages.cs" />

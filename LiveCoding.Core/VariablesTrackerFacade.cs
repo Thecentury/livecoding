@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using LiveCoding.Core.Capturing;
 
 namespace LiveCoding.Core

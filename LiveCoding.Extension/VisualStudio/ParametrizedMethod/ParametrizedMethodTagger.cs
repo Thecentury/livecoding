@@ -25,13 +25,13 @@ namespace LiveCoding.Extension.VisualStudio.ParametrizedMethod
 		{
 			return new ExecuteMethodControl
 			{
-				DataContext = new MethodExecutionViewModel( new MethodExecutionData( span ) { Call = data.Call }, _view )
+				DataContext = new MethodExecutionViewModel( new MethodExecutionData( span, MethodExecutionKind.CommonMethod ) { Call = data.Call }, _view )
 			};
 		}
 
 		protected override bool UpdateAdornment(ExecuteMethodControl adornment, ParametrizedMethodTag data, SnapshotSpan snapshotSpan)
 		{
-			adornment.DataContext = new MethodExecutionViewModel( new MethodExecutionData( snapshotSpan ) { Call = data.Call }, _view );
+			adornment.DataContext = new MethodExecutionViewModel( new MethodExecutionData( snapshotSpan, MethodExecutionKind.CommonMethod ) { Call = data.Call }, _view );
 			return true;
 		}
 

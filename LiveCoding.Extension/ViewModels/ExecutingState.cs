@@ -129,7 +129,7 @@ namespace LiveCoding.Extension.ViewModels
 
 				var syntaxTree = SyntaxTree.ParseFile( filePath, cancellationToken: token );
 
-				ValuesTrackingRewriter rewriter = new ValuesTrackingRewriter(syntaxTree);
+				ValuesTrackingRewriter rewriter = new ValuesTrackingRewriter( syntaxTree );
 
 				compilationUnit = syntaxTree.GetRoot( token );
 
@@ -251,44 +251,35 @@ namespace LiveCoding.Extension.ViewModels
 
 			try
 			{
-				if ( Owner.Data.Call == null )
+				var snapshot = Owner.Data.SnapshotSpan.Snapshot;
+
+				int methodStartPosition = Owner.Data.SnapshotSpan.Start.Position;
+				var methodDeclaration = Owner.Data.GetMethodDeclaration( compilationUnit, token );
+
+				var classDeclaration =
+					compilationUnit.DescendantNodes()
+						.OfType<ClassDeclarationSyntax>()
+						.Where( cd => cd.Span.Contains( methodStartPosition ) )
+						.First();
+
+				_context.Stopwatch = Stopwatch.StartNew();
+
+				IMethodExecutor methodExecutor;
+
+				if ( methodDeclaration.IsStatic() )
 				{
-					var snapshot = Owner.Data.SnapshotSpan.Snapshot;
-
-					int methodStartPosition = Owner.Data.SnapshotSpan.Start.Position;
-					var line = snapshot.GetLineFromLineNumber( snapshot.GetLineNumberFromPosition( methodStartPosition ) );
-					string text = line.GetText();
-
-					var methodTree = SyntaxTree.ParseText( text, cancellationToken: token );
-
-					var methodDeclaration = methodTree.GetRoot( token ).ChildNodes().OfType<MethodDeclarationSyntax>().First();
-
-					var classDeclaration =
-						compilationUnit.DescendantNodes()
-							.OfType<ClassDeclarationSyntax>()
-							.Where( cd => cd.Span.Contains( methodStartPosition ) )
-							.First();
-
-					_context.Stopwatch = Stopwatch.StartNew();
-
-					IMethodExecutor methodExecutor;
-
-					if ( methodDeclaration.IsStatic() )
-					{
-						methodExecutor = new StaticMethodExecutor( methodDeclaration, classDeclaration );
-					}
-					else
-					{
-						methodExecutor = new InstanceMethodExecutor( methodDeclaration, classDeclaration );
-					}
-
-					methodExecutor.Execute( _codeCompiler );
+					methodExecutor = new StaticMethodExecutor( methodDeclaration, classDeclaration );
+				}
+				else if ( Owner.Data.Kind == MethodExecutionKind.TestCase )
+				{
+					methodExecutor = new TestCaseExecutor( methodDeclaration, classDeclaration, Owner.Data.Call );
 				}
 				else
 				{
-					_context.Stopwatch = Stopwatch.StartNew();
-					_codeCompiler.Compile( Owner.Data.Call );
+					methodExecutor = new InstanceMethodExecutor( methodDeclaration, classDeclaration );
 				}
+
+				methodExecutor.Execute( _codeCompiler );
 			}
 			finally
 			{

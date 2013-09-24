@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
 using LiveCoding.Core;
 using LiveCoding.Extension.Rewriting;
 using NUnit.Framework;

@@ -14,7 +14,7 @@ namespace LiveCoding.Extension.ViewModels
 
 		public override void Execute( ICodeCompiler compiler )
 		{
-			string instanceVariableName = "__liveCodingInstance_" + Guid.NewGuid().ToString( "N" );
+			string instanceVariableName = GenerateVariableName();
 
 			bool hasParameterlessConstructor = Class.ChildNodes()
 				.OfType<ConstructorDeclarationSyntax>()
