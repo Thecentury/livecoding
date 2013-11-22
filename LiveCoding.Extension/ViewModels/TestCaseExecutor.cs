@@ -1,5 +1,4 @@
-﻿using System;
-using Roslyn.Compilers.CSharp;
+﻿using Roslyn.Compilers.CSharp;
 
 namespace LiveCoding.Extension.ViewModels
 {
