@@ -260,6 +260,7 @@ namespace LiveCoding.Extension.ViewModels
 					compilationUnit.DescendantNodes()
 						.OfType<ClassDeclarationSyntax>()
 						.Where( cd => cd.Span.Contains( methodStartPosition ) )
+						.OrderBy( cd => cd.Span.Length )
 						.First();
 
 				_context.Stopwatch = Stopwatch.StartNew();

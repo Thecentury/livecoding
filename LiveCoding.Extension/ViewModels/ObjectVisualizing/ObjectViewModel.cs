@@ -12,6 +12,13 @@ using LiveCoding.Extension.Extensions;
 
 namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
 {
+	public interface ITypeProvider
+	{
+		Type Type { get; }
+
+
+	}
+
 	internal sealed class ObjectViewModel : INotifyPropertyChanged
 	{
 		private ReadOnlyCollection<ObjectViewModel> _children;
