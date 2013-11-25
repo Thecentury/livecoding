@@ -17,7 +17,7 @@ namespace LiveCoding.Extension.ViewModels
 				throw new CannotExecuteException( "Cannot execute static ctor" );
 			}
 
-			compiler.Compile( "{0}.{1}( {2} );", FullClassName, MethodName, DefaultMethodParameterValues );
+			compiler.Compile( "{0}.{1}( {2} );", FullLiveCodingClassName, MethodName, DefaultMethodParameterValues );
 		}
 	}
 }

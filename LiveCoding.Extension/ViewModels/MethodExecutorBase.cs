@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Text;
+using LiveCoding.Extension.Extensions;
 using LiveCoding.Extension.Rewriting;
 using Roslyn.Compilers.CSharp;
 
@@ -19,9 +22,19 @@ namespace LiveCoding.Extension.ViewModels
 			get { return _class; }
 		}
 
+		protected string FullLiveCodingClassName
+		{
+			get { return ClassFromNamespaceRewriter.LiveCodingWrapperClassName + "." + FullClassName; }
+		}
+
 		protected string FullClassName
 		{
-			get { return ClassFromNamespaceRewriter.LiveCodingWrapperClassName + "." + ClassName; }
+			get
+			{
+				return _class.GetSelfAndAllEnclosingClasses()
+					.Select( c => c.Identifier.ValueText )
+					.FoldR( new StringBuilder(), ( l, r ) => l.Length > 0 ? l.Append( "." ).Append( r ) : l.Append( r ) ).ToString();
+			}
 		}
 
 		protected string ClassName
