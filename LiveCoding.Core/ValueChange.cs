@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace LiveCoding.Core
 {
 	[Serializable]
-	[DebuggerDisplay( "Change {VariableName} = {OriginalValue} @ {LineNumber} on {TimestampUtc}" )]
+	[DebuggerDisplay( "Change {VariableName} = {OriginalValue} @ {OriginalLineNumber} on {TimestampUtc}" )]
 	public sealed class ValueChange : LiveEvent, IPositionAware
 	{
 		public string VariableName { get; set; }

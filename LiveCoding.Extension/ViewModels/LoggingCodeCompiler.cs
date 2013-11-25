@@ -35,11 +35,11 @@ namespace LiveCoding.Extension.ViewModels
 			_inner.SetupScriptEngine( namespaces, references );
 		}
 
-		public object Compile( string code )
+		public object Compile( string code, bool isPrelude )
 		{
 			_logger.Trace( "Compiling '{0}'", code );
 
-			return _inner.Compile( code );
+			return _inner.Compile( code, isPrelude );
 		}
 
 		public void SetLiveEventListener( ILiveEventListener listener )

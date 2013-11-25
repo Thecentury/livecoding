@@ -31,7 +31,7 @@ namespace LiveCoding.Extension.ViewModels
 			_session = _scriptEngine.CreateSession();
 		}
 
-		public object Compile( string code )
+		public object Compile( string code, bool isPrelude )
 		{
 			return _session.Execute( code );
 		}

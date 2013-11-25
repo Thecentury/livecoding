@@ -17,6 +17,7 @@ namespace LiveCoding.Extension.ViewModels
 		private CodeCompiler _compiler;
 		private List<string> _namespaces;
 		private List<string> _references;
+		private readonly List<string> _preludes = new List<string>(); 
 
 		private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
@@ -64,7 +65,7 @@ namespace LiveCoding.Extension.ViewModels
 			_compiler.SetupScriptEngine( namespaces, references );
 		}
 
-		public object Compile( string code )
+		public object Compile( string code, bool isPrelude )
 		{
 			if ( code == null )
 			{
@@ -73,7 +74,12 @@ namespace LiveCoding.Extension.ViewModels
 
 			try
 			{
-				return _compiler.Compile( code );
+				if ( isPrelude )
+				{
+					_preludes.Add( code );
+				}
+
+				return _compiler.Compile( code, isPrelude );
 			}
 			catch ( RemotingException exc )
 			{
@@ -81,7 +87,12 @@ namespace LiveCoding.Extension.ViewModels
 				logger.WarnException( string.Format( "Compile( '{0}' ) failed", code ), exc );
 				CreateDomainAndCompiler( _namespaces, _references );
 
-				return _compiler.Compile( code );
+				foreach ( string prelude in _preludes )
+				{
+					_compiler.Compile( prelude, true );
+				}
+
+				return _compiler.Compile( code, isPrelude );
 			}
 		}
 
