@@ -26,14 +26,14 @@ namespace LiveCoding.Extension.ViewModels
 
 			if ( hasParameterlessConstructor || doesnotHaveConstructorDeclarationAtAll )
 			{
-				compiler.Compile( "var {0} = new {1}();", instanceVariableName, FullClassName );
+				compiler.Compile( "var {0} = new {1}();", instanceVariableName, FullLiveCodingClassName );
 			}
 			else
 			{
 				var firstConstructor = Class.ChildNodes().OfType<ConstructorDeclarationSyntax>().First();
 
 				string constructorParameters = firstConstructor.ParameterList.GetDefaultParametersValuesString();
-				compiler.Compile( "var {0} = new {1}( {2} );", instanceVariableName, FullClassName, constructorParameters );
+				compiler.Compile( "var {0} = new {1}( {2} );", instanceVariableName, FullLiveCodingClassName, constructorParameters );
 			}
 
 			bool ctorInvocation = ClassName == MethodName;

@@ -45,7 +45,7 @@ namespace LiveCoding.Core
 			AddEvent( evt );
 		}
 
-		public static void RegisterIf( bool result, int startIfLine, int endIfLine, int conditionStartPosition, int conditionEndPosition, int? startElseLine = null, int? endElseLine = null )
+		public static bool RegisterIf( bool result, int startIfLine, int endIfLine, int conditionStartPosition, int conditionEndPosition, int? startElseLine = null, int? endElseLine = null )
 		{
 			var evt = new IfEvaluationEvent
 			{
@@ -59,6 +59,8 @@ namespace LiveCoding.Core
 			};
 
 			AddEvent( evt );
+
+			return result;
 		}
 
 		public static void RegisterLoopIteration( Guid loopId, object iteratorValue = null )

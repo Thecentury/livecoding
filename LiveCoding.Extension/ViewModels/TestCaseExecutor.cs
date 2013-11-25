@@ -18,7 +18,7 @@ namespace LiveCoding.Extension.ViewModels
 
 			string instanceVariableName = GenerateVariableName();
 
-			compiler.Compile( "var {0} = new {1}();", instanceVariableName, FullClassName );
+			compiler.Compile( "var {0} = new {1}();", instanceVariableName, FullLiveCodingClassName );
 			compiler.Compile( "{0}.{1}( {2} )", instanceVariableName, MethodName, _parameters );
 		}
 	}
