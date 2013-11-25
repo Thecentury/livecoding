@@ -9,11 +9,13 @@ namespace LiveCoding.Core
 		{
 			object capturedValue = ValueCapturer.CreateCapturedValue( value );
 
+			object originalValue = ValueCapturer.WrapOriginalValue( value );
+
 			var valueChange = new ValueChange
 			{
 				VariableName = variableName,
 				OriginalLineNumber = originalLineNumber,
-				OriginalValue = value,
+				OriginalValue = originalValue,
 				CapturedValue = capturedValue
 			};
 
