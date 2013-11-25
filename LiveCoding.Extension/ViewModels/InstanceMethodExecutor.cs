@@ -26,20 +26,20 @@ namespace LiveCoding.Extension.ViewModels
 
 			if ( hasParameterlessConstructor || doesnotHaveConstructorDeclarationAtAll )
 			{
-				compiler.Compile( "var {0} = new {1}();", instanceVariableName, FullLiveCodingClassName );
+				compiler.Compile( "var {0} = new {1}();", true, instanceVariableName, FullLiveCodingClassName );
 			}
 			else
 			{
 				var firstConstructor = Class.ChildNodes().OfType<ConstructorDeclarationSyntax>().First();
 
 				string constructorParameters = firstConstructor.ParameterList.GetDefaultParametersValuesString();
-				compiler.Compile( "var {0} = new {1}( {2} );", instanceVariableName, FullLiveCodingClassName, constructorParameters );
+				compiler.Compile( "var {0} = new {1}( {2} );", true, instanceVariableName, FullLiveCodingClassName, constructorParameters );
 			}
 
 			bool ctorInvocation = ClassName == MethodName;
 			if ( !ctorInvocation )
 			{
-				compiler.Compile( "{0}.{1}( {2} )", instanceVariableName, MethodName, DefaultMethodParameterValues );
+				compiler.Compile( "{0}.{1}( {2} )", false, instanceVariableName, MethodName, DefaultMethodParameterValues );
 			}
 		}
 	}

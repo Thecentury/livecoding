@@ -175,7 +175,7 @@ namespace LiveCoding.Extension.ViewModels
 
 				_codeCompiler.SetLiveEventListener( new EventProxyListener() );
 
-				_codeCompiler.Compile( rewritten.ToString() );
+				_codeCompiler.Compile( rewritten.ToString(), true );
 			}
 
 			//var compilation = Compilation.Create( "1.dll",

@@ -9,7 +9,7 @@ namespace LiveCoding.Extension.ViewModels
 	{
 		void SetupScriptEngine( [NotNull] List<string> namespaces, [NotNull] List<string> references );
 
-		object Compile( [NotNull] string code );
+		object Compile( [NotNull] string code, bool isPrelude );
 
 		void SetLiveEventListener( ILiveEventListener listener );
 	}

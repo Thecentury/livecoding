@@ -14,12 +14,10 @@ namespace LiveCoding.Extension.ViewModels
 
 		public override void Execute( ICodeCompiler compiler )
 		{
-			//Type type = (Type)compiler.Compile( "typeof({0})", FullClassName );
-
 			string instanceVariableName = GenerateVariableName();
 
-			compiler.Compile( "var {0} = new {1}();", instanceVariableName, FullLiveCodingClassName );
-			compiler.Compile( "{0}.{1}( {2} )", instanceVariableName, MethodName, _parameters );
+			compiler.Compile( "var {0} = new {1}();", false, instanceVariableName, FullLiveCodingClassName );
+			compiler.Compile( "{0}.{1}( {2} )", false, instanceVariableName, MethodName, _parameters );
 		}
 	}
 }
