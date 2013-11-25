@@ -188,7 +188,6 @@
     <Compile Include="ViewModels\MethodExecutorBase.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\ObjectViewModel.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\ObjectViewModelHierarchy.cs" />
-    <Compile Include="ViewModels\ObjectVisualizing\TypeHelper.cs" />
     <Compile Include="ViewModels\ObjectVisualizing\TypePrettyPrinter.cs" />
     <Compile Include="ViewModels\StaticMethodExecutor.cs" />
     <Compile Include="ViewModels\TestCaseExecutor.cs" />

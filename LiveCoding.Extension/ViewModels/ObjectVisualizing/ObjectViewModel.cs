@@ -4,28 +4,19 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
+using LiveCoding.Core;
 using LiveCoding.Extension.Extensions;
 
 namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
 {
-	public interface ITypeProvider
-	{
-		Type Type { get; }
-
-
-	}
-
 	internal sealed class ObjectViewModel : INotifyPropertyChanged
 	{
 		private ReadOnlyCollection<ObjectViewModel> _children;
 		private readonly ObjectViewModel _parent;
-		private readonly object _object;
-		private readonly PropertyInfo _info;
-		private readonly Type _type;
+		private readonly IObjectInfoProxy _object;
+		private readonly MemberValue _info;
 
 		bool _isExpanded;
 		bool _isSelected;
@@ -35,14 +26,13 @@ namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
 		{
 		}
 
-		private ObjectViewModel( object obj, PropertyInfo info, ObjectViewModel parent )
+		private ObjectViewModel( object obj, MemberValue info, ObjectViewModel parent )
 		{
-			_object = obj;
+			_object = obj != null ? ( ( obj as IObjectInfoProxy ) ?? new ReflectionObjectInfoProxy( obj ) ) : null;
 			_info = info;
 			if ( _object != null )
 			{
-				_type = obj.GetType();
-				if ( !TypeHelper.IsPrintableType( _type ) )
+				if ( _object.IsPrintable() )
 				{
 					// load the _children object with an empty collection to allow the + expander to be shown
 					_children = new ReadOnlyCollection<ObjectViewModel>( new[] { new ObjectViewModel( null ) } );
@@ -59,25 +49,23 @@ namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
 			}
 
 			// exclude value types and strings from listing child members
-			if ( TypeHelper.IsPrintableType( _type ) )
+			if ( _object.IsPrintable() )
 			{
 				return;
 			}
 
 			List<ObjectViewModel> children = new List<ObjectViewModel>();
 
-			bool shouldAddSelfProperties = !_type.IsArray;
+			bool shouldAddSelfProperties = !_object.IsArray();
 
 			if ( shouldAddSelfProperties )
 			{
 				// the public properties of this object are its children
-				children.AddRange( _type.GetProperties( BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance )
-					.Where( p => !p.GetIndexParameters().Any() ) // exclude indexed parameters for now
-					.Select( p => new ObjectViewModel( p.GetValue( _object, null ), p, this ) ) );
+				children.AddRange( _object.GetMemberValues().Select( p => new ObjectViewModel( p.GetValue(), p, this ) ) );
 			}
 
 			// if this is a collection type, add the contained items to the children
-			var collection = _object as IEnumerable;
+			IEnumerable collection = _object.AsEnumerable();
 			if ( collection != null )
 			{
 				foreach ( var item in collection )
@@ -97,7 +85,7 @@ namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
 			get { return _parent; }
 		}
 
-		public PropertyInfo Info
+		public MemberValue Info
 		{
 			get { return _info; }
 		}
@@ -119,13 +107,13 @@ namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
 				var type = string.Empty;
 				if ( _object != null )
 				{
-					type = string.Format( "({0})", _type.Name );
+					type = string.Format( "({0})", _object.GetTypeName() );
 				}
 				else
 				{
 					if ( _info != null )
 					{
-						type = string.Format( "({0})", _info.PropertyType.Name );
+						type = string.Format( "({0})", _info.MemberType.Name );
 					}
 				}
 				return type;
@@ -139,7 +127,7 @@ namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
 				var name = string.Empty;
 				if ( _info != null )
 				{
-					name = _info.Name;
+					name = _info.MemberName;
 				}
 				return name;
 			}

@@ -5,6 +5,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using LiveCoding.Core;
+using LiveCoding.Core.Capturing;
 using LiveCoding.Extension.ViewModels.ObjectVisualizing;
 using LiveCoding.Extension.Views;
 using LiveCoding.Extension.VisualStudio.If;

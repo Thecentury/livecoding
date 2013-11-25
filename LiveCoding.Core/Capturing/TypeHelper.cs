@@ -1,14 +1,19 @@
 ﻿using System;
 
-namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
+namespace LiveCoding.Core.Capturing
 {
-	internal static class TypeHelper
+	public static class TypeHelper
 	{
 		public static bool IsExpandable( object o )
 		{
 			if ( o == null )
 			{
 				return false;
+			}
+
+			if ( o is IObjectInfoProxy )
+			{
+				return true;
 			}
 
 			return !IsPrintableType( o.GetType() );

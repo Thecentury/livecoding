@@ -6,17 +6,18 @@ namespace LiveCoding.Core
 	{
 		public static string GetValueString( this ValueChange change )
 		{
-			if ( change.CapturedValue == null )
+			object capturedValue = change.CapturedValue;
+			if ( capturedValue == null )
 			{
 				return "null";
 			}
 
-			if ( Equals( change.CapturedValue, String.Empty ) )
+			if ( Equals( capturedValue, String.Empty ) )
 			{
 				return "\"\"";
 			}
 
-			return change.CapturedValue.ToString();
+			return capturedValue.ToString();
 		}
 	}
 }
