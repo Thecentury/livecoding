@@ -16,7 +16,7 @@ namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
 		private ReadOnlyCollection<ObjectViewModel> _children;
 		private readonly ObjectViewModel _parent;
 		private readonly IObjectInfoProxy _object;
-		private readonly MemberValue _info;
+		private readonly IMemberValue _info;
 
 		bool _isExpanded;
 		bool _isSelected;
@@ -26,13 +26,13 @@ namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
 		{
 		}
 
-		private ObjectViewModel( object obj, MemberValue info, ObjectViewModel parent )
+		private ObjectViewModel( object obj, IMemberValue info, ObjectViewModel parent )
 		{
 			_object = obj != null ? ( ( obj as IObjectInfoProxy ) ?? new ReflectionObjectInfoProxy( obj ) ) : null;
 			_info = info;
 			if ( _object != null )
 			{
-				if ( _object.IsPrintable() )
+				if ( !_object.IsPrintable() )
 				{
 					// load the _children object with an empty collection to allow the + expander to be shown
 					_children = new ReadOnlyCollection<ObjectViewModel>( new[] { new ObjectViewModel( null ) } );
@@ -85,7 +85,7 @@ namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
 			get { return _parent; }
 		}
 
-		public MemberValue Info
+		public IMemberValue Info
 		{
 			get { return _info; }
 		}
@@ -145,33 +145,28 @@ namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
 				string value;
 				if ( _object != null )
 				{
-					Type type = _object.GetType();
+					if ( _object.IsArray() )
+					{
+						string arrayElementTypeName = _object.GetArrayElementTypeName();
 
-					if ( type.IsArray )
-					{
-						Array array = (Array)_object;
-						Type arrayItemType = type.GetElementType();
-
-						value = String.Format( "{0}[ {1} ]", arrayItemType.Name, String.Join( ", ", Enumerable.Range( 0, array.Rank ).Select( d => array.GetLength( d ) ) ) );
+						value = String.Format( "{0}[ {1} ]", arrayElementTypeName, _object.GetArrayDimensions() );
 					}
-					else if ( type.IsGenericICollection() )
+					else if ( _object.Execute( o => o.GetType().IsGenericICollection() ) )
 					{
-						var list = (ICollection)_object;
-						string cleanedTypeName = TypePrettyPrinter.GetCleanedNameOfGenericType( type );
-						value = String.Format( "{0}<{1}>[ {2} ]", cleanedTypeName, String.Join( ", ", type.GetGenericArguments().Select( t => t.Name ) ), list.Count );
+						string cleanedTypeName = _object.Execute( o => TypePrettyPrinter.GetCleanedNameOfGenericType( o.GetType() ) );
+						value = String.Format( "{0}<{1}>[ {2} ]", cleanedTypeName, String.Join( ", ", _object.Execute( o => o.GetType().GetGenericArguments().Select( t => t.Name ) ) ), _object.GetCollectionCount() );
 					}
-					else if ( type.IsCollection() )
+					else if ( _object.Execute( o => o.GetType().IsCollection() ) )
 					{
-						var collection = (ICollection)_object;
-						value = String.Format( "{0}[ {1} ]", TypePrettyPrinter.PrettyPrint( type ), collection.Count );
+						value = String.Format( "{0}[ {1} ]", _object.PrettyPrintType(), _object.GetCollectionCount() );
 					}
-					else if ( _object is string || _object is StringBuilder )
+					else if ( _object.Is<string>() || _object.Is<StringBuilder>() )
 					{
 						value = String.Format( "\"{0}\"", _object );
 					}
-					else if ( _object.ToString() == _object.GetType().ToString() )
+					else if ( _object.ToString() == _object.Execute( o => o.GetType().ToString() ) )
 					{
-						value = TypePrettyPrinter.PrettyPrint( type );
+						value = _object.PrettyPrintType();
 					}
 					else
 					{

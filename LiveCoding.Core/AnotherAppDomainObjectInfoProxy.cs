@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using LiveCoding.Core.Capturing;
 
 namespace LiveCoding.Core
 {
@@ -19,19 +18,9 @@ namespace LiveCoding.Core
 			_obj = obj;
 		}
 
-		public bool IsPrintable()
+		public TResult Execute<TResult>( Func<object, TResult> callback )
 		{
-			return TypeHelper.IsPrintableType( _obj.GetType() );
-		}
-
-		public bool IsArray()
-		{
-			return _obj.GetType().IsArray;
-		}
-
-		public string GetTypeName()
-		{
-			return _obj.GetType().Name;
+			return callback( _obj );
 		}
 
 		public IEnumerable AsEnumerable()
@@ -40,9 +29,14 @@ namespace LiveCoding.Core
 			return null;
 		}
 
-		public IEnumerable<MemberValue> GetMemberValues()
+		public IEnumerable<IMemberValue> GetMemberValues()
 		{
-			return PropertiesHelper.FilterProperties( _obj.GetType() ).Select( p => new PropertyValueProxy( _obj, p ) );
+			return PropertiesHelper.FilterProperties( _obj.GetType() ).Select( p => new PropertyValueProxy( _obj, p ) ).ToList();
+		}
+
+		public override string ToString()
+		{
+			return _obj.ToString();
 		}
 	}
 }

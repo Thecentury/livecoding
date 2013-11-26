@@ -2,12 +2,12 @@
 
 namespace LiveCoding.Core
 {
-	public abstract class MemberValue
+	public interface IMemberValue
 	{
-		public abstract string MemberName { get; }
+		string MemberName { get; }
 
-		public abstract Type MemberType { get; }
-
-		public abstract object GetValue();
+		Type MemberType { get; }
+		
+		object GetValue();
 	}
 }

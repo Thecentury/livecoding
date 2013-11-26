@@ -4,7 +4,7 @@ using LiveCoding.Core.Capturing;
 
 namespace LiveCoding.Core
 {
-	internal sealed class PropertyValueProxy : MemberValue
+	internal sealed class PropertyValueProxy : MarshalByRefObject, IMemberValue
 	{
 		private readonly object _target;
 		private readonly PropertyInfo _property;
@@ -15,17 +15,21 @@ namespace LiveCoding.Core
 			_property = property;
 		}
 
-		public override string MemberName
+		public string MemberName
 		{
 			get { return _property.Name; }
 		}
 
-		public override Type MemberType
+		public Type MemberType
 		{
-			get { return _property.PropertyType; }
+			get
+			{
+				// todo brinchuk do not expose member type
+				return _property.PropertyType;
+			}
 		}
 
-		public override object GetValue()
+		public object GetValue()
 		{
 			object rawValue = _property.GetValue( _target );
 			if ( MemberType.IsSerializable() )

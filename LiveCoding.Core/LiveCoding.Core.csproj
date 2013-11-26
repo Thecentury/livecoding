@@ -73,6 +73,7 @@
     <Compile Include="InvocationEvent.cs" />
     <Compile Include="IObjectInfoProxy.cs" />
     <Compile Include="IPositionAware.cs" />
+    <Compile Include="LiveCodingConstants.cs" />
     <Compile Include="LiveEvent.cs" />
     <Compile Include="LiveEventAddedEventArgs.cs" />
     <Compile Include="Internal\LiveEventWatcher.cs" />
@@ -81,10 +82,12 @@
     <Compile Include="Internal\SpecificLiveEventWatcher.cs" />
     <Compile Include="Internal\StackExtensions.cs" />
     <Compile Include="MemberValue.cs" />
+    <Compile Include="ObjectInfoProxyExtensions.cs" />
     <Compile Include="PropertiesHelper.cs" />
     <Compile Include="PropertyValue.cs" />
     <Compile Include="PropertyValueProxy.cs" />
     <Compile Include="ReflectionObjectInfoProxy.cs" />
+    <Compile Include="TypePrettyPrinter.cs" />
     <Compile Include="ValueChangeExtensions.cs" />
     <Compile Include="VariablesTracker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
