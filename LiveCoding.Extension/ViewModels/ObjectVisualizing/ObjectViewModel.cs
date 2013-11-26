@@ -100,26 +100,6 @@ namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
 			get { return _children; }
 		}
 
-		public string Type
-		{
-			get
-			{
-				var type = string.Empty;
-				if ( _object != null )
-				{
-					type = string.Format( "({0})", _object.GetTypeName() );
-				}
-				else
-				{
-					if ( _info != null )
-					{
-						type = string.Format( "({0})", _info.MemberType.Name );
-					}
-				}
-				return type;
-			}
-		}
-
 		public string Name
 		{
 			get

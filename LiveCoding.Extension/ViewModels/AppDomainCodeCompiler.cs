@@ -17,9 +17,10 @@ namespace LiveCoding.Extension.ViewModels
 		private CodeCompiler _compiler;
 		private List<string> _namespaces;
 		private List<string> _references;
-		private readonly List<string> _preludes = new List<string>(); 
+		private readonly List<string> _preludes = new List<string>();
 
 		private readonly Logger _logger = LogManager.GetCurrentClassLogger();
+		private ILiveEventListener _listener;
 
 		public void Dispose()
 		{
@@ -57,12 +58,17 @@ namespace LiveCoding.Extension.ViewModels
 			string appDomainName = "LiveCodingCompilation_" + Guid.NewGuid().ToString( "N" );
 
 			_logger.Debug( "Going to create new app domain '{0}'", appDomainName );
-	
-			_domain = AppDomain.CreateDomain( appDomainName, 
+
+			_domain = AppDomain.CreateDomain( appDomainName,
 				AppDomain.CurrentDomain.Evidence, appDomainSetup, new PermissionSet( PermissionState.Unrestricted ), new StrongName[0] );
 
 			_compiler = _domain.CreateInstanceAndUnwrap<CodeCompiler>();
 			_compiler.SetupScriptEngine( namespaces, references );
+
+			if ( _listener != null )
+			{
+				SetLiveEventListener( _listener );
+			}
 		}
 
 		public object Compile( string code, bool isPrelude )
@@ -98,6 +104,7 @@ namespace LiveCoding.Extension.ViewModels
 
 		public void SetLiveEventListener( ILiveEventListener listener )
 		{
+			_listener = listener;
 			var listenerSetter = new ListenerSetter( listener );
 			_domain.DoCallBack( listenerSetter.SetListener );
 		}
