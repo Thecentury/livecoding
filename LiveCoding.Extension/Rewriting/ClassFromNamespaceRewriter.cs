@@ -1,15 +1,14 @@
 ﻿using System.Linq;
+using LiveCoding.Core;
 using Roslyn.Compilers.CSharp;
 
 namespace LiveCoding.Extension.Rewriting
 {
 	public sealed class ClassFromNamespaceRewriter : SyntaxRewriter
 	{
-		public static readonly string LiveCodingWrapperClassName = "__LiveCodingWrapper";
-
 		public override SyntaxNode VisitNamespaceDeclaration( NamespaceDeclarationSyntax node )
 		{
-			return Syntax.ClassDeclaration( LiveCodingWrapperClassName )
+			return Syntax.ClassDeclaration( LiveCodingConstants.LiveCodingWrapperClassName )
 				.WithMembers(
 				Syntax.List(
 					node.Members.Select( m => Visit( m ) ).Cast<MemberDeclarationSyntax>()

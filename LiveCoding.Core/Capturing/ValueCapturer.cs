@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace LiveCoding.Core.Capturing
 {
@@ -31,7 +32,8 @@ namespace LiveCoding.Core.Capturing
 
 		private static object Capture( object o )
 		{
-			if ( o.GetType().IsSerializable() )
+			Type type = o.GetType();
+			if ( type.IsSerializable() && !type.IsInsideOfLiveCodingSubmission() )
 			{
 				return o;
 			}

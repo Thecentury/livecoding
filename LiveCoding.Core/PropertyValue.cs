@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace LiveCoding.Core
 {
-	public sealed class PropertyValue : MemberValue
+	public sealed class PropertyValue : IMemberValue
 	{
 		private readonly object _target;
 		private readonly PropertyInfo _property;
@@ -22,17 +22,17 @@ namespace LiveCoding.Core
 			_property = property;
 		}
 
-		public override string MemberName
+		public string MemberName
 		{
 			get { return _property.Name; }
 		}
 
-		public override Type MemberType
+		public Type MemberType
 		{
 			get { return _property.PropertyType; }
 		}
 
-		public override object GetValue()
+		public object GetValue()
 		{
 			return _property.GetValue( _target );
 		}

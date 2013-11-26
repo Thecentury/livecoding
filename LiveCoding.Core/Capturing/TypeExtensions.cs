@@ -9,5 +9,10 @@ namespace LiveCoding.Core.Capturing
 		{
 			return type.GetCustomAttributes( typeof( SerializableAttribute ), true ).Any();
 		}
+
+		public static bool IsInsideOfLiveCodingSubmission( this Type type )
+		{
+			return type.FullName.Contains( LiveCodingConstants.LiveCodingWrapperClassName );
+		}
 	}
 }

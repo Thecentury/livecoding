@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using LiveCoding.Core;
 using LiveCoding.Extension.Extensions;
 using LiveCoding.Extension.Rewriting;
 using Roslyn.Compilers.CSharp;
@@ -24,7 +25,7 @@ namespace LiveCoding.Extension.ViewModels
 
 		protected string FullLiveCodingClassName
 		{
-			get { return ClassFromNamespaceRewriter.LiveCodingWrapperClassName + "." + FullClassName; }
+			get { return LiveCodingConstants.LiveCodingWrapperClassName + "." + FullClassName; }
 		}
 
 		protected string FullClassName

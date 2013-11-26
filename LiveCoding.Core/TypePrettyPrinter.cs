@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
+namespace LiveCoding.Core
 {
 	public static class TypePrettyPrinter
 	{

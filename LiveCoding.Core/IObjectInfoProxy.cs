@@ -6,14 +6,10 @@ namespace LiveCoding.Core
 {
 	public interface IObjectInfoProxy
 	{
-		bool IsPrintable();
-
-		bool IsArray();
-
-		string GetTypeName();
+		TResult Execute<TResult>( Func<object, TResult> callback );
 
 		IEnumerable AsEnumerable();
 
-		IEnumerable<MemberValue> GetMemberValues();
+		IEnumerable<IMemberValue> GetMemberValues();
 	}
 }

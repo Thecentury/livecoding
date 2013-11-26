@@ -23,7 +23,7 @@ namespace ConsoleApplication1
         {
             public SerializableObject()
             {
-                I = 1;
+                I = 2;
             }
 
             public int I { get; set; }
@@ -33,7 +33,7 @@ namespace ConsoleApplication1
         {
             public MarshalByRef()
             {
-                I = 1;
+                I = 3;
             }
 
             public int I { get; set; }
