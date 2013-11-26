@@ -20,19 +20,15 @@ namespace LiveCoding.Core
 			get { return _property.Name; }
 		}
 
-		public Type MemberType
+		private Type MemberType
 		{
-			get
-			{
-				// todo brinchuk do not expose member type
-				return _property.PropertyType;
-			}
+			get { return _property.PropertyType; }
 		}
 
 		public object GetValue()
 		{
 			object rawValue = _property.GetValue( _target );
-			if ( MemberType.IsSerializable() )
+			if ( MemberType.IsSerializable() && !MemberType.IsInsideOfLiveCodingSubmission() || rawValue == null )
 			{
 				return rawValue;
 			}

@@ -27,11 +27,6 @@ namespace LiveCoding.Core
 			get { return _property.Name; }
 		}
 
-		public Type MemberType
-		{
-			get { return _property.PropertyType; }
-		}
-
 		public object GetValue()
 		{
 			return _property.GetValue( _target );

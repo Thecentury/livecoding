@@ -16,6 +16,13 @@ namespace ConsoleApplication1
 	        }
 
             public int I { get; set; }
+
+            public NonSerializableObject Null { get; set; }
+
+            public NonSerializableObject Me
+            {
+                get { return this; }
+            }
         }
 
         [Serializable]
@@ -27,6 +34,13 @@ namespace ConsoleApplication1
             }
 
             public int I { get; set; }
+
+            public SerializableObject Null { get; set; }
+
+            public SerializableObject Me
+            {
+                get { return this; }
+            }
         }
 
         public class MarshalByRef : MarshalByRefObject
@@ -37,6 +51,13 @@ namespace ConsoleApplication1
             }
 
             public int I { get; set; }
+
+            public MarshalByRef Null { get; set; }
+
+            public MarshalByRef Me
+            {
+                get { return this; }
+            }
         }
 
         public void NonSerializable()
