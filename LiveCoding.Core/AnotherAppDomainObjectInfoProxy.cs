@@ -31,7 +31,7 @@ namespace LiveCoding.Core
 
 		public IEnumerable<IMemberValue> GetMemberValues()
 		{
-			return TypesHelper.GetPublicPropertiesOf( _obj.GetType() )
+			return TypesHelper.GetPropertiesOf( _obj.GetType() )
 				.Select( p => new PropertyValueProxy( _obj, p ) )
 				.Cast<IMemberValue>()
 				.Concat( 

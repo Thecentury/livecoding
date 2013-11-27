@@ -11,13 +11,13 @@ namespace LiveCoding.Core
 
 		public PropertyValueProxy( object target, PropertyInfo property )
 		{
-			if (target == null)
+			if ( target == null )
 			{
-				throw new ArgumentNullException("target");
+				throw new ArgumentNullException( "target" );
 			}
-			if (property == null)
+			if ( property == null )
 			{
-				throw new ArgumentNullException("property");
+				throw new ArgumentNullException( "property" );
 			}
 			_target = target;
 			_property = property;

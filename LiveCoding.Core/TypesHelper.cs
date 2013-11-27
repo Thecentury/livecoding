@@ -7,9 +7,9 @@ namespace LiveCoding.Core
 {
 	internal static class TypesHelper
 	{
-		public static IEnumerable<PropertyInfo> GetPublicPropertiesOf( Type type )
+		public static IEnumerable<PropertyInfo> GetPropertiesOf( Type type )
 		{
-			return type.GetProperties( BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance )
+			return type.GetProperties( BindingFlags.GetProperty | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic )
 				.Where( p => !p.GetIndexParameters().Any() );
 		}
 
