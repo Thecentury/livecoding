@@ -58,6 +58,8 @@
     <Compile Include="Capturing\TypeHelper.cs" />
     <Compile Include="Capturing\ValueCapturer.cs" />
     <Compile Include="EventProxyListener.cs" />
+    <Compile Include="FieldValue.cs" />
+    <Compile Include="FieldValueProxy.cs" />
     <Compile Include="IfEvaluationEvent.cs" />
     <Compile Include="ILiveEventListener.cs" />
     <Compile Include="ILoopEvent.cs" />
@@ -83,7 +85,7 @@
     <Compile Include="Internal\StackExtensions.cs" />
     <Compile Include="MemberValue.cs" />
     <Compile Include="ObjectInfoProxyExtensions.cs" />
-    <Compile Include="PropertiesHelper.cs" />
+    <Compile Include="TypesHelper.cs" />
     <Compile Include="PropertyValue.cs" />
     <Compile Include="PropertyValueProxy.cs" />
     <Compile Include="ReflectionObjectInfoProxy.cs" />
