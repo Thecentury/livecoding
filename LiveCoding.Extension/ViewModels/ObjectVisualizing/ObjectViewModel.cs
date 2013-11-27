@@ -134,7 +134,7 @@ namespace LiveCoding.Extension.ViewModels.ObjectVisualizing
 					else if ( _object.Execute( o => o.GetType().IsGenericICollection() ) )
 					{
 						string cleanedTypeName = _object.Execute( o => TypePrettyPrinter.GetCleanedNameOfGenericType( o.GetType() ) );
-						value = String.Format( "{0}<{1}>[ {2} ]", cleanedTypeName, String.Join( ", ", _object.Execute( o => o.GetType().GetGenericArguments().Select( t => t.Name ) ) ), _object.GetCollectionCount() );
+						value = String.Format( "{0}<{1}>[ {2} ]", cleanedTypeName, String.Join( ", ", _object.Execute( o => o.GetType().GetGenericArguments().Select( t => t.Name ).ToList() ) ), _object.GetCollectionCount() );
 					}
 					else if ( _object.Execute( o => o.GetType().IsCollection() ) )
 					{

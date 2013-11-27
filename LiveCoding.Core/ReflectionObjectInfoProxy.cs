@@ -30,8 +30,13 @@ namespace LiveCoding.Core
 
 		public IEnumerable<IMemberValue> GetMemberValues()
 		{
-			return PropertiesHelper.FilterProperties( _obj.GetType() )
-				.Select( p => new PropertyValue( _obj, p ) );
+			return
+				TypesHelper.GetPublicPropertiesOf( _obj.GetType() )
+					.Select( p => new PropertyValue( _obj, p ) )
+					.Cast<IMemberValue>()
+					.Concat( 
+						TypesHelper.GetFieldsOf( _obj.GetType() )
+						.Select( f => new FieldValue( _obj, f ) ) );
 		}
 
 		public override string ToString()

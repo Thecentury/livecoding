@@ -11,6 +11,14 @@ namespace LiveCoding.Core
 
 		public PropertyValueProxy( object target, PropertyInfo property )
 		{
+			if (target == null)
+			{
+				throw new ArgumentNullException("target");
+			}
+			if (property == null)
+			{
+				throw new ArgumentNullException("property");
+			}
 			_target = target;
 			_property = property;
 		}
@@ -20,21 +28,24 @@ namespace LiveCoding.Core
 			get { return _property.Name; }
 		}
 
-		private Type MemberType
-		{
-			get { return _property.PropertyType; }
-		}
-
 		public object GetValue()
 		{
 			object rawValue = _property.GetValue( _target );
-			if ( MemberType.IsSerializable() && !MemberType.IsInsideOfLiveCodingSubmission() || rawValue == null )
+			if ( rawValue == null )
 			{
-				return rawValue;
+				return null;
 			}
 			else
 			{
-				return new AnotherAppDomainObjectInfoProxy( rawValue );
+				var type = rawValue.GetType();
+				if ( type.IsPrintable() )
+				{
+					return rawValue;
+				}
+				else
+				{
+					return new AnotherAppDomainObjectInfoProxy( rawValue );
+				}
 			}
 		}
 	}

@@ -17,6 +17,19 @@ namespace ConsoleApplication1
 
             public int I { get; set; }
 
+            public List<NonSerializableObject> List
+            {
+                get
+                {
+                    return new List<NonSerializableObject> { this, this };
+                }
+            }
+
+            public Tuple<object> Tuple
+            {
+                get { return new Tuple<object>(this); }
+            }
+
             public NonSerializableObject Null { get; set; }
 
             public NonSerializableObject Me
@@ -36,6 +49,16 @@ namespace ConsoleApplication1
             public int I { get; set; }
 
             public SerializableObject Null { get; set; }
+
+            public NonSerializableObject NonSerializable
+            {
+                get { return new NonSerializableObject(); }
+            }
+
+            public MarshalByRefObject MarshalByRef
+            {
+                get { return new MarshalByRef(); }
+            }
 
             public SerializableObject Me
             {

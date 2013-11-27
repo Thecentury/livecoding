@@ -16,13 +16,13 @@ namespace LiveCoding.Core.Capturing
 				return true;
 			}
 
-			return !IsPrintableType( o.GetType() );
+			return !IsPrintable( o.GetType() );
 		}
 
 		/// <summary>
 		/// Gets a value indicating if the object graph can display this type without enumerating its children
 		/// </summary>
-		public static bool IsPrintableType( Type type )
+		public static bool IsPrintable( this Type type )
 		{
 			return type != null && (
 				type.IsPrimitive ||

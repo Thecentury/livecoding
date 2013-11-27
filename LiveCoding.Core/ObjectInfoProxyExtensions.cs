@@ -48,7 +48,7 @@ namespace LiveCoding.Core
 
 		public static bool IsPrintable( this IObjectInfoProxy proxy )
 		{
-			return proxy.Execute( o => TypeHelper.IsPrintableType( o.GetType() ) );
+			return proxy.Execute( o => TypeHelper.IsPrintable( o.GetType() ) );
 		}
 	}
 }
