@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using LiveCoding.Core.Capturing;
 
 namespace LiveCoding.Core
 {
@@ -25,8 +26,21 @@ namespace LiveCoding.Core
 
 		public IEnumerable AsEnumerable()
 		{
+			IEnumerable enumerable = _obj as IEnumerable;
+			if ( enumerable == null )
+			{
+				return null;
+			}
+
+			var type = _obj.GetType();
+
+			if ( type.IsArray && type.GetElementType().IsPrintable() )
+			{
+				return (IEnumerable)_obj;
+			}
+
 			// todo brinchuk 
-			return null;
+			return ( enumerable ).Cast<object>().Select( o => o != null ? new AnotherAppDomainObjectInfoProxy( o ) : null ).ToList();
 		}
 
 		public IEnumerable<IMemberValue> GetMemberValues()
@@ -34,7 +48,7 @@ namespace LiveCoding.Core
 			return TypesHelper.GetPropertiesOf( _obj.GetType() )
 				.Select( p => new PropertyValueProxy( _obj, p ) )
 				.Cast<IMemberValue>()
-				.Concat( 
+				.Concat(
 					TypesHelper.GetFieldsOf( _obj.GetType() )
 					.Select( f => new FieldValueProxy( _obj, f ) ) )
 				.ToList();
