@@ -2,8 +2,6 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:extension="clr-namespace:LiveCoding.Extension"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:LiveCoding.Extension.ViewModels"
              xmlns:views="clr-namespace:LiveCoding.Extension.Views"
@@ -26,7 +24,7 @@
             <Button Command="{Binding ExecuteCommand}">
                 <Button.Template>
                     <ControlTemplate>
-                        <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/leaf.png"
+                        <Image Source="pack://application:,,,/LiveCoding;component/Resources/leaf.png"
                                Style="{StaticResource IconStyle}"
                                ToolTip="Execute" />
                     </ControlTemplate>
@@ -38,7 +36,7 @@
             <Button Command="{Binding ExecuteCommand}">
                 <Button.Template>
                     <ControlTemplate>
-                        <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/ui-progress-bar-indeterminate.png"
+                        <Image Source="pack://application:,,,/LiveCoding;component/Resources/ui-progress-bar-indeterminate.png"
                                Style="{StaticResource IconStyle}"
                                ToolTip="Cancel" />
                     </ControlTemplate>
@@ -51,7 +49,7 @@
                 <Button Command="{Binding ExecuteCommand}">
                     <Button.Template>
                         <ControlTemplate>
-                            <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/tick.png"
+                            <Image Source="pack://application:,,,/LiveCoding;component/Resources/tick.png"
                                    Style="{StaticResource IconStyle}"
                                    ToolTip="Done" />
                         </ControlTemplate>
@@ -60,7 +58,7 @@
                 <Button Command="{Binding ClearCommand}">
                     <Button.Template>
                         <ControlTemplate>
-                            <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/eraser.png"
+                            <Image Source="pack://application:,,,/LiveCoding;component/Resources/eraser.png"
                                    Style="{StaticResource IconStyle}"
                                    ToolTip="Clear" />
                         </ControlTemplate>
@@ -73,7 +71,7 @@
             <Button Command="{Binding ExecuteCommand}">
                 <Button.Template>
                     <ControlTemplate>
-                        <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/exclamation-red.png"
+                        <Image Source="pack://application:,,,/LiveCoding;component/Resources/exclamation-red.png"
                                Style="{StaticResource IconStyle}"
                                ToolTip="{Binding CurrentState.(viewModels:FailedState.Exception)}" />
                     </ControlTemplate>
@@ -85,7 +83,7 @@
             <Button Command="{Binding ExecuteCommand}">
                 <Button.Template>
                     <ControlTemplate>
-                        <Image Source="pack://application:,,,/LiveCoding.Extension;component/Resources/cross-circle.png"
+                        <Image Source="pack://application:,,,/LiveCoding;component/Resources/cross-circle.png"
                                Style="{StaticResource IconStyle}"
                                ToolTip="Canceled" />
                     </ControlTemplate>
