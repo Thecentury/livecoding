@@ -73,6 +73,20 @@ class C {
 	}
 }";
 
+		private const string EventInsideOfRegion = @"
+class C {
+#region Q Q
+
+public event System.EventHandler QQ;
+
+#endregion 
+
+public void M(){
+//	int i = 1;
+}
+
+}";
+
 		[Test]
 		public void GetScriptAssemblyName()
 		{
@@ -89,6 +103,7 @@ class C {
 		[TestCase( OneIf )]
 		[TestCase( Invocation1 )]
 		[TestCase( InvocationWithReturnValue )]
+		[TestCase( EventInsideOfRegion )]
 		public void Rewrite( string code )
 		{
 			var tree = SyntaxTree.ParseText( code );
@@ -99,6 +114,25 @@ class C {
 
 			ScriptEngine engine = new ScriptEngine();
 			engine.AddReference( typeof( VariablesTracker ).Assembly );
+
+			var session = engine.CreateSession();
+			string rewrittenCode = rewritten.ToString();
+
+			Console.WriteLine( rewrittenCode );
+
+			session.Execute( rewrittenCode );
+		}
+
+		[TestCase( EventInsideOfRegion )]
+		public void RewriteWithEmptyRewriter( string code )
+		{
+			var tree = SyntaxTree.ParseText( code );
+
+			var rewriter = new EmptyRewriter();
+
+			var rewritten = tree.GetRoot().Accept( rewriter ).NormalizeWhitespace();
+
+			ScriptEngine engine = new ScriptEngine();
 
 			var session = engine.CreateSession();
 			string rewrittenCode = rewritten.ToString();
