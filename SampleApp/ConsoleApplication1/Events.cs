@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApplication1
 {
-    class BaseClass
+    public class BaseClass
     {
         public event EventHandler E;
         public void Raise()
@@ -19,7 +19,7 @@ namespace ConsoleApplication1
         }
     }
 
-    class Events : BaseClass
+    public class Events : BaseClass
     {
         public void M()
         {

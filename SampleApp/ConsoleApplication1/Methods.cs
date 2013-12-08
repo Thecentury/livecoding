@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApplication1
 {
-    class Methods
+    public class Methods
     {
         public void M()
         {

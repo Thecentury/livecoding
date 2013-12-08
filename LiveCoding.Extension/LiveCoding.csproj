@@ -171,6 +171,7 @@
     <Compile Include="Extensions\ProjectExtensions.cs" />
     <Compile Include="Extensions\StringEnumerableExtensions.cs" />
     <Compile Include="NlogBootstrapper.cs" />
+    <Compile Include="Rewriting\AddInitialNamespaceAsUsingRewriter.cs" />
     <Compile Include="Rewriting\BaseMethodDeclarationSyntaxExtensions.cs" />
     <Compile Include="Rewriting\DoWhileLoopAdapter.cs" />
     <Compile Include="EnumerableExtensions.cs" />
