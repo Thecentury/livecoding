@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppDomainTests.cs" />
+    <Compile Include="EmptyRewriter.cs" />
     <Compile Include="LoggingTests.cs" />
     <Compile Include="ValuesTrackingRewriterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

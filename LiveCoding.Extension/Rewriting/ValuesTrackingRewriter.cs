@@ -422,13 +422,6 @@ namespace LiveCoding.Extension.Rewriting
 			yield return track;
 		}
 
-		public override SyntaxNode VisitLocalDeclarationStatement( LocalDeclarationStatementSyntax node )
-		{
-			LocalDeclarationStatementSyntax rewritten = (LocalDeclarationStatementSyntax)base.VisitLocalDeclarationStatement( node );
-
-			return rewritten;
-		}
-
 		public override SyntaxNode VisitBlock( BlockSyntax node )
 		{
 			List<StatementSyntax> statements = new List<StatementSyntax>();
