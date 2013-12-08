@@ -157,21 +157,24 @@ namespace LiveCoding.Extension.ViewModels
 
 				SetCompilationData( _codeCompiler, compilationUnit );
 
+
+				var namespaceDeclarations = compilationUnit.ChildNodes().OfType<NamespaceDeclarationSyntax>().Select( n => n.Name.ToString() ).ToList();
 				var rewritten = compilationUnit
 					.Accept( rewriter )
 					.Accept( new ClassFromNamespaceRewriter() )
+					.Accept( new AddInitialNamespaceAsUsingRewriter( namespaceDeclarations ) )
 					.NormalizeWhitespace();
 
-				_logger.Debug( "Rewritten code:{0}{1}", Environment.NewLine, rewritten.ToString() );
+				_logger.Debug( "Rewritten code:{0}{1}", Environment.NewLine, rewritten );
 
 				List<string> namespaces = new List<string>();
 				foreach ( var usingDirectiveSyntax in compilationUnit.Usings )
 				{
 					namespaces.Add( usingDirectiveSyntax.Name.ToString() );
 				}
-				foreach ( var namespaceDeclaration in compilationUnit.ChildNodes().OfType<NamespaceDeclarationSyntax>() )
+				foreach ( var namespaceDeclaration in namespaceDeclarations )
 				{
-					namespaces.Add( namespaceDeclaration.Name.ToString() );
+					namespaces.Add( namespaceDeclaration );
 				}
 
 				_codeCompiler.SetupScriptEngine( namespaces, references );

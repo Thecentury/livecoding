@@ -11,7 +11,7 @@ namespace LiveCoding.Extension.Rewriting
 			return Syntax.ClassDeclaration( LiveCodingConstants.LiveCodingWrapperClassName )
 				.WithMembers(
 				Syntax.List(
-					node.Members.Select( m => Visit( m ) ).Cast<MemberDeclarationSyntax>()
+					node.Members.Cast<MemberDeclarationSyntax>()
 				) );
 		}
 	}
