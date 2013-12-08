@@ -9,8 +9,6 @@ namespace LiveCoding.Core
 	{
 		public string VariableName { get; set; }
 
-		public object OriginalValue { get; set; }
-
 		public object CapturedValue { get; set; }
 
 		public int OriginalLineNumber { get; set; }

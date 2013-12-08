@@ -9,13 +9,10 @@ namespace LiveCoding.Core
 		{
 			object capturedValue = ValueCapturer.CreateCapturedValue( value );
 
-			object originalValue = ValueCapturer.WrapOriginalValue( value );
-
 			var valueChange = new ValueChange
 			{
 				VariableName = variableName,
 				OriginalLineNumber = originalLineNumber,
-				OriginalValue = originalValue,
 				CapturedValue = capturedValue
 			};
 
@@ -34,6 +31,20 @@ namespace LiveCoding.Core
 			return evt.LoopId;
 		}
 
+		private static object[] CaptureParameters( object[] parameters )
+		{
+			object[] capturedParameters = new object[parameters.Length];
+
+			for ( var i = 0; i < parameters.Length; i++ )
+			{
+				var parameter = parameters[i];
+				var capturedValue = ValueCapturer.CreateCapturedValue( parameter );
+				capturedParameters[i] = capturedValue;
+			}
+
+			return capturedParameters;
+		}
+
 		public static void RegisterInvocation( int lineNumber, int startPosition, int endPosition, params object[] parameters )
 		{
 			var evt = new InvocationEvent
@@ -41,7 +52,7 @@ namespace LiveCoding.Core
 				LineNumber = lineNumber,
 				InvocationStartPosition = startPosition,
 				InvocationEndPosition = endPosition,
-				Parameters = parameters
+				Parameters = CaptureParameters( parameters )
 			};
 
 			AddEvent( evt );

@@ -19,6 +19,7 @@ using LiveCoding.Extension.VisualStudio.Invocations;
 using LiveCoding.Extension.VisualStudio.Loops;
 using LiveCoding.Extension.VisualStudio.VariableValues;
 using NLog;
+using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 using VSLangProj;
 
@@ -129,7 +130,28 @@ namespace LiveCoding.Extension.ViewModels
 
 				var syntaxTree = SyntaxTree.ParseFile( filePath, cancellationToken: token );
 
-				ValuesTrackingRewriter rewriter = new ValuesTrackingRewriter( syntaxTree );
+				List<string> references = new List<string>();
+
+				foreach ( Reference reference in project.GetReferences().References )
+				{
+					string path = reference.Path;
+					references.Add( path );
+				}
+
+				if ( File.Exists( projectOutputFullPath ) )
+				{
+					references.Add( projectOutputFullPath );
+				}
+
+				string liveCodingCoreAssembly = typeof( VariablesTracker ).Assembly.Location;
+				if ( !references.Contains( liveCodingCoreAssembly ) )
+				{
+					references.Add( liveCodingCoreAssembly );
+				}
+
+				var compilation = Compilation.Create( "1", syntaxTrees: new[] { syntaxTree }, references: references.Select( r => new MetadataFileReference( r ) ) );
+
+				ValuesTrackingRewriter rewriter = new ValuesTrackingRewriter( syntaxTree, compilation, token );
 
 				compilationUnit = syntaxTree.GetRoot( token );
 
@@ -150,25 +172,6 @@ namespace LiveCoding.Extension.ViewModels
 				foreach ( var namespaceDeclaration in compilationUnit.ChildNodes().OfType<NamespaceDeclarationSyntax>() )
 				{
 					namespaces.Add( namespaceDeclaration.Name.ToString() );
-				}
-
-				List<string> references = new List<string>();
-
-				foreach ( Reference reference in project.GetReferences().References )
-				{
-					string path = reference.Path;
-					references.Add( path );
-				}
-
-				if ( File.Exists( projectOutputFullPath ) )
-				{
-					references.Add( projectOutputFullPath );
-				}
-
-				string liveCodingCoreAssembly = typeof( VariablesTracker ).Assembly.Location;
-				if ( !references.Contains( liveCodingCoreAssembly ) )
-				{
-					references.Add( liveCodingCoreAssembly );
 				}
 
 				_codeCompiler.SetupScriptEngine( namespaces, references );

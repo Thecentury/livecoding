@@ -1,20 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 
 namespace LiveCoding.Core.Capturing
 {
 	internal static class ValueCapturer
 	{
-		public static object WrapOriginalValue( object o )
-		{
-			if ( o == null )
-			{
-				return null;
-			}
-
-			return Capture( o );
-		}
-
 		public static object CreateCapturedValue( dynamic value )
 		{
 			if ( value == null )
@@ -33,7 +24,8 @@ namespace LiveCoding.Core.Capturing
 		private static object Capture( object o )
 		{
 			Type type = o.GetType();
-			if ( type.IsSerializable() && !type.IsInsideOfLiveCodingSubmission() )
+
+			if ( type.IsSerializable() && !type.IsInsideOfLiveCodingSubmission() && !type.IsDelegate() )
 			{
 				return o;
 			}

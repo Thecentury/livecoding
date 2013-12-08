@@ -2,6 +2,7 @@
 using LiveCoding.Core;
 using LiveCoding.Extension.Rewriting;
 using NUnit.Framework;
+using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 using Roslyn.Scripting.CSharp;
 
@@ -87,6 +88,21 @@ public void M(){
 
 }";
 
+		private const string EventDeclarationAndSubscription = @"
+using System;
+
+class B {
+public event EventHandler E;
+}
+
+class C : B {
+	private void Q() {
+		E += (e,s)=>{};
+		E -= (e,s)=>{};
+	}
+}
+";
+
 		[Test]
 		public void GetScriptAssemblyName()
 		{
@@ -104,11 +120,14 @@ public void M(){
 		[TestCase( Invocation1 )]
 		[TestCase( InvocationWithReturnValue )]
 		[TestCase( EventInsideOfRegion )]
+		[TestCase( EventDeclarationAndSubscription )]
 		public void Rewrite( string code )
 		{
 			var tree = SyntaxTree.ParseText( code );
 
-			ValuesTrackingRewriter rewriter = new ValuesTrackingRewriter( tree );
+			var compilation = Compilation.Create( "1", syntaxTrees: new[] { tree }, references: new[] { new MetadataFileReference( @"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\mscorlib.dll" ) } );
+
+			ValuesTrackingRewriter rewriter = new ValuesTrackingRewriter( tree, compilation );
 
 			var rewritten = tree.GetRoot().Accept( rewriter ).NormalizeWhitespace();
 
