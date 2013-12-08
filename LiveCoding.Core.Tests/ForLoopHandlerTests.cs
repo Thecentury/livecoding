@@ -27,7 +27,7 @@ namespace LiveCoding.Core.Tests
 			var forLoopStartedEvent = new ForLoopStartedEvent();
 			handler.Accept( forLoopStartedEvent );
 			handler.Accept( new ForLoopIterationEvent( forLoopStartedEvent.LoopId, 1 ) );
-			handler.Accept( new ValueChange { OriginalValue = 1 } );
+			handler.Accept( new ValueChange { CapturedValue = 1 } );
 			handler.Accept( new ForLoopIterationEvent( forLoopStartedEvent.LoopId, 2 ) );
 			handler.Accept( new ValueChange() );
 			handler.Accept( new ForLoopFinishedEvent( forLoopStartedEvent.LoopId ) );
